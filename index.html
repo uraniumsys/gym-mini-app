@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gym Motivation</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #09090b;
+            --card-bg: #18181b;
+            --card-border: #27272a;
+            --accent: #a3e635; /* Неоновый лайм */
+            --accent-hover: #bef264;
+            --text-main: #fafafa;
+            --text-muted: #a1a1aa;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Отступ для нижнего меню */
+        }
+
+        /* --- Экраны --- */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            padding: 20px 16px;
+        }
+        .screen.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Типографика --- */
+        h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+
+        /* --- Карточки тренировок --- */
+        .workout-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .workout-card:active { transform: scale(0.97); border-color: var(--accent); }
+        
+        .workout-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .workout-icon { font-size: 40px; }
+        .workout-badge {
+            background: rgba(163, 230, 53, 0.1);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .workout-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+        .workout-meta { display: flex; gap: 16px; color: var(--text-muted); font-size: 13px; }
+        .workout-meta span { display: flex; align-items: center; gap: 6px; }
+
+        /* --- Список упражнений --- */
+        .exercise-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .exercise-item.completed {
+            border-color: var(--accent);
+            background: rgba(163, 230, 53, 0.05);
+        }
+        .exercise-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .exercise-name { font-size: 16px; font-weight: 600; }
+        .exercise-check {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--card-border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .exercise-item.completed .exercise-check {
+            background: var(--accent); border-color: var(--accent);
+        }
+        .exercise-item.completed .exercise-check::after {
+            content: '✓'; color: #000; font-size: 14px; font-weight: bold;
+        }
+        .exercise-details { font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+        .exercise-notes { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+        /* --- Кнопки --- */
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.98); background: var(--accent-hover); }
+
+        /* --- Нижняя навигация --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(24, 24, 27, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--card-border);
+            display: flex; justify-content: space-around;
+            padding: 12px 0 20px; z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-muted); font-size: 11px; font-weight: 500;
+            cursor: pointer; transition: 0.2s; gap: 4px;
+        }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon { font-size: 22px; }
+
+        /* --- Профиль --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .stat-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 20px; text-align: center;
+        }
+        .stat-value { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+        .stat-label { font-size: 12px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <div id="screen-home" class="screen active">
+        <h1>Тренировки</h1>
+        <p class="subtitle">Выбери программу на сегодня</p>
+
+        <div class="workout-card" onclick="openWorkout('fullbody')">
+            <div class="workout-header">
+                <div class="workout-icon"></div>
+                <div class="workout-badge">Новичок</div>
+            </div>
+            <div class="workout-title">Full Body</div>
+            <div class="workout-meta">
+                <span>⏱ 45 мин</span>
+                <span>🔥 6 упражнений</span>
+            </div>
+        </div>
+
+        <div class="workout-card" onclick="openWorkout('upper')">
+            <div class="workout-header">
+                <div class="workout-icon">🏋️</div>
+                <div class="workout-badge">Средний</div>
+            </div>
+            <div class="workout-title">Верх тела</div>
+            <div class="workout-meta">
+                <span> 40 мин</span>
+                <span>🔥 6 упражнений</span>
+            </div>
+        </div>
+
+        <div class="workout-card" onclick="openWorkout('lower')">
+            <div class="workout-header">
+                <div class="workout-icon"></div>
+                <div class="workout-badge">Средний</div>
+            </div>
+            <div class="workout-title">Низ тела</div>
+            <div class="workout-meta">
+                <span>⏱ 40 мин</span>
+                <span>🔥 6 упражнений</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН ТРЕНИРОВКИ -->
+    <div id="screen-workout" class="screen">
+        <h2 id="workout-title">Название</h2>
+        <p class="subtitle">Отмечай выполненные подходы</p>
+        <div id="exercises-list"></div>
+        <button class="btn-primary" onclick="finishWorkout()">Завершить тренировку</button>
+    </div>
+
+    <!-- ЭКРАН ПРОФИЛЯ -->
+    <div id="screen-profile" class="screen">
+        <h1>Профиль</h1>
+        <p class="subtitle">Твой прогресс и статистика</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="streak-val">0</div>
+                <div class="stat-label">Дней подряд 🔥</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-val">0</div>
+                <div class="stat-label">Всего тренировок</div>
+            </div>
+        </div>
+
+        <div class="workout-card" style="cursor: default;">
+            <div class="workout-title" style="font-size: 16px;">Совет дня</div>
+            <div class="exercise-notes" style="margin-top: 8px;">Не забывай пить воду во время тренировки. Обезвоживание снижает силовые показатели на 10-15%.</div>
+        </div>
+    </div>
+
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+            <div class="nav-icon">🏠</div>
+            <div>Главная</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile')">
+            <div class="nav-icon">👤</div>
+            <div>Профиль</div>
+        </div>
+    </div>
+
+    <script>
+        // Данные
+        const workoutsData = {
+            fullbody: {
+                name: 'Full Body',
+                exercises: [
+                    { name: 'Приседания с гантелями', sets: 3, reps: '12', rest: '60 сек', notes: 'Гантели у плеч, спина прямая' },
+                    { name: 'Отжимания от пола', sets: 3, reps: '10-15', rest: '60 сек', notes: 'Если тяжело — с колен' },
+                    { name: 'Тяга гантели в наклоне', sets: 3, reps: '12', rest: '60 сек', notes: 'Спина параллельна полу' },
+                    { name: 'Жим гантелей сидя', sets: 3, reps: '12', rest: '60 сек', notes: 'Не прогибай поясницу' },
+                    { name: 'Планка', sets: 3, reps: '30-45 сек', rest: '45 сек', notes: 'Тело — прямая линия' },
+                    { name: 'Скручивания', sets: 3, reps: '15', rest: '45 сек', notes: 'Поясница прижата к полу' }
+                ]
+            },
+            upper: {
+                name: 'Верх тела',
+                exercises: [
+                    { name: 'Жим штанги лёжа', sets: 4, reps: '8-10', rest: '90 сек', notes: 'Лопатки сведены, ноги на полу' },
+                    { name: 'Тяга верхнего блока', sets: 3, reps: '10-12', rest: '60 сек', notes: 'Тяни к груди, не за голову' },
+                    { name: 'Жим гантелей на наклонной', sets: 3, reps: '10-12', rest: '60 сек', notes: 'Угол скамьи 30-45°' },
+                    { name: 'Тяга горизонтального блока', sets: 3, reps: '12', rest: '60 сек', notes: 'Своди лопатки в конце' },
+                    { name: 'Разведение гантелей стоя', sets: 3, reps: '12-15', rest: '45 сек', notes: 'Локти чуть согнуты' },
+                    { name: 'Сгибания на бицепс', sets: 3, reps: '12', rest: '45 сек', notes: 'Не раскачивай корпус' }
+                ]
+            },
+            lower: {
+                name: 'Низ тела',
+                exercises: [
+                    { name: 'Приседания со штангой', sets: 4, reps: '8-10', rest: '90 сек', notes: 'Колени по направлению стоп' },
+                    { name: 'Румынская тяга', sets: 3, reps: '10-12', rest: '60 сек', notes: 'Штанга скользит по ногам' },
+                    { name: 'Выпады с гантелями', sets: 3, reps: '12', rest: '60 сек', notes: 'Колено не выходит за носок' },
+                    { name: 'Жим ногами', sets: 3, reps: '12', rest: '60 сек', notes: 'Не выпрямляй колени полностью' },
+                    { name: 'Сгибания ног в тренажёре', sets: 3, reps: '12-15', rest: '45 сек', notes: 'Контролируй движение вниз' },
+                    { name: 'Подъёмы на носки', sets: 4, reps: '15-20', rest: '30 сек', notes: 'Задержись наверху на 1 сек' }
+                ]
+            }
+        };
+
+        // Навигация
+        function switchTab(tab) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`screen-${tab}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function openWorkout(id) {
+            const workout = workoutsData[id];
+            document.getElementById('workout-title').innerText = workout.name;
+            
+            const list = document.getElementById('exercises-list');
+            list.innerHTML = workout.exercises.map((ex, i) => `
+                <div class="exercise-item" onclick="toggleExercise(this)">
+                    <div class="exercise-top">
+                        <div class="exercise-name">${ex.name}</div>
+                        <div class="exercise-check"></div>
+                    </div>
+                    <div class="exercise-details">${ex.sets} × ${ex.reps} | Отдых: ${ex.rest}</div>
+                    <div class="exercise-notes">💡 ${ex.notes}</div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-workout').classList.add('active');
+        }
+
+        function toggleExercise(el) {
+            el.classList.toggle('completed');
+        }
+
+        function finishWorkout() {
+            // Вибрация через Telegram API
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+            alert(' Отличная работа! Тренировка сохранена.');
+            switchTabDirect('home');
+        }
+
+        function switchTabDirect(tab) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`screen-${tab}`).classList.add('active');
+            document.querySelector(`.nav-item[onclick="switchTab('${tab}')"]`).classList.add('active');
+        }
+
+        // Инициализация Telegram
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+        }
+    </script>
+</body>
+</html>
