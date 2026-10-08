@@ -31,7 +31,6 @@
             padding-bottom: 90px;
         }
 
-        /* Экраны с анимацией slide */
         .screen {
             display: none;
             padding: 24px 20px;
@@ -44,7 +43,6 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Заголовки */
         .header { margin-bottom: 28px; }
         .header h1 {
             font-size: 32px;
@@ -57,7 +55,6 @@
         }
         .header p { color: var(--muted); font-size: 15px; }
 
-        /* Карточки тренировок с градиентами */
         .workout-card {
             position: relative;
             border-radius: 24px;
@@ -106,7 +103,6 @@
         .workout-meta { display: flex; gap: 16px; font-size: 13px; color: rgba(255,255,255,0.7); }
         .workout-meta span { display: flex; align-items: center; gap: 6px; }
 
-        /* Прогресс-бар тренировки */
         .progress-bar {
             height: 6px;
             background: var(--card-border);
@@ -128,7 +124,6 @@
             margin-bottom: 20px;
         }
 
-        /* Упражнения */
         .exercise-item {
             background: var(--card);
             border: 1px solid var(--card-border);
@@ -172,26 +167,6 @@
         }
         .exercise-notes { font-size: 12px; color: var(--muted); line-height: 1.4; }
 
-        /* Кнопка завершения */
-        .btn-primary {
-            width: 100%;
-            background: var(--gradient-1);
-            color: #000;
-            border: none;
-            padding: 18px;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 24px;
-            transition: 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .btn-primary:active { transform: scale(0.97); }
-        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        /* Нижняя навигация */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(22, 22, 29, 0.95);
@@ -209,7 +184,6 @@
         .nav-item.active { color: var(--accent); }
         .nav-item svg { width: 24px; height: 24px; }
 
-        /* Профиль */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
         .stat-card {
             background: var(--card);
@@ -236,21 +210,6 @@
         }
         .info-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
         .info-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
-        }
-        .back-btn:active { color: var(--text); }
     </style>
 </head>
 <body>
@@ -291,7 +250,7 @@
             <div class="workout-title">Верх тела</div>
             <div class="workout-meta">
                 <span>⏱ 40 мин</span>
-                <span> 6 упражнений</span>
+                <span>🔥 6 упражнений</span>
             </div>
         </div>
 
@@ -315,12 +274,6 @@
 
     <!-- ЭКРАН ТРЕНИРОВКИ -->
     <div id="screen-workout" class="screen">
-        <button class="back-btn" onclick="goHome()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Назад
-        </button>
         <h2 id="workout-title" style="font-size: 26px; font-weight: 900; margin-bottom: 20px;">Название</h2>
         
         <div class="progress-bar">
@@ -341,7 +294,7 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="streak-val">0</div>
-                <div class="stat-label">Дней подряд 🔥</div>
+                <div class="stat-label">Дней подряд </div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="total-val">0</div>
@@ -413,7 +366,6 @@
         let currentWorkout = null;
         let completedExercises = new Set();
 
-        // Загрузка статистики
         function loadStats() {
             const stats = JSON.parse(localStorage.getItem('gymStats') || '{"streak":0,"total":0,"lastDate":null}');
             document.getElementById('streak-val').textContent = stats.streak;
@@ -466,7 +418,9 @@
 
             updateProgress();
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-workout').classList.add('active');            if (window.Telegram?.WebApp) {
+            document.getElementById('screen-workout').classList.add('active');
+            
+            if (window.Telegram?.WebApp) {
                 window.Telegram.WebApp.BackButton.show();
                 window.Telegram.WebApp.MainButton.show();
             }
@@ -492,18 +446,8 @@
             const pct = (done / total) * 100;
             document.getElementById('progress-fill').style.width = pct + '%';
             document.getElementById('progress-text').textContent = `${done} из ${total} выполнено`;
-            
-            const btn = document.getElementById('finish-btn');
-            if (done === 0) {
-                btn.textContent = 'Начни тренировку';
-                btn.disabled = true;
-            } else if (done < total) {
-                btn.textContent = `Продолжить (${done}/${total})`;
-                btn.disabled = false;
-            } else {
-                btn.textContent = '✓ Завершить тренировку';
-                btn.disabled = false;
-            }             const tgBtn = window.Telegram?.WebApp?.MainButton;
+
+            const tgBtn = window.Telegram?.WebApp?.MainButton;
             if (tgBtn) {
                 if (done === 0) {
                     tgBtn.setText("Начни тренировку");
@@ -526,27 +470,25 @@
             goHome();
         }
 
-      function goHome() {
-    if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.BackButton.hide();
-        window.Telegram.WebApp.MainButton.hide();
-    }
-    switchTab('home');
-}
+        function goHome() {
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.BackButton.hide();
+                window.Telegram.WebApp.MainButton.hide();
+            }
+            switchTab('home');
+        }
 
-               // Инициализация Telegram
+        // Инициализация Telegram
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
             
-            // Настраиваем цвета кнопки под нашу тему (зеленый)
             tg.MainButton.setParams({
                 color: '#a3e635',
                 text_color: '#000000'
             });
 
-            // Вешаем события на кнопки
             tg.MainButton.onClick(finishWorkout);
             tg.BackButton.onClick(goHome);
         }
