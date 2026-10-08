@@ -329,7 +329,6 @@
         <div class="progress-text" id="progress-text">0 из 6 выполнено</div>
 
         <div id="exercises-list"></div>
-        <button class="btn-primary" id="finish-btn" onclick="finishWorkout()" disabled>Начни тренировку</button>
     </div>
 
     <!-- ЭКРАН ПРОФИЛЯ -->
@@ -467,7 +466,10 @@
 
             updateProgress();
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-workout').classList.add('active');
+            document.getElementById('screen-workout').classList.add('active');            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.BackButton.show();
+                window.Telegram.WebApp.MainButton.show();
+            }
         }
 
         function toggleExercise(index, el) {
@@ -501,6 +503,18 @@
             } else {
                 btn.textContent = '✓ Завершить тренировку';
                 btn.disabled = false;
+            }             const tgBtn = window.Telegram?.WebApp?.MainButton;
+            if (tgBtn) {
+                if (done === 0) {
+                    tgBtn.setText("Начни тренировку");
+                    tgBtn.disable();
+                } else if (done < total) {
+                    tgBtn.setText(`Продолжить (${done}/${total})`);
+                    tgBtn.enable();
+                } else {
+                    tgBtn.setText("✓ Завершить тренировку");
+                    tgBtn.enable();
+                }
             }
         }
 
@@ -509,18 +523,32 @@
             if (window.Telegram?.WebApp?.HapticFeedback) {
                 window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             }
-            alert(' Отличная работа! Тренировка сохранена.');
             goHome();
         }
 
-        function goHome() {
-            switchTab('home');
-        }
+      function goHome() {
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.BackButton.hide();
+        window.Telegram.WebApp.MainButton.hide();
+    }
+    switchTab('home');
+}
 
-        // Инициализация
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
+               // Инициализация Telegram
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            
+            // Настраиваем цвета кнопки под нашу тему (зеленый)
+            tg.MainButton.setParams({
+                color: '#a3e635',
+                text_color: '#000000'
+            });
+
+            // Вешаем события на кнопки
+            tg.MainButton.onClick(finishWorkout);
+            tg.BackButton.onClick(goHome);
         }
         loadStats();
     </script>
