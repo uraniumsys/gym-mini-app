@@ -5,991 +5,803 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gym Motivation</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a0f;
-            --card: #16161d;
-            --card-border: #25252f;
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
             --accent: #a3e635;
-            --accent-dark: #65a30d;
-            --text: #fafafa;
-            --muted: #71717a;
+            --accent-dim: rgba(163, 230, 53, 0.15);
             --danger: #ef4444;
-            --warning: #f59e0b;
-            --gradient-1: linear-gradient(135deg, #a3e635 0%, #65a30d 100%);
-            --gradient-2: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            --gradient-3: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --warning: #eab308;
+            --success: #22c55e;
+            --radius: 16px;
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
+            margin: 0;
             font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding-bottom: 90px;
-        }
-
-        .screen {
-            display: none;
-            padding: 24px 20px;
-            animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .screen.active { display: block; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .header { margin-bottom: 28px; }
-        .header h1 {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: -1px;
-            margin-bottom: 6px;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .header p { color: var(--muted); font-size: 15px; }
-
-        .workout-card {
-            position: relative;
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 16px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.2s;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .workout-card:active { transform: scale(0.97); }
-        .workout-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            opacity: 0.15;
-            z-index: 0;
-        }
-        .workout-card > * { position: relative; z-index: 1; }
-
-        .workout-card.fullbody { background: linear-gradient(135deg, #1a2e1a 0%, #0f1f0f 100%); }
-        .workout-card.fullbody::before { background: var(--gradient-1); }
-        .workout-card.upper { background: linear-gradient(135deg, #2e1a0f 0%, #1f0f0a 100%); }
-        .workout-card.upper::before { background: var(--gradient-2); }
-        .workout-card.lower { background: linear-gradient(135deg, #0f1f2e 0%, #0a0f1f 100%); }
-        .workout-card.lower::before { background: var(--gradient-3); }
-
-        .workout-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-        .workout-icon {
-            width: 56px; height: 56px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .workout-icon svg { width: 28px; height: 28px; }
-        .workout-badge {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .workout-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-        .workout-meta { display: flex; gap: 16px; font-size: 13px; color: rgba(255,255,255,0.7); }
-        .workout-meta span { display: flex; align-items: center; gap: 6px; }
-
-        .progress-bar {
-            height: 6px;
-            background: var(--card-border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient-1);
-            border-radius: 3px;
-            transition: width 0.4s ease;
-            width: 0%;
-        }
-        .progress-text {
-            text-align: center;
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-
-        .exercise-item {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 12px;
-            transition: all 0.25s;
-            cursor: pointer;
-        }
-        .exercise-item:active { transform: scale(0.98); }
-        .exercise-item.completed {
-            border-color: var(--accent);
-            background: rgba(163, 230, 53, 0.08);
-        }
-        .exercise-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .exercise-name { font-size: 16px; font-weight: 700; flex: 1; }
-        .exercise-check {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            border: 2px solid var(--card-border);
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.25s;
-            flex-shrink: 0;
-            margin-left: 12px;
-        }
-        .exercise-item.completed .exercise-check {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-        .exercise-item.completed .exercise-check::after {
-            content: '✓';
-            color: #000;
-            font-size: 14px;
-            font-weight: 900;
-        }
-        .exercise-details {
-            font-size: 13px;
-            color: var(--accent);
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .exercise-notes { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-        /* === ЭКРАН ДЕТАЛЕЙ УПРАЖНЕНИЯ === */
-        .exercise-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        .exercise-header h2 {
-            font-size: 26px;
-            font-weight: 900;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-        .exercise-header .plan {
-            font-size: 18px;
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .hint-card {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 24px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .hint-card:active { transform: scale(0.98); }
-        .hint-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .hint-header span {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--muted);
-        }
-        .hint-header .arrow {
-            transition: transform 0.3s;
-            color: var(--muted);
-        }
-        .hint-card.open .hint-header .arrow {
-            transform: rotate(180deg);
-        }
-        .hint-content {
-            display: none;
-            font-size: 14px;
-            color: var(--text);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.5;
-            padding-top: 8px;
-            border-top: 1px solid var(--card-border);
-        }
-        .hint-card.open .hint-content {
-            display: block;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            overflow-x: hidden;
         }
 
-        /* Подходы */
-        .sets-container {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        .set-circle {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 3px solid var(--card-border);
-            background: var(--card);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-        .set-circle:active { transform: scale(0.95); }
-        .set-circle.done {
-            border-color: var(--accent);
-            background: rgba(163, 230, 53, 0.15);
-        }
-        .set-circle.done::after {
-            content: '✓';
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 22px;
-            height: 22px;
+        /* Анимации */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .animate-in { animation: fadeIn 0.3s ease-out forwards; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .btn {
             background: var(--accent);
             color: #000;
-            border-radius: 50%;
-            font-size: 13px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .set-circle .set-num {
-            font-size: 11px;
-            color: var(--muted);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
             font-weight: 600;
-        }
-        .set-circle .set-reps {
             font-size: 16px;
-            font-weight: 800;
-            color: var(--text);
-        }
-
-        /* Таймер */
-        .timer-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-        .timer-ring {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin-bottom: 20px;
-        }
-        .timer-ring svg {
-            transform: rotate(-90deg);
+            cursor: pointer;
             width: 100%;
-            height: 100%;
+            transition: opacity 0.2s;
         }
-        .timer-ring .bg {
-            fill: none;
-            stroke: var(--card-border);
-            stroke-width: 12;
-        }
-        .timer-ring .progress {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 12;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.3s linear, stroke 0.3s;
-        }
-        .timer-ring .progress.warning { stroke: var(--warning); }
-        .timer-ring .progress.danger { stroke: var(--danger); }
-        .timer-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-        .timer-display .time {
-            font-size: 56px;
-            font-weight: 900;
-            letter-spacing: -2px;
-            line-height: 1;
-        }
-        .timer-display .label {
-            font-size: 13px;
-            color: var(--muted);
-            margin-top: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .timer-display .time.pulse {
-            animation: pulse 0.5s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
+        .btn:active { opacity: 0.8; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-icon {
+            width: 44px; height: 44px; border-radius: 50%; border: none;
+            background: var(--bg-tertiary); color: var(--text-primary);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        .timer-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        .timer-btn {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            color: var(--text);
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .timer-btn:active { transform: scale(0.93); }
-        .timer-btn.primary {
-            background: var(--accent);
-            color: #000;
-            width: 64px;
-            font-size: 20px;
-        }
-        .timer-btn.primary:active { background: var(--accent-dark); }
-
-        /* Кнопки навигации */
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        .nav-btn {
-            flex: 1;
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            color: var(--text);
-            padding: 16px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .nav-btn:active { transform: scale(0.97); }
-        .nav-btn.primary {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-        }
-
-        /* Нижняя навигация */
+        /* Навигация */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(22, 22, 29, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--card-border);
+            background: rgba(24, 24, 27, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--bg-tertiary);
             display: flex; justify-content: space-around;
-            padding: 12px 0 24px; z-index: 100;
+            padding: 12px 0 calc(12px + var(--safe-bottom));
+            z-index: 100;
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center;
-            color: var(--muted); font-size: 11px; font-weight: 600;
-            cursor: pointer; transition: 0.2s; gap: 4px;
-            padding: 4px 16px;
+            color: var(--text-secondary); font-size: 12px; gap: 4px; cursor: pointer;
         }
         .nav-item.active { color: var(--accent); }
         .nav-item svg { width: 24px; height: 24px; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .stat-card {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 24px 16px;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 36px;
-            font-weight: 900;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
-        }
-        .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; }
-
-        .info-card {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
+        /* Карточки тренировок */
+        .workout-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
             padding: 20px;
-        }
-        .info-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-        .info-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
+            transition: transform 0.2s;
+            border: 1px solid transparent;
         }
-        .back-btn:active { color: var(--text); }
+        .workout-card:active { transform: scale(0.98); }
+        .workout-card.fullbody { border-color: #10b981; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), var(--bg-secondary)); }
+        .workout-card.upper { border-color: #3b82f6; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), var(--bg-secondary)); }
+        .workout-card.lower { border-color: #f59e0b; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), var(--bg-secondary)); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .card-title { font-size: 20px; font-weight: 700; margin: 0; }
+        .card-meta { display: flex; gap: 12px; font-size: 14px; color: var(--text-secondary); }
+        .badge { background: var(--bg-tertiary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+        /* Список упражнений */
+        .progress-bar { height: 6px; background: var(--bg-tertiary); border-radius: 3px; margin: 16px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+        .exercise-item {
+            display: flex; align-items: center; gap: 16px;
+            padding: 16px; background: var(--bg-secondary);
+            border-radius: 12px; margin-bottom: 12px; cursor: pointer;
+        }
+        .exercise-item.completed { opacity: 0.6; }
+        .check-circle {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 2px solid var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.2s;
+        }
+        .exercise-item.completed .check-circle {
+            background: var(--accent); border-color: var(--accent);
+        }
+
+        /* Детали упражнения */
+        .detail-header { text-align: center; margin-bottom: 24px; }
+        .detail-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .detail-plan { font-size: 18px; color: var(--accent); font-weight: 600; }
+        .tip-box {
+            background: var(--accent-dim); border-left: 3px solid var(--accent);
+            padding: 16px; border-radius: 0 12px 12px 0; margin: 20px 0;
+            font-size: 14px; color: var(--text-primary);
+        }
+        
+        /* Кружочки подходов */
+        .sets-container { display: flex; justify-content: center; gap: 16px; margin: 24px 0; }
+        .set-circle {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--bg-tertiary); border: 2px solid var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 18px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .set-circle.done {
+            background: var(--accent); border-color: var(--accent); color: #000;
+            animation: pulse 0.3s ease;
+        }
+
+        /* Таймер */
+        .timer-container { display: flex; flex-direction: column; align-items: center; margin: 30px 0; }
+        .timer-svg { width: 160px; height: 160px; transform: rotate(-90deg); }
+        .timer-bg { fill: none; stroke: var(--bg-tertiary); stroke-width: 8; }
+        .timer-progress {
+            fill: none; stroke: var(--accent); stroke-width: 8;
+            stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear, stroke 0.3s;
+        }
+        .timer-text {
+            position: absolute; font-size: 36px; font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-controls { display: flex; gap: 12px; margin-top: 20px; }
+        .timer-btn {
+            width: 50px; height: 50px; border-radius: 50%; border: none;
+            background: var(--bg-tertiary); color: var(--text-primary);
+            font-size: 18px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .timer-btn.primary { background: var(--accent); color: #000; width: 64px; height: 64px; font-size: 20px; }
+        .timer-btn:active { transform: scale(0.95); }
+
+        /* Навигация упражнений */
+        .exercise-nav { display: flex; justify-content: space-between; margin-top: 30px; gap: 12px; }
+        .exercise-nav .btn { flex: 1; }
+
+        /* Профиль */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .stat-card {
+            background: var(--bg-secondary); padding: 20px; border-radius: var(--radius);
+            text-align: center; border: 1px solid var(--bg-tertiary);
+        }
+        .stat-value { font-size: 32px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .stat-label { font-size: 14px; color: var(--text-secondary); }
+        .tip-of-day {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 20px; border-radius: var(--radius); border: 1px solid var(--accent);
+        }
+
+        /* Экран завершения */
+        .completion-screen { text-align: center; padding-top: 40px; }
+        .completion-icon { font-size: 64px; margin-bottom: 20px; animation: pulse 1s infinite; }
+        .completion-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
+        .completion-stats { display: flex; justify-content: center; gap: 24px; margin: 30px 0; }
+        .comp-stat { text-align: center; }
+        .comp-stat-val { font-size: 24px; font-weight: 700; }
+        .comp-stat-label { font-size: 13px; color: var(--text-secondary); }
+
+        /* Заголовки экранов */
+        .screen-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+        .back-btn { background: none; border: none; color: var(--text-primary); cursor: pointer; padding: 8px; }
     </style>
 </head>
 <body>
 
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <div id="screen-home" class="screen active">
-        <div class="header">
-            <h1>Тренировки</h1>
-            <p>Выбери программу на сегодня</p>
-        </div>
-
-        <div class="workout-card fullbody" onclick="openWorkout('fullbody')">
-            <div class="workout-top">
-                <div class="workout-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#a3e635" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6.5 6.5L17.5 17.5"/>
-                        <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
-                    </svg>
-                </div>
-                <div class="workout-badge">Новичок</div>
-            </div>
-            <div class="workout-title">Full Body</div>
-            <div class="workout-meta">
-                <span> 45 мин</span>
-                <span>🔥 6 упражнений</span>
-            </div>
-        </div>
-
-        <div class="workout-card upper" onclick="openWorkout('upper')">
-            <div class="workout-top">
-                <div class="workout-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 12h12M6 12v6M18 12v6M8 12V8a4 4 0 0 1 8 0v4"/>
-                    </svg>
-                </div>
-                <div class="workout-badge">Средний</div>
-            </div>
-            <div class="workout-title">Верх тела</div>
-            <div class="workout-meta">
-                <span>⏱ 40 мин</span>
-                <span>🔥 6 упражнений</span>
-            </div>
-        </div>
-
-        <div class="workout-card lower" onclick="openWorkout('lower')">
-            <div class="workout-top">
-                <div class="workout-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8 4v8l4 4 4-4V4"/>
-                        <path d="M4 20h16"/>
-                    </svg>
-                </div>
-                <div class="workout-badge">Средний</div>
-            </div>
-            <div class="workout-title">Низ тела</div>
-            <div class="workout-meta">
-                <span> 40 мин</span>
-                <span>🔥 6 упражнений</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ЭКРАН СПИСКА УПРАЖНЕНИЙ -->
-    <div id="screen-workout" class="screen">
-        <button class="back-btn" onclick="goHome()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Назад
-        </button>
-        <h2 id="workout-title" style="font-size: 26px; font-weight: 900; margin-bottom: 20px;">Название</h2>
+    <div id="view-home" class="view container animate-in">
+        <h1 style="font-size: 28px; margin-bottom: 8px;">Тренировки 💪</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">Выберите программу на сегодня</p>
         
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-        </div>
-        <div class="progress-text" id="progress-text">0 из 6 выполнено</div>
-
-        <div id="exercises-list"></div>
+        <div id="workout-list"></div>
     </div>
 
-    <!-- ЭКРАН ДЕТАЛЕЙ УПРАЖНЕНИЯ С ТАЙМЕРОМ -->
-    <div id="screen-exercise" class="screen">
-        <button class="back-btn" onclick="backToWorkout()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            К списку
-        </button>
+    <!-- СПИСОК УПРАЖНЕНИЙ -->
+    <div id="view-exercises" class="view container hidden">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showView('home')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h2 id="ex-list-title" style="margin: 0; font-size: 20px;">Программа</h2>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="ex-list-progress" style="width: 0%"></div></div>
+        <div id="exercises-list-container"></div>
+    </div>
 
-        <div class="exercise-header">
-            <h2 id="ex-name">Название упражнения</h2>
-            <div class="plan" id="ex-plan">3 × 12 · Отдых 60 сек</div>
+    <!-- ДЕТАЛИ УПРАЖНЕНИЯ -->
+    <div id="view-detail" class="view container hidden">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showView('exercises')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <span style="color: var(--text-secondary); font-size: 14px;">Упражнение <span id="detail-current-num">1</span>/<span id="detail-total-num">6</span></span>
         </div>
 
-        <!-- Подсказка по технике -->
-        <div class="hint-card" id="hint-card" onclick="toggleHint()">
-            <div class="hint-header">
-                <span>💡 Техника выполнения</span>
-                <span class="arrow">▼</span>
-            </div>
-            <div class="hint-content" id="hint-content">
-                Описание техники...
-            </div>
+        <div class="detail-header">
+            <div class="detail-title" id="detail-name">Название</div>
+            <div class="detail-plan" id="detail-plan">3 × 10-12</div>
         </div>
 
-        <!-- Подходы -->
+        <div class="tip-box">
+            <strong>💡 Техника:</strong> <span id="detail-tip">Совет по технике</span>
+        </div>
+
+        <div style="text-align: center; color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">Выполненные подходы</div>
         <div class="sets-container" id="sets-container"></div>
 
-        <!-- Таймер -->
         <div class="timer-container">
-            <div class="timer-ring">
-                <svg viewBox="0 0 220 220">
-                    <circle class="bg" cx="110" cy="110" r="100"/>
-                    <circle class="progress" id="timer-progress" cx="110" cy="110" r="100"
-                        stroke-dasharray="628.32" stroke-dashoffset="0"/>
+            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                <svg class="timer-svg" viewBox="0 0 160 160">
+                    <circle class="timer-bg" cx="80" cy="80" r="70"></circle>
+                    <circle class="timer-progress" id="timer-circle" cx="80" cy="80" r="70"></circle>
                 </svg>
-                <div class="timer-display">
-                    <div class="time" id="timer-time">0:00</div>
-                    <div class="label" id="timer-label">Отдых</div>
-                </div>
+                <div class="timer-text" id="timer-display">01:00</div>
             </div>
-
             <div class="timer-controls">
-                <button class="timer-btn" onclick="adjustTimer(-10)">−10</button>
-                <button class="timer-btn primary" id="timer-toggle" onclick="toggleTimer()">▶</button>
+                <button class="timer-btn" onclick="adjustTimer(-10)">-10</button>
+                <button class="timer-btn primary" id="timer-toggle-btn" onclick="toggleTimer()">▶</button>
                 <button class="timer-btn" onclick="adjustTimer(10)">+10</button>
                 <button class="timer-btn" onclick="resetTimer()">↺</button>
             </div>
         </div>
 
-        <!-- Навигация между упражнениями -->
-        <div class="nav-buttons">
-            <button class="nav-btn" onclick="prevExercise()">← Предыдущее</button>
-            <button class="nav-btn primary" onclick="nextExercise()">Следующее →</button>
+        <div style="margin: 20px 0;">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 16px; background: var(--bg-secondary); border-radius: 12px;">
+                <input type="checkbox" id="exercise-complete-check" style="width: 24px; height: 24px; accent-color: var(--accent);" onchange="toggleExerciseComplete()">
+                <span style="font-weight: 600; font-size: 16px;">Упражнение выполнено полностью</span>
+            </label>
+        </div>
+
+        <div class="exercise-nav">
+            <button class="btn btn-secondary" onclick="prevExercise()">← Назад</button>
+            <button class="btn" onclick="nextExercise()">Далее →</button>
         </div>
     </div>
 
-    <!-- ЭКРАН ПРОФИЛЯ -->
-    <div id="screen-profile" class="screen">
-        <div class="header">
-            <h1>Профиль</h1>
-            <p>Твой прогресс и статистика</p>
+    <!-- ЭКРАН ЗАВЕРШЕНИЯ (Бонус из Roadmap) -->
+    <div id="view-completion" class="view container hidden completion-screen">
+        <div class="completion-icon">🏆</div>
+        <div class="completion-title">Тренировка завершена!</div>
+        <p style="color: var(--text-secondary);">Отличная работа. Так держать!</p>
+        
+        <div class="completion-stats">
+            <div class="comp-stat">
+                <div class="comp-stat-val" id="comp-time">45</div>
+                <div class="comp-stat-label">минут</div>
+            </div>
+            <div class="comp-stat">
+                <div class="comp-stat-val" id="comp-exercises">6</div>
+                <div class="comp-stat-label">упражнений</div>
+            </div>
         </div>
+
+        <button class="btn" style="margin-bottom: 12px;" onclick="shareResult()">📤 Поделиться результатом</button>
+        <button class="btn btn-secondary" onclick="finishWorkoutFlow()">На главную</button>
+    </div>
+
+    <!-- ПРОФИЛЬ -->
+    <div id="view-profile" class="view container hidden">
+        <h1 style="font-size: 28px; margin-bottom: 24px;">Профиль 📊</h1>
         
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value" id="streak-val">0</div>
-                <div class="stat-label">Дней подряд 🔥</div>
+                <div class="stat-value" id="stat-streak">0</div>
+                <div class="stat-label">Дней подряд</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="total-val">0</div>
+                <div class="stat-value" id="stat-total">0</div>
                 <div class="stat-label">Всего тренировок</div>
             </div>
         </div>
 
-        <div class="info-card">
-            <h3>💡 Совет дня</h3>
-            <p>Не забывай пить воду во время тренировки. Обезвоживание снижает силовые показатели на 10-15%.</p>
+        <div class="tip-of-day">
+            <div style="font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 8px;">💡 СОВЕТ ДНЯ</div>
+            <div id="daily-tip" style="font-size: 15px; line-height: 1.6;">Загрузка совета...</div>
         </div>
+
+        <button class="btn btn-secondary" style="margin-top: 24px; color: var(--danger);" onclick="resetStats()">Сбросить прогресс</button>
     </div>
 
     <!-- НИЖНЯЯ НАВИГАЦИЯ -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')" data-tab="home">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showView('home')" id="nav-home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <span>Главная</span>
         </div>
-        <div class="nav-item" onclick="switchTab('profile')" data-tab="profile">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
+        <div class="nav-item" onclick="showView('profile')" id="nav-profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span>Профиль</span>
         </div>
-    </div>
+    </nav>
 
     <script>
-        const workoutsData = {
+        // === ДАННЫЕ ===
+        const workouts = {
             fullbody: {
-                name: 'Full Body',
+                id: 'fullbody', title: 'Full Body', duration: '45 мин', level: 'Новичок', class: 'fullbody',
                 exercises: [
-                    { name: 'Приседания с гантелями', sets: 3, reps: '12', rest: 60, notes: 'Гантели у плеч, спина прямая' },
-                    { name: 'Отжимания от пола', sets: 3, reps: '10-15', rest: 60, notes: 'Если тяжело — с колен' },
-                    { name: 'Тяга гантели в наклоне', sets: 3, reps: '12', rest: 60, notes: 'Спина параллельна полу' },
-                    { name: 'Жим гантелей сидя', sets: 3, reps: '12', rest: 60, notes: 'Не прогибай поясницу' },
-                    { name: 'Планка', sets: 3, reps: '30-45 сек', rest: 45, notes: 'Тело — прямая линия' },
-                    { name: 'Скручивания', sets: 3, reps: '15', rest: 45, notes: 'Поясница прижата к полу' }
+                    { id: 'fb1', name: 'Приседания со штангой', sets: 3, reps: '10-12', tip: 'Держите спину прямой, колени не выходят за носки.' },
+                    { id: 'fb2', name: 'Жим лёжа', sets: 3, reps: '8-10', tip: 'Лопатки сведены, стопы плотно уперты в пол.' },
+                    { id: 'fb3', name: 'Тяга верхнего блока', sets: 3, reps: '10-12', tip: 'Тяните локти вниз, сводя лопатки в нижней точке.' },
+                    { id: 'fb4', name: 'Выпады с гантелями', sets: 3, reps: '12 на ногу', tip: 'Колено задней ноги почти касается пола.' },
+                    { id: 'fb5', name: 'Планка', sets: 3, reps: '45 сек', tip: 'Тело образует прямую линию, не проваливайте поясницу.' },
+                    { id: 'fb6', name: 'Скручивания', sets: 3, reps: '15-20', tip: 'Отрывайте только лопатки, поясница прижата к полу.' }
                 ]
             },
             upper: {
-                name: 'Верх тела',
+                id: 'upper', title: 'Верх тела', duration: '40 мин', level: 'Средний', class: 'upper',
                 exercises: [
-                    { name: 'Жим штанги лёжа', sets: 4, reps: '8-10', rest: 90, notes: 'Лопатки сведены, ноги на полу' },
-                    { name: 'Тяга верхнего блока', sets: 3, reps: '10-12', rest: 60, notes: 'Тяни к груди, не за голову' },
-                    { name: 'Жим гантелей на наклонной', sets: 3, reps: '10-12', rest: 60, notes: 'Угол скамьи 30-45°' },
-                    { name: 'Тяга горизонтального блока', sets: 3, reps: '12', rest: 60, notes: 'Своди лопатки в конце' },
-                    { name: 'Разведение гантелей стоя', sets: 3, reps: '12-15', rest: 45, notes: 'Локти чуть согнуты' },
-                    { name: 'Сгибания на бицепс', sets: 3, reps: '12', rest: 45, notes: 'Не раскачивай корпус' }
+                    { id: 'u1', name: 'Жим гантелей на наклонной', sets: 4, reps: '8-10', tip: 'Угол скамьи 30-45 градусов.' },
+                    { id: 'u2', name: 'Подтягивания', sets: 3, reps: '8-12', tip: 'Полная амплитуда, подбородок выше перекладины.' },
+                    { id: 'u3', name: 'Армейский жим', sets: 3, reps: '10-12', tip: 'Не прогибайте поясницу, пресс напряжён.' },
+                    { id: 'u4', name: 'Тяга штанги в наклоне', sets: 3, reps: '10-12', tip: 'Корпус параллелен полу, тяните к поясу.' },
+                    { id: 'u5', name: 'Махи гантелями в стороны', sets: 3, reps: '12-15', tip: 'Локти слегка согнуты, поднимайте до уровня плеч.' },
+                    { id: 'u6', name: 'Французский жим', sets: 3, reps: '12-15', tip: 'Локти зафиксированы, работают только трицепсы.' }
                 ]
             },
             lower: {
-                name: 'Низ тела',
+                id: 'lower', title: 'Низ тела', duration: '40 мин', level: 'Средний', class: 'lower',
                 exercises: [
-                    { name: 'Приседания со штангой', sets: 4, reps: '8-10', rest: 90, notes: 'Колени по направлению стоп' },
-                    { name: 'Румынская тяга', sets: 3, reps: '10-12', rest: 60, notes: 'Штанга скользит по ногам' },
-                    { name: 'Выпады с гантелями', sets: 3, reps: '12', rest: 60, notes: 'Колено не выходит за носок' },
-                    { name: 'Жим ногами', sets: 3, reps: '12', rest: 60, notes: 'Не выпрямляй колени полностью' },
-                    { name: 'Сгибания ног в тренажёре', sets: 3, reps: '12-15', rest: 45, notes: 'Контролируй движение вниз' },
-                    { name: 'Подъёмы на носки', sets: 4, reps: '15-20', rest: 30, notes: 'Задержись наверху на 1 сек' }
+                    { id: 'l1', name: 'Становая тяга', sets: 4, reps: '6-8', tip: 'Спина прямая, движение начинается с ног.' },
+                    { id: 'l2', name: 'Жим ногами', sets: 3, reps: '10-12', tip: 'Не выпрямляйте колени полностью в верхней точке.' },
+                    { id: 'l3', name: 'Румынская тяга', sets: 3, reps: '10-12', tip: 'Отводите таз назад, чувствуя растяжение бицепса бедра.' },
+                    { id: 'l4', name: 'Разгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Пиковое сокращение в верхней точке.' },
+                    { id: 'l5', name: 'Сгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Контролируйте негативную фазу движения.' },
+                    { id: 'l6', name: 'Подъёмы на носки стоя', sets: 4, reps: '15-20', tip: 'Максимальная амплитуда, пауза в верхней точке.' }
                 ]
             }
         };
 
-        let currentWorkout = null;
-        let currentExerciseIndex = 0;
-        let completedExercises = new Set();
-        let completedSets = new Set(); // ключ: "exerciseIndex-setNum"
+        const tips = [
+            "Пейте воду небольшими глотками между подходами.",
+            "Разминка 5-10 минут снижает риск травм на 50%.",
+            "Сон 7-8 часов критически важен для роста мышц.",
+            "Прогрессия нагрузок: старайтесь добавить 1-2 кг или 1 повторение каждую неделю.",
+            "Не задерживайте дыхание при усилии, выдыхайте на напряжении."
+        ];
 
-        // Таймер
-        let timerInterval = null;
-        let timerSeconds = 60;
-        let timerTotal = 60;
-        let timerRunning = false;
+        // === СОСТОЯНИЕ ===
+        let state = {
+            currentView: 'home',
+            activeWorkoutId: null,
+            activeExerciseIndex: 0,
+            progress: JSON.parse(localStorage.getItem('gym_progress')) || {},
+            stats: JSON.parse(localStorage.getItem('gym_stats')) || { streak: 0, totalWorkouts: 0, lastWorkoutDate: null },
+            timer: { timeLeft: 60, totalTime: 60, intervalId: null, isRunning: false }
+        };
 
-        function loadStats() {
-            const stats = JSON.parse(localStorage.getItem('gymStats') || '{"streak":0,"total":0,"lastDate":null}');
-            document.getElementById('streak-val').textContent = stats.streak;
-            document.getElementById('total-val').textContent = stats.total;
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.setHeaderColor('#09090b');
+        tg.setBackgroundColor('#09090b');
+
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        function init() {
+            renderWorkouts();
+            updateStats();
+            setDailyTip();
+            
+            // Обработка кнопки "Назад" в Telegram
+            tg.BackButton.onClick(() => {
+                if (state.currentView === 'detail') showView('exercises');
+                else if (state.currentView === 'exercises') showView('home');
+                else if (state.currentView === 'completion') finishWorkoutFlow();
+                else tg.close();
+            });
         }
 
-        function saveStats() {
-            const stats = JSON.parse(localStorage.getItem('gymStats') || '{"streak":0,"total":0,"lastDate":null}');
-            const today = new Date().toDateString();
+        // === НАВИГАЦИЯ ===
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`view-${viewId}`).classList.add('animate-in');
             
-            if (stats.lastDate !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                if (stats.lastDate === yesterday.toDateString()) {
-                    stats.streak++;
-                } else if (stats.lastDate !== today) {
-                    stats.streak = 1;
-                }
-                stats.total++;
-                stats.lastDate = today;
-                localStorage.setItem('gymStats', JSON.stringify(stats));
+            state.currentView = viewId;
+            
+            // Обновление нижней навигации
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (viewId === 'home') document.getElementById('nav-home').classList.add('active');
+            if (viewId === 'profile') {
+                document.getElementById('nav-profile').classList.add('active');
+                updateStats();
             }
+
+            // Управление кнопкой "Назад" в Telegram
+            if (viewId === 'home' || viewId === 'profile') {
+                tg.BackButton.hide();
+            } else {
+                tg.BackButton.show();
+            }
+
+            tg.HapticFeedback.impactOccurred('light');
         }
 
-        function switchTab(tab) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(`screen-${tab}`).classList.add('active');
-            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-            if (tab === 'profile') loadStats();
-        }
-
-        function openWorkout(id) {
-            currentWorkout = id;
-            completedExercises.clear();
-            completedSets.clear();
-            const workout = workoutsData[id];
-            document.getElementById('workout-title').textContent = workout.name;
+        // === ГЛАВНЫЙ ЭКРАН ===
+        function renderWorkouts() {
+            const container = document.getElementById('workout-list');
+            container.innerHTML = '';
             
-            const list = document.getElementById('exercises-list');
-            list.innerHTML = workout.exercises.map((ex, i) => `
-                <div class="exercise-item ${completedExercises.has(i) ? 'completed' : ''}" onclick="openExercise(${i})">
-                    <div class="exercise-top">
-                        <div class="exercise-name">${ex.name}</div>
-                        <div class="exercise-check"></div>
+            Object.values(workouts).forEach(w => {
+                const card = document.createElement('div');
+                card.className = `workout-card ${w.class}`;
+                card.onclick = () => startWorkout(w.id);
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${w.title}</h3>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                     </div>
-                    <div class="exercise-details">${ex.sets} × ${ex.reps} · Отдых ${ex.rest} сек</div>
-                    <div class="exercise-notes">💡 ${ex.notes}</div>
-                </div>
-            `).join('');
-
-            updateProgress();
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-workout').classList.add('active');
-            
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.BackButton.show();
-                window.Telegram.WebApp.MainButton.hide();
-            }
-        }
-
-        function openExercise(index) {
-            currentExerciseIndex = index;
-            const ex = workoutsData[currentWorkout].exercises[index];
-            
-            document.getElementById('ex-name').textContent = ex.name;
-            document.getElementById('ex-plan').textContent = `${ex.sets} × ${ex.reps} · Отдых ${ex.rest} сек`;
-            document.getElementById('hint-content').textContent = ex.notes;
-            document.getElementById('hint-card').classList.remove('open');
-            
-            // Сбросить подсказку
-            document.getElementById('hint-card').classList.remove('open');
-            
-            // Отрисовать подходы
-            renderSets(ex.sets);
-            
-            // Сбросить таймер
-            stopTimer();
-            timerTotal = ex.rest;
-            timerSeconds = ex.rest;
-            updateTimerDisplay();
-            
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-exercise').classList.add('active');
-            
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.BackButton.show();
-            }
-        }
-
-        function renderSets(totalSets) {
-            const container = document.getElementById('sets-container');
-            const ex = workoutsData[currentWorkout].exercises[currentExerciseIndex];
-            const reps = ex.reps;
-            
-            let html = '';
-            for (let i = 1; i <= totalSets; i++) {
-                const key = `${currentExerciseIndex}-${i}`;
-                const isDone = completedSets.has(key);
-                html += `
-                    <div class="set-circle ${isDone ? 'done' : ''}" onclick="toggleSet(${i})">
-                        <span class="set-num">Подход</span>
-                        <span class="set-reps">${reps}</span>
+                    <div class="card-meta">
+                        <span class="badge">⏱ ${w.duration}</span>
+                        <span class="badge">📊 ${w.level}</span>
+                        <span class="badge">🏋️ ${w.exercises.length} упр.</span>
                     </div>
                 `;
+                container.appendChild(card);
+            });
+        }
+
+        // === СПИСОК УПРАЖНЕНИЙ ===
+        function startWorkout(workoutId) {
+            state.activeWorkoutId = workoutId;
+            state.activeExerciseIndex = 0;
+            
+            // Инициализация прогресса, если нет
+            if (!state.progress[workoutId]) {
+                state.progress[workoutId] = {};
+                workouts[workoutId].exercises.forEach(ex => {
+                    state.progress[workoutId][ex.id] = { completed: false, setsDone: 0 };
+                });
             }
-            container.innerHTML = html;
+            
+            showView('exercises');
+            renderExerciseList();
+        }
+
+        function renderExerciseList() {
+            const w = workouts[state.activeWorkoutId];
+            document.getElementById('ex-list-title').textContent = w.title;
+            
+            const container = document.getElementById('exercises-list-container');
+            container.innerHTML = '';
+            
+            let completedCount = 0;
+            
+            w.exercises.forEach((ex, index) => {
+                const prog = state.progress[state.activeWorkoutId][ex.id];
+                if (prog.completed) completedCount++;
+                
+                const item = document.createElement('div');
+                item.className = `exercise-item ${prog.completed ? 'completed' : ''}`;
+                item.onclick = () => openExerciseDetail(index);
+                item.innerHTML = `
+                    <div class="check-circle">
+                        ${prog.completed ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">${index + 1}. ${ex.name}</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">${ex.sets} подходов × ${ex.reps}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            
+            const progressPct = (completedCount / w.exercises.length) * 100;
+            document.getElementById('ex-list-progress').style.width = `${progressPct}%`;
+        }
+
+        // === ДЕТАЛИ УПРАЖНЕНИЯ ===
+        function openExerciseDetail(index) {
+            state.activeExerciseIndex = index;
+            const w = workouts[state.activeWorkoutId];
+            const ex = w.exercises[index];
+            const prog = state.progress[state.activeWorkoutId][ex.id];
+            
+            document.getElementById('detail-current-num').textContent = index + 1;
+            document.getElementById('detail-total-num').textContent = w.exercises.length;
+            document.getElementById('detail-name').textContent = ex.name;
+            document.getElementById('detail-plan').textContent = `${ex.sets} подходов × ${ex.reps}`;
+            document.getElementById('detail-tip').textContent = ex.tip;
+            document.getElementById('exercise-complete-check').checked = prog.completed;
+            
+            renderSets(ex.sets, prog.setsDone);
+            resetTimer();
+            showView('detail');
+        }
+
+        function renderSets(totalSets, doneSets) {
+            const container = document.getElementById('sets-container');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= totalSets; i++) {
+                const circle = document.createElement('div');
+                circle.className = `set-circle ${i <= doneSets ? 'done' : ''}`;
+                circle.textContent = i;
+                circle.onclick = () => toggleSet(i);
+                container.appendChild(circle);
+            }
         }
 
         function toggleSet(setNum) {
-            const key = `${currentExerciseIndex}-${setNum}`;
-            const ex = workoutsData[currentWorkout].exercises[currentExerciseIndex];
+            const w = workouts[state.activeWorkoutId];
+            const ex = w.exercises[state.activeExerciseIndex];
+            const prog = state.progress[state.activeWorkoutId][ex.id];
             
-            if (completedSets.has(key)) {
-                completedSets.delete(key);
+            if (prog.setsDone === setNum) {
+                prog.setsDone = setNum - 1; // Отмена
             } else {
-                completedSets.add(key);
-                // Вибрация
-                if (window.Telegram?.WebApp?.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.selectionChanged();
+                prog.setsDone = setNum;
+                // Автостарт таймера при отметке подхода, если он не запущен
+                if (!state.timer.isRunning && state.timer.timeLeft > 0) {
+                    startTimer();
                 }
-                // Автостарт таймера
-                timerTotal = ex.rest;
-                timerSeconds = ex.rest;
-                startTimer();
             }
             
-            renderSets(ex.sets);
-            checkExerciseComplete();
-        }
-
-        function checkExerciseComplete() {
-            const ex = workoutsData[currentWorkout].exercises[currentExerciseIndex];
-            let allDone = true;
-            for (let i = 1; i <= ex.sets; i++) {
-                if (!completedSets.has(`${currentExerciseIndex}-${i}`)) {
-                    allDone = false;
-                    break;
-                }
-            }
-            if (allDone) {
-                completedExercises.add(currentExerciseIndex);
-                if (window.Telegram?.WebApp?.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                }
-            } else {
-                completedExercises.delete(currentExerciseIndex);
+            saveProgress();
+            renderSets(ex.sets, prog.setsDone);
+            tg.HapticFeedback.impactOccurred('medium');
+            
+            // Проверка на завершение всех подходов
+            if (prog.setsDone === ex.sets && !prog.completed) {
+                // Можно добавить легкую вибрацию успеха
+                setTimeout(() => tg.HapticFeedback.notificationOccurred('success'), 300);
             }
         }
 
-        function toggleHint() {
-            document.getElementById('hint-card').classList.toggle('open');
+        function toggleExerciseComplete() {
+            const isChecked = document.getElementById('exercise-complete-check').checked;
+            const w = workouts[state.activeWorkoutId];
+            const ex = w.exercises[state.activeExerciseIndex];
+            
+            state.progress[state.activeWorkoutId][ex.id].completed = isChecked;
+            if (isChecked) {
+                state.progress[state.activeWorkoutId][ex.id].setsDone = ex.sets;
+            }
+            saveProgress();
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function prevExercise() {
+            if (state.activeExerciseIndex > 0) {
+                openExerciseDetail(state.activeExerciseIndex - 1);
+            }
+        }
+
+        function nextExercise() {
+            const w = workouts[state.activeWorkoutId];
+            if (state.activeExerciseIndex < w.exercises.length - 1) {
+                openExerciseDetail(state.activeExerciseIndex + 1);
+            } else {
+                checkWorkoutCompletion();
+            }
         }
 
         // === ТАЙМЕР ===
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
         function updateTimerDisplay() {
-            const mins = Math.floor(timerSeconds / 60);
-            const secs = timerSeconds % 60;
-            document.getElementById('timer-time').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').textContent = formatTime(state.timer.timeLeft);
             
-            const progress = document.getElementById('timer-progress');
-            const circumference = 2 * Math.PI * 100; // 628.32
-            const offset = circumference * (1 - timerSeconds / timerTotal);
-            progress.style.strokeDashoffset = offset;
+            // Обновление круга SVG (длина окружности r=70 ≈ 440)
+            const circle = document.getElementById('timer-circle');
+            const circumference = 440;
+            const offset = circumference - (state.timer.timeLeft / state.timer.totalTime) * circumference;
+            circle.style.strokeDashoffset = offset;
             
-            // Цвета
-            progress.classList.remove('warning', 'danger');
-            const timeEl = document.getElementById('timer-time');
-            timeEl.classList.remove('pulse');
-            
-            if (timerSeconds <= 0) {
-                progress.classList.add('danger');
-                timeEl.classList.add('pulse');
-                document.getElementById('timer-label').textContent = 'Время!';
-            } else if (timerSeconds <= 10) {
-                progress.classList.add('warning');
-                document.getElementById('timer-label').textContent = 'Почти готово...';
+            // Цветовая индикация
+            if (state.timer.timeLeft > 30) {
+                circle.style.stroke = 'var(--accent)'; // Зеленый/Лайм
+                document.getElementById('timer-display').style.color = 'var(--accent)';
+            } else if (state.timer.timeLeft > 10) {
+                circle.style.stroke = 'var(--warning)'; // Желтый
+                document.getElementById('timer-display').style.color = 'var(--warning)';
             } else {
-                document.getElementById('timer-label').textContent = 'Отдых';
-            }  
-            // Кнопка play/pause
-            const toggleBtn = document.getElementById('timer-toggle');
-            if (timerRunning) {
-    toggleBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-} else {
-    toggleBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-}
+                circle.style.stroke = 'var(--danger)'; // Красный
+                document.getElementById('timer-display').style.color = 'var(--danger)';
+            }
+            
+            document.getElementById('timer-toggle-btn').textContent = state.timer.isRunning ? '⏸' : '▶';
+        }
+
         function startTimer() {
-            if (timerRunning) return;
-            timerRunning = true;
+            if (state.timer.isRunning) return;
+            state.timer.isRunning = true;
             updateTimerDisplay();
             
-            timerInterval = setInterval(() => {
-                timerSeconds--;
-                updateTimerDisplay();
-                
-                if (timerSeconds <= 0) {
-                    stopTimer();
-                    playBeep();
-                    if (window.Telegram?.WebApp?.HapticFeedback) {
-                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
-                    }
+            state.timer.intervalId = setInterval(() => {
+                if (state.timer.timeLeft > 0) {
+                    state.timer.timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    completeTimer();
                 }
             }, 1000);
         }
 
-        function stopTimer() {
-            timerRunning = false;
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
+        function pauseTimer() {
+            state.timer.isRunning = false;
+            clearInterval(state.timer.intervalId);
             updateTimerDisplay();
         }
 
         function toggleTimer() {
-            if (timerRunning) {
-                stopTimer();
+            if (state.timer.isRunning) {
+                pauseTimer();
             } else {
                 startTimer();
             }
+            tg.HapticFeedback.impactOccurred('light');
         }
 
         function resetTimer() {
-            stopTimer();
-            const ex = workoutsData[currentWorkout].exercises[currentExerciseIndex];
-            timerTotal = ex.rest;
-            timerSeconds = ex.rest;
+            pauseTimer();
+            state.timer.timeLeft = 60;
+            state.timer.totalTime = 60;
             updateTimerDisplay();
         }
 
-        function adjustTimer(delta) {
-            timerSeconds = Math.max(0, timerSeconds + delta);
-            if (timerSeconds > timerTotal) timerTotal = timerSeconds;
+        function adjustTimer(seconds) {
+            pauseTimer();
+            state.timer.timeLeft = Math.max(5, Math.min(300, state.timer.timeLeft + seconds));
+            state.timer.totalTime = Math.max(state.timer.totalTime, state.timer.timeLeft);
             updateTimerDisplay();
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function completeTimer() {
+            pauseTimer();
+            // Звуковой сигнал (Web Audio API)
+            playBeep();
+            // Вибрация
+            tg.HapticFeedback.notificationOccurred('success');
         }
 
         function playBeep() {
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.frequency.value = 880;
-                gain.gain.value = 0.3;
-                osc.start();
-                setTimeout(() => {
-                    osc.stop();
-                    ctx.close();
-                }, 300);
-            } catch (e) {}
-        }
-
-        function nextExercise() {
-            const workout = workoutsData[currentWorkout];
-            if (currentExerciseIndex < workout.exercises.length - 1) {
-                openExercise(currentExerciseIndex + 1);
-            } else {
-                // Тренировка завершена
-                saveStats();
-                alert('🎉 Тренировка завершена! Отличная работа!');
-                backToWorkout();
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.frequency.value = 880; // A5
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {
+                console.log('Audio play failed', e);
             }
         }
 
-        function prevExercise() {
-            if (currentExerciseIndex > 0) {
-                openExercise(currentExerciseIndex - 1);
-            }
-        }
-
-        function backToWorkout() {
-            stopTimer();
-            openWorkout(currentWorkout);
-        }
-
-        function updateProgress() {
-            const workout = workoutsData[currentWorkout];
-            const total = workout.exercises.length;
-            const done = completedExercises.size;
-            const pct = (done / total) * 100;
-            document.getElementById('progress-fill').style.width = pct + '%';
-            document.getElementById('progress-text').textContent = `${done} из ${total} выполнено`;
-        }
-
-        function goHome() {
-            stopTimer();
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.BackButton.hide();
-            }
-            switchTab('home');
-        }
-
-        // Инициализация Telegram
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
+        // === ЗАВЕРШЕНИЕ ТРЕНИРОВКИ ===
+        function checkWorkoutCompletion() {
+            const w = workouts[state.activeWorkoutId];
+            const allCompleted = w.exercises.every(ex => 
+                state.progress[state.activeWorkoutId][ex.id].completed
+            );
             
-            tg.BackButton.onClick(() => {
-                const activeScreen = document.querySelector('.screen.active');
-                if (activeScreen.id === 'screen-exercise') {
-                    backToWorkout();
-                } else if (activeScreen.id === 'screen-workout') {
-                    goHome();
+            if (allCompleted) {
+                showCompletionScreen();
+            } else {
+                // Предупреждение, что не все упражнения отмечены
+                tg.showPopup({
+                    title: 'Не всё выполнено',
+                    message: 'Отметьте все упражнения как выполненные, чтобы завершить тренировку.',
+                    buttons: [{type: 'ok'}]
+                });
+            }
+        }
+
+        function showCompletionScreen() {
+            const w = workouts[state.activeWorkoutId];
+            document.getElementById('comp-time').textContent = w.duration.replace(' мин', '');
+            document.getElementById('comp-exercises').textContent = w.exercises.length;
+            
+            // Обновление статистики
+            const today = new Date().toDateString();
+            if (state.stats.lastWorkoutDate !== today) {
+                state.stats.totalWorkouts++;
+                
+                // Проверка серии (streak)
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (state.stats.lastWorkoutDate === yesterday.toDateString()) {
+                    state.stats.streak++;
+                } else {
+                    state.stats.streak = 1;
+                }
+                state.stats.lastWorkoutDate = today;
+                
+                localStorage.setItem('gym_stats', JSON.stringify(state.stats));
+            }
+            
+            showView('completion');
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        function shareResult() {
+            const w = workouts[state.activeWorkoutId];
+            const text = `🔥 Я только что завершил тренировку "${w.title}" в Gym Motivation!\n⏱ Время: ${w.duration}\n💪 Статус: Все упражнения выполнены!`;
+            
+            if (tg.shareToStory) {
+                // Можно использовать shareToStory если доступно, или sendData
+                tg.sendData(JSON.stringify({action: 'share', text: text}));
+            } else {
+                // Fallback: копирование в буфер или нативный share
+                if (navigator.share) {
+                    navigator.share({ title: 'Gym Motivation', text: text });
+                } else {
+                    navigator.clipboard.writeText(text).then(() => {
+                        tg.showPopup({ message: 'Результат скопирован в буфер обмена!' });
+                    });
+                }
+            }
+        }
+
+        function finishWorkoutFlow() {
+            // Очистка прогресса текущей тренировки для нового начала
+            delete state.progress[state.activeWorkoutId];
+            saveProgress();
+            showView('home');
+        }
+
+        // === ПРОФИЛЬ И СТАТИСТИКА ===
+        function updateStats() {
+            document.getElementById('stat-streak').textContent = state.stats.streak;
+            document.getElementById('stat-total').textContent = state.stats.totalWorkouts;
+        }
+
+        function setDailyTip() {
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            const tipIndex = dayOfYear % tips.length;
+            document.getElementById('daily-tip').textContent = tips[tipIndex];
+        }
+
+        function resetStats() {
+            tg.showPopup({
+                title: 'Сброс прогресса',
+                message: 'Вы уверены? Все данные о тренировках будут удалены.',
+                buttons: [
+                    { type: 'destructive', text: 'Удалить', id: 'delete' },
+                    { type: 'cancel' }
+                ]
+            }, (btnId) => {
+                if (btnId === 'delete') {
+                    state.stats = { streak: 0, totalWorkouts: 0, lastWorkoutDate: null };
+                    state.progress = {};
+                    localStorage.removeItem('gym_stats');
+                    localStorage.removeItem('gym_progress');
+                    updateStats();
+                    tg.HapticFeedback.notificationOccurred('error');
                 }
             });
         }
-        loadStats();
+
+        // === УТИЛИТЫ ===
+        function saveProgress() {
+            localStorage.setItem('gym_progress', JSON.stringify(state.progress));
+        }
+
+        // Запуск
+        init();
     </script>
 </body>
 </html>
