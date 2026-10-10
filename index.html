@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gym Motivation</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #050505;
@@ -17,6 +17,9 @@
             --accent: #2DD4BF;
             --accent-dim: rgba(45, 212, 191, 0.12);
             --accent-glow: rgba(45, 212, 191, 0.4);
+            --fire: #F97316;
+            --fire-glow: rgba(249, 115, 22, 0.5);
+            --gold: #FBBF24;
             --danger: #EF4444;
             --warning: #F59E0B;
             --radius: 16px;
@@ -34,16 +37,18 @@
             overflow-x: hidden;
         }
 
-        /* Анимации */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes breathe { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        @keyframes fireGlow { 0%, 100% { box-shadow: 0 0 20px var(--fire-glow); } 50% { box-shadow: 0 0 40px var(--fire-glow), 0 0 60px rgba(249, 115, 22, 0.3); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         
         .animate-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .slide-right { animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .slide-left { animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         .hidden { display: none !important; }
         .container { padding: 20px; max-width: 600px; margin: 0 auto; }
@@ -68,6 +73,69 @@
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
         .btn-ghost { background: transparent; color: var(--text-secondary); padding: 12px; }
         .btn-large { padding: 18px 24px; font-size: 17px; }
+        .btn-fire { 
+            background: linear-gradient(135deg, var(--fire), #EA580C); 
+            color: #fff;
+            box-shadow: 0 4px 20px var(--fire-glow);
+        }
+
+        /* ОНБОРДИНГ */
+        .onboarding-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px 20px;
+            background: radial-gradient(circle at top, rgba(45, 212, 191, 0.1), transparent 50%);
+        }
+        .onboarding-title {
+            font-size: 36px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent), #14B8A6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .onboarding-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .input-field {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .input-field::placeholder {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
 
         /* Баннер продолжения */
         .resume-banner {
@@ -113,17 +181,6 @@
             transition: transform 0.3s;
         }
         .workout-card:active .card-image { transform: scale(1.05); }
-        .card-image-fallback {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-elevated));
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 600;
-        }
         .card-image-overlay {
             position: absolute;
             inset: 0;
@@ -138,6 +195,42 @@
             font-size: 13px; color: var(--text-secondary); font-weight: 500;
         }
         .meta-item svg { width: 16px; height: 16px; stroke: var(--accent); }
+
+        /* Серия (Streak) */
+        .streak-card {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(249, 115, 22, 0.05));
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            animation: fireGlow 2s infinite;
+        }
+        .streak-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--fire), #EA580C);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        .streak-info h3 { margin: 0 0 4px 0; font-size: 18px; color: var(--fire); }
+        .streak-info p { margin: 0; font-size: 14px; color: var(--text-secondary); }
+        .streak-level {
+            display: inline-block;
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--fire);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
 
         /* Список упражнений */
         .progress-bar { height: 4px; background: var(--bg-tertiary); border-radius: 2px; margin: 16px 0; overflow: hidden; }
@@ -179,19 +272,6 @@
             height: 100%;
             object-fit: cover;
         }
-        .detail-image-fallback {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-elevated));
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 600;
-            text-align: center;
-            padding: 20px;
-        }
         .detail-image-overlay {
             position: absolute;
             inset: 0;
@@ -224,7 +304,6 @@
         }
         .tip-box strong { color: var(--text-primary); display: block; margin-bottom: 4px; }
 
-        /* Подходы */
         .sets-label { text-align: center; color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
         .sets-container { display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; }
         .set-circle {
@@ -234,7 +313,6 @@
             font-weight: 700; font-size: 18px; cursor: pointer;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             color: var(--text-secondary);
-            position: relative;
         }
         .set-circle:active { transform: scale(0.9); }
         .set-circle.done {
@@ -246,7 +324,6 @@
             animation: breathe 2s infinite;
         }
 
-        /* Тёмный чекбокс */
         .complete-checkbox {
             display: flex; align-items: center; gap: 14px; 
             cursor: pointer; padding: 16px; background: var(--bg-secondary); 
@@ -275,7 +352,7 @@
         .exercise-nav { display: flex; gap: 12px; }
         .exercise-nav .btn { flex: 1; }
 
-        /* ЭКРАН ОТДЫХА */
+        /* Экран отдыха */
         .rest-screen { text-align: center; padding: 40px 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
         .rest-label {
             font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
@@ -291,28 +368,19 @@
             height: 240px;
             margin: 0 auto 40px auto;
         }
-        .rest-timer-svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-            display: block;
-        }
+        .rest-timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
         .rest-timer-bg { fill: none; stroke: var(--bg-tertiary); stroke-width: 8; }
         .rest-timer-progress {
             fill: none; stroke: var(--accent); stroke-width: 8;
-            stroke-linecap: round; stroke-dasharray: 691; /* 2 * PI * 110 */
+            stroke-linecap: round; stroke-dasharray: 691;
             stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s;
             filter: drop-shadow(0 0 8px var(--accent-glow));
         }
         .rest-timer-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 56px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -2px;
+            font-size: 56px; font-weight: 800;
+            font-variant-numeric: tabular-nums; letter-spacing: -2px;
             color: var(--accent);
         }
         
@@ -362,6 +430,18 @@
         }
         .completion-icon svg { width: 44px; height: 44px; stroke: var(--accent); }
         .completion-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+        .completion-streak {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--fire);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 16px 0 24px;
+        }
         .completion-stats { 
             display: flex; justify-content: center; gap: 32px; margin: 32px 0; 
             padding: 24px; background: var(--bg-secondary); border-radius: var(--radius);
@@ -371,6 +451,34 @@
         .comp-stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-top: 4px; }
 
         /* Профиль */
+        .profile-header {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), transparent);
+            padding: 24px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            border: 1px solid rgba(45, 212, 191, 0.2);
+        }
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 24px;
+        }
+        .profile-stat {
+            text-align: center;
+        }
+        .profile-stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .profile-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
         .stat-card {
             background: var(--bg-secondary); padding: 24px 20px; border-radius: var(--radius);
@@ -379,12 +487,65 @@
         .stat-value { font-size: 36px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -1px; }
         .stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
         
+        .chart-container {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--bg-tertiary);
+            margin-bottom: 24px;
+        }
+        .chart-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .chart-svg {
+            width: 100%;
+            height: 150px;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .achievement {
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 16px 8px;
+            text-align: center;
+            opacity: 0.4;
+            transition: all 0.3s;
+        }
+        .achievement.unlocked {
+            opacity: 1;
+            border-color: var(--gold);
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);
+        }
+        .achievement-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .achievement-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .achievement.unlocked .achievement-name {
+            color: var(--gold);
+        }
+        
         .tip-of-day {
             background: var(--bg-secondary);
             padding: 24px; border-radius: var(--radius); border: 1px solid var(--bg-tertiary);
+            margin-bottom: 24px;
         }
 
-        /* Навигация */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(5, 5, 5, 0.9);
@@ -415,11 +576,35 @@
 </head>
 <body>
 
+    <!-- ОНБОРДИНГ -->
+    <div id="view-onboarding" class="view onboarding-screen hidden">
+        <div class="onboarding-title">Gym Motivation</div>
+        <div class="onboarding-subtitle">Давайте настроим ваш профиль</div>
+        
+        <div class="input-group">
+            <label class="input-label">Возраст</label>
+            <input type="number" class="input-field" id="input-age" placeholder="25" min="14" max="100">
+        </div>
+        
+        <div class="input-group">
+            <label class="input-label">Рост (см)</label>
+            <input type="number" class="input-field" id="input-height" placeholder="175" min="100" max="250">
+        </div>
+        
+        <div class="input-group">
+            <label class="input-label">Вес (кг)</label>
+            <input type="number" class="input-field" id="input-weight" placeholder="70" min="30" max="300" step="0.1">
+        </div>
+        
+        <button class="btn btn-large" style="margin-top: 20px;" onclick="completeOnboarding()">Начать тренировки</button>
+    </div>
+
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <div id="view-home" class="view container animate-in">
+    <div id="view-home" class="view container animate-in hidden">
         <h1>Тренировки</h1>
         <p class="subtitle">Выберите программу или продолжите начатое</p>
         
+        <div id="streak-container"></div>
         <div id="resume-banner-container"></div>
         <div id="workout-list"></div>
     </div>
@@ -439,8 +624,7 @@
     <!-- ДЕТАЛИ УПРАЖНЕНИЯ -->
     <div id="view-detail" class="view container hidden" style="padding: 0; max-width: 600px;">
         <div class="detail-image-wrapper">
-            <img id="detail-image" class="detail-image" src="" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="detail-image-fallback" style="display: none;" id="detail-image-fallback">Упражнение</div>
+            <img id="detail-image" class="detail-image" src="" alt="">
             <div class="detail-image-overlay"></div>
             <button class="back-btn detail-back-btn" onclick="showView('exercises')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -477,13 +661,13 @@
         </div>
     </div>
 
-    <!-- ЭКРАН ОТДЫХА (НОВЫЙ) -->
+    <!-- ЭКРАН ОТДЫХА -->
     <div id="view-rest" class="view hidden">
         <div class="rest-screen">
             <div class="rest-label">Отдых</div>
             <div class="rest-subtitle" id="rest-next-info">Следующий подход</div>
             
-            <div class="rest-exercise-name" id="rest-exercise-name">Приседания со штангой</div>
+            <div class="rest-exercise-name" id="rest-exercise-name">Упражнение</div>
             <div class="rest-set-info" id="rest-set-info">Подход 2 из 3</div>
             
             <div class="rest-timer-wrapper">
@@ -516,7 +700,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
         <div class="completion-title">Тренировка завершена</div>
-        <p style="color: var(--text-secondary); margin-top: 0;">Отличная работа. Прогресс сохранён.</p>
+        <div class="completion-streak" id="completion-streak">
+            <span>🔥</span>
+            <span id="completion-streak-count">1 день подряд</span>
+        </div>
+        <p style="color: var(--text-secondary); margin-top: 0;" id="completion-message">Отличная работа!</p>
         
         <div class="completion-stats">
             <div class="comp-stat">
@@ -536,7 +724,26 @@
     <!-- ПРОФИЛЬ -->
     <div id="view-profile" class="view container hidden">
         <h1>Прогресс</h1>
-        <p class="subtitle">Ваша статистика и мотивация</p>
+        <p class="subtitle">Ваша статистика и достижения</p>
+        
+        <div class="profile-header">
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="profile-age">-</div>
+                    <div class="profile-stat-label">лет</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="profile-height">-</div>
+                    <div class="profile-stat-label">см</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="profile-weight">-</div>
+                    <div class="profile-stat-label">кг</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="streak-container-profile"></div>
         
         <div class="stats-grid">
             <div class="stat-card">
@@ -549,12 +756,27 @@
             </div>
         </div>
 
+        <div class="chart-container">
+            <div class="chart-title">История тренировок</div>
+            <svg class="chart-svg" id="workout-chart"></svg>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Прогресс веса</div>
+            <svg class="chart-svg" id="weight-chart"></svg>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Достижения</div>
+            <div class="achievements-grid" id="achievements-grid"></div>
+        </div>
+
         <div class="tip-of-day">
             <div style="font-size: 13px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Совет дня</div>
             <div id="daily-tip" style="font-size: 15px; line-height: 1.6; color: var(--text-primary);">Загрузка...</div>
         </div>
 
-        <button class="btn btn-secondary" style="margin-top: 32px; color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" onclick="resetStats()">Сбросить весь прогресс</button>
+        <button class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" onclick="resetStats()">Сбросить весь прогресс</button>
     </div>
 
     <!-- НИЖНЯЯ НАВИГАЦИЯ -->
@@ -570,42 +792,44 @@
     </nav>
 
     <script>
-        // === ДАННЫЕ С НАДЁЖНЫМИ ИЗОБРАЖЕНИЯМИ ===
+        // ОДНО ТЕМАТИЧЕСКОЕ ФОТО ДЛЯ ВСЕХ УПРАЖНЕНИЙ
+        const GYM_PHOTO = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80';
+        
         const workouts = {
             fullbody: {
                 id: 'fullbody', title: 'Full Body', duration: '45 мин', level: 'Новичок',
-                image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
+                image: GYM_PHOTO,
                 exercises: [
-                    { id: 'fb1', name: 'Приседания со штангой', sets: 3, reps: '10-12', tip: 'Держите спину прямой, колени не выходят за носки. Вес на пятках.', image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80' },
-                    { id: 'fb2', name: 'Жим лёжа', sets: 3, reps: '8-10', tip: 'Лопатки сведены, стопы плотно уперты в пол. Контролируйте негативную фазу.', image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80' },
-                    { id: 'fb3', name: 'Тяга верхнего блока', sets: 3, reps: '10-12', tip: 'Тяните локти вниз, сводя лопатки в нижней точке. Корпус слегка отклонён.', image: 'https://images.unsplash.com/photo-1598971639058-211a74a96aea?w=800&q=80' },
-                    { id: 'fb4', name: 'Выпады с гантелями', sets: 3, reps: '12 на ногу', tip: 'Колено задней ноги почти касается пола. Корпус держите вертикально.', image: 'https://images.unsplash.com/photo-1434608519344-49d77a699ded?w=800&q=80' },
-                    { id: 'fb5', name: 'Планка', sets: 3, reps: '45 сек', tip: 'Тело образует прямую линию, не проваливайте поясницу, напрягите пресс.', image: 'https://images.unsplash.com/photo-1566241440091-ec10de8db2e1?w=800&q=80' },
-                    { id: 'fb6', name: 'Скручивания', sets: 3, reps: '15-20', tip: 'Отрывайте только лопатки, поясница прижата к полу. Выдох на усилии.', image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80' }
+                    { id: 'fb1', name: 'Приседания со штангой', sets: 3, reps: '10-12', tip: 'Держите спину прямой, колени не выходят за носки. Вес на пятках.' },
+                    { id: 'fb2', name: 'Жим лёжа', sets: 3, reps: '8-10', tip: 'Лопатки сведены, стопы плотно уперты в пол. Контролируйте негативную фазу.' },
+                    { id: 'fb3', name: 'Тяга верхнего блока', sets: 3, reps: '10-12', tip: 'Тяните локти вниз, сводя лопатки в нижней точке. Корпус слегка отклонён.' },
+                    { id: 'fb4', name: 'Выпады с гантелями', sets: 3, reps: '12 на ногу', tip: 'Колено задней ноги почти касается пола. Корпус держите вертикально.' },
+                    { id: 'fb5', name: 'Планка', sets: 3, reps: '45 сек', tip: 'Тело образует прямую линию, не проваливайте поясницу, напрягите пресс.' },
+                    { id: 'fb6', name: 'Скручивания', sets: 3, reps: '15-20', tip: 'Отрывайте только лопатки, поясница прижата к полу. Выдох на усилии.' }
                 ]
             },
             upper: {
                 id: 'upper', title: 'Верх тела', duration: '40 мин', level: 'Средний',
-                image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80',
+                image: GYM_PHOTO,
                 exercises: [
-                    { id: 'u1', name: 'Жим гантелей на наклонной', sets: 4, reps: '8-10', tip: 'Угол скамьи 30-45 градусов. Локти под углом 45° к корпусу.', image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80' },
-                    { id: 'u2', name: 'Подтягивания', sets: 3, reps: '8-12', tip: 'Полная амплитуда, подбородок выше перекладины. Без рывков.', image: 'https://images.unsplash.com/photo-1598971639058-211a74a96aea?w=800&q=80' },
-                    { id: 'u3', name: 'Армейский жим', sets: 3, reps: '10-12', tip: 'Не прогибайте поясницу, пресс напряжён. Штанга движется вертикально.', image: 'https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&q=80' },
-                    { id: 'u4', name: 'Тяга штанги в наклоне', sets: 3, reps: '10-12', tip: 'Корпус параллелен полу, тяните гриф к низу живота, сводя лопатки.', image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80' },
-                    { id: 'u5', name: 'Махи гантелями в стороны', sets: 3, reps: '12-15', tip: 'Локти слегка согнуты, поднимайте до уровня плеч. Мизинец выше большого пальца.', image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80' },
-                    { id: 'u6', name: 'Французский жим', sets: 3, reps: '12-15', tip: 'Локти зафиксированы и смотрят в потолок, работают только трицепсы.', image: 'https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&q=80' }
+                    { id: 'u1', name: 'Жим гантелей на наклонной', sets: 4, reps: '8-10', tip: 'Угол скамьи 30-45 градусов. Локти под углом 45° к корпусу.' },
+                    { id: 'u2', name: 'Подтягивания', sets: 3, reps: '8-12', tip: 'Полная амплитуда, подбородок выше перекладины. Без рывков.' },
+                    { id: 'u3', name: 'Армейский жим', sets: 3, reps: '10-12', tip: 'Не прогибайте поясницу, пресс напряжён. Штанга движется вертикально.' },
+                    { id: 'u4', name: 'Тяга штанги в наклоне', sets: 3, reps: '10-12', tip: 'Корпус параллелен полу, тяните гриф к низу живота, сводя лопатки.' },
+                    { id: 'u5', name: 'Махи гантелями в стороны', sets: 3, reps: '12-15', tip: 'Локти слегка согнуты, поднимайте до уровня плеч. Мизинец выше большого пальца.' },
+                    { id: 'u6', name: 'Французский жим', sets: 3, reps: '12-15', tip: 'Локти зафиксированы и смотрят в потолок, работают только трицепсы.' }
                 ]
             },
             lower: {
                 id: 'lower', title: 'Низ тела', duration: '40 мин', level: 'Средний',
-                image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
+                image: GYM_PHOTO,
                 exercises: [
-                    { id: 'l1', name: 'Становая тяга', sets: 4, reps: '6-8', tip: 'Спина прямая, движение начинается с толчка ногами, а не рывка спиной.', image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80' },
-                    { id: 'l2', name: 'Жим ногами', sets: 3, reps: '10-12', tip: 'Не выпрямляйте колени полностью в верхней точке, чтобы не блокировать сустав.', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80' },
-                    { id: 'l3', name: 'Румынская тяга', sets: 3, reps: '10-12', tip: 'Отводите таз назад, чувствуя растяжение бицепса бедра. Колени слегка согнуты.', image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80' },
-                    { id: 'l4', name: 'Разгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Пиковое сокращение в верхней точке на 1-2 секунды.', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80' },
-                    { id: 'l5', name: 'Сгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Контролируйте негативную фазу движения, не бросайте вес.', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80' },
-                    { id: 'l6', name: 'Подъёмы на носки стоя', sets: 4, reps: '15-20', tip: 'Максимальная амплитуда, пауза в верхней точке, медленное опускание.', image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80' }
+                    { id: 'l1', name: 'Становая тяга', sets: 4, reps: '6-8', tip: 'Спина прямая, движение начинается с толчка ногами, а не рывка спиной.' },
+                    { id: 'l2', name: 'Жим ногами', sets: 3, reps: '10-12', tip: 'Не выпрямляйте колени полностью в верхней точке, чтобы не блокировать сустав.' },
+                    { id: 'l3', name: 'Румынская тяга', sets: 3, reps: '10-12', tip: 'Отводите таз назад, чувствуя растяжение бицепса бедра. Колени слегка согнуты.' },
+                    { id: 'l4', name: 'Разгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Пиковое сокращение в верхней точке на 1-2 секунды.' },
+                    { id: 'l5', name: 'Сгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Контролируйте негативную фазу движения, не бросайте вес.' },
+                    { id: 'l6', name: 'Подъёмы на носки стоя', sets: 4, reps: '15-20', tip: 'Максимальная амплитуда, пауза в верхней точке, медленное опускание.' }
                 ]
             }
         };
@@ -618,15 +842,34 @@
             "Не задерживайте дыхание при усилии, выдыхайте на напряжении."
         ];
 
-        // === СОСТОЯНИЕ ===
+        const streakMessages = {
+            1: "Начало положено! ",
+            3: "3 дня подряд! Вы на пути к привычке! 💪",
+            7: "Неделя без пропусков! Вы машина! 🚀",
+            14: "2 недели! Это уже образ жизни! ⚡",
+            30: "МЕСЯЦ! Вы легенда! 👑",
+            60: "2 месяца! Непревзойдённая дисциплина! 🏆",
+            100: "100 ДНЕЙ! Вы непобедимы! 🔥"
+        };
+
+        const achievements = [
+            { id: 'first', icon: '🎯', name: 'Первая тренировка', condition: (stats) => stats.totalWorkouts >= 1 },
+            { id: 'streak3', icon: '🔥', name: '3 дня подряд', condition: (stats) => stats.streak >= 3 },
+            { id: 'streak7', icon: '⚡', name: 'Неделя силы', condition: (stats) => stats.streak >= 7 },
+            { id: 'streak30', icon: '👑', name: 'Месяц дисциплины', condition: (stats) => stats.streak >= 30 },
+            { id: 'workouts10', icon: '', name: '10 тренировок', condition: (stats) => stats.totalWorkouts >= 10 },
+            { id: 'workouts50', icon: '🏆', name: '50 тренировок', condition: (stats) => stats.totalWorkouts >= 50 }
+        ];
+
         let state = {
             currentView: 'home',
             activeWorkoutId: null,
             activeExerciseIndex: 0,
+            profile: JSON.parse(localStorage.getItem('gym_profile')) || null,
             progress: JSON.parse(localStorage.getItem('gym_progress')) || {},
-            stats: JSON.parse(localStorage.getItem('gym_stats')) || { streak: 0, totalWorkouts: 0, lastWorkoutDate: null },
+            stats: JSON.parse(localStorage.getItem('gym_stats')) || { streak: 0, totalWorkouts: 0, lastWorkoutDate: null, workoutHistory: [], weightHistory: [] },
             restTimer: { timeLeft: 60, totalTime: 60, intervalId: null, isRunning: false },
-            pendingRest: null // { exerciseIndex, setNumber }
+            pendingRest: null
         };
 
         const tg = window.Telegram.WebApp;
@@ -635,60 +878,87 @@
         tg.setHeaderColor('#050505');
         tg.setBackgroundColor('#050505');
 
-        // === ИНИЦИАЛИЗАЦИЯ ===
         function init() {
-            renderResumeBanner();
-            renderWorkouts();
-            updateStats();
-            setDailyTip();
+            if (!state.profile) {
+                showView('onboarding');
+                tg.BackButton.hide();
+            } else {
+                renderHome();
+            }
             
             tg.BackButton.onClick(() => {
                 if (state.currentView === 'detail') showView('exercises');
                 else if (state.currentView === 'exercises') showView('home');
                 else if (state.currentView === 'rest') skipRest();
                 else if (state.currentView === 'completion') finishWorkoutFlow();
+                else if (state.currentView === 'profile') showView('home');
                 else tg.close();
             });
         }
 
-        // === НАВИГАЦИЯ С АНИМАЦИЕЙ ===
-        let navDirection = 'forward';
-        
-        function showView(viewId, direction = 'forward') {
-            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
-            const view = document.getElementById(`view-${viewId}`);
-            view.classList.remove('hidden');
+        function completeOnboarding() {
+            const age = parseInt(document.getElementById('input-age').value);
+            const height = parseInt(document.getElementById('input-height').value);
+            const weight = parseFloat(document.getElementById('input-weight').value);
             
-            // Удаляем старые классы анимации
-            view.classList.remove('animate-in', 'slide-right', 'slide-left');
-            // Форсируем reflow
-            void view.offsetWidth;
-            
-            if (viewId === 'detail' || viewId === 'rest') {
-                view.classList.add(direction === 'forward' ? 'slide-right' : 'slide-left');
-            } else {
-                view.classList.add('animate-in');
+            if (!age || !height || !weight) {
+                tg.showPopup({ message: 'Пожалуйста, заполните все поля' });
+                return;
             }
             
-            state.currentView = viewId;
+            state.profile = { age, height, weight, createdAt: new Date().toISOString() };
+            localStorage.setItem('gym_profile', JSON.stringify(state.profile));
             
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if (viewId === 'home') {
-                document.getElementById('nav-home').classList.add('active');
-                renderResumeBanner();
-            }
-            if (viewId === 'profile') {
-                document.getElementById('nav-profile').classList.add('active');
-                updateStats();
-            }
-
-            if (viewId === 'home' || viewId === 'profile') tg.BackButton.hide();
-            else tg.BackButton.show();
-
-            tg.HapticFeedback.impactOccurred('light');
+            // Добавляем начальную запись веса
+            state.stats.weightHistory.push({
+                date: new Date().toISOString(),
+                weight: weight
+            });
+            localStorage.setItem('gym_stats', JSON.stringify(state.stats));
+            
+            renderHome();
+            tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // === ГЛАВНЫЙ ЭКРАН ===
+        function renderHome() {
+            showView('home');
+            renderStreak();
+            renderResumeBanner();
+            renderWorkouts();
+        }
+
+        function getStreakLevel(streak) {
+            if (streak >= 100) return { name: 'Легенда', color: 'var(--gold)' };
+            if (streak >= 30) return { name: 'Мастер', color: 'var(--fire)' };
+            if (streak >= 14) return { name: 'Воин', color: 'var(--fire)' };
+            if (streak >= 7) return { name: 'Боец', color: 'var(--warning)' };
+            if (streak >= 3) return { name: 'Новичок', color: 'var(--accent)' };
+            return { name: 'Старт', color: 'var(--text-secondary)' };
+        }
+
+        function renderStreak() {
+            const streak = state.stats.streak;
+            const level = getStreakLevel(streak);
+            const message = streakMessages[streak] || `${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд!`;
+            
+            const html = `
+                <div class="streak-card">
+                    <div class="streak-icon">🔥</div>
+                    <div class="streak-info">
+                        <h3>${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд</h3>
+                        <p>${message}</p>
+                        <div class="streak-level" style="background: ${level.color}20; color: ${level.color};">${level.name}</div>
+                    </div>
+                </div>
+            `;
+            
+            const homeContainer = document.getElementById('streak-container');
+            const profileContainer = document.getElementById('streak-container-profile');
+            
+            if (homeContainer) homeContainer.innerHTML = streak > 0 ? html : '';
+            if (profileContainer) profileContainer.innerHTML = streak > 0 ? html : '';
+        }
+
         function renderResumeBanner() {
             const container = document.getElementById('resume-banner-container');
             const activeId = Object.keys(state.progress).find(id => {
@@ -724,8 +994,7 @@
                 card.onclick = () => startWorkout(w.id);
                 card.innerHTML = `
                     <div class="card-image-wrapper">
-                        <img src="${w.image}" class="card-image" alt="${w.title}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="card-image-fallback" style="display: none;">${w.title}</div>
+                        <img src="${w.image}" class="card-image" alt="${w.title}" loading="lazy">
                         <div class="card-image-overlay"></div>
                     </div>
                     <div class="card-content">
@@ -750,7 +1019,6 @@
             });
         }
 
-        // === СПИСОК УПРАЖНЕНИЙ ===
         function startWorkout(workoutId) {
             state.activeWorkoutId = workoutId;
             
@@ -802,31 +1070,19 @@
             document.getElementById('ex-list-progress').style.width = `${progressPct}%`;
         }
 
-        // === ДЕТАЛИ УПРАЖНЕНИЯ ===
         function openExerciseDetail(index, direction = 'forward') {
             state.activeExerciseIndex = index;
             const w = workouts[state.activeWorkoutId];
             const ex = w.exercises[index];
             const prog = state.progress[state.activeWorkoutId][ex.id];
             
+            document.getElementById('detail-image').src = GYM_PHOTO;
             document.getElementById('detail-name').textContent = ex.name;
             document.getElementById('detail-current-num').textContent = index + 1;
             document.getElementById('detail-total-num').textContent = w.exercises.length;
             document.getElementById('detail-plan').textContent = `${ex.sets} подходов × ${ex.reps}`;
             document.getElementById('detail-tip').textContent = ex.tip;
             document.getElementById('exercise-complete-check').checked = prog.completed;
-            
-            // Изображение с fallback
-            const img = document.getElementById('detail-image');
-            const fallback = document.getElementById('detail-image-fallback');
-            img.style.display = 'block';
-            fallback.style.display = 'none';
-            img.src = ex.image;
-            img.onerror = () => {
-                img.style.display = 'none';
-                fallback.style.display = 'flex';
-                fallback.textContent = ex.name;
-            };
             
             renderSets(ex.sets, prog.setsDone);
             showView('detail', direction);
@@ -849,13 +1105,11 @@
             }
         }
 
-        // Обработка клика на подход → переход на экран отдыха
         function handleSetClick(setNum) {
             const w = workouts[state.activeWorkoutId];
             const ex = w.exercises[state.activeExerciseIndex];
             const prog = state.progress[state.activeWorkoutId][ex.id];
             
-            // Если кликнули на уже выполненный подход — отменяем
             if (prog.setsDone === setNum) {
                 prog.setsDone = setNum - 1;
                 saveProgress();
@@ -864,24 +1118,20 @@
                 return;
             }
             
-            // Если кликнули на более поздний подход — выполняем все предыдущие
             if (setNum > prog.setsDone + 1) {
                 prog.setsDone = setNum - 1;
             }
             
-            // Отмечаем текущий подход
             prog.setsDone = setNum;
             saveProgress();
             renderSets(ex.sets, prog.setsDone);
             tg.HapticFeedback.impactOccurred('medium');
             
-            // Если все подходы выполнены — отмечаем упражнение
             if (prog.setsDone === ex.sets) {
                 prog.completed = true;
                 document.getElementById('exercise-complete-check').checked = true;
                 saveProgress();
                 
-                // Показываем экран завершения или следующее упражнение
                 setTimeout(() => {
                     const allDone = w.exercises.every(e => state.progress[state.activeWorkoutId][e.id].completed);
                     if (allDone) {
@@ -899,7 +1149,6 @@
                 return;
             }
             
-            // Иначе — переходим на экран отдыха для следующего подхода
             state.pendingRest = {
                 exerciseIndex: state.activeExerciseIndex,
                 nextSet: setNum + 1
@@ -938,7 +1187,6 @@
             }
         }
 
-        // === ЭКРАН ОТДЫХА ===
         function openRestScreen() {
             const w = workouts[state.activeWorkoutId];
             const ex = w.exercises[state.activeExerciseIndex];
@@ -948,11 +1196,8 @@
             document.getElementById('rest-set-info').textContent = `Подход ${nextSet} из ${ex.sets}`;
             document.getElementById('rest-next-info').textContent = 'Следующий подход через';
             
-            // Сброс таймера
             resetRestTimer();
             showView('rest', 'forward');
-            
-            // Автостарт
             setTimeout(() => startRestTimer(), 300);
         }
 
@@ -966,7 +1211,7 @@
             document.getElementById('rest-timer-display').textContent = formatTime(state.restTimer.timeLeft);
             
             const circle = document.getElementById('rest-timer-circle');
-            const circumference = 691; // 2 * PI * 110
+            const circumference = 691;
             const offset = circumference - (state.restTimer.timeLeft / state.restTimer.totalTime) * circumference;
             circle.style.strokeDashoffset = offset;
             
@@ -1031,20 +1276,14 @@
             pauseRestTimer();
             playBeep();
             tg.HapticFeedback.notificationOccurred('success');
-            
-            // Автопереход к следующему подходу через 1.5 сек
             setTimeout(() => {
-                if (state.currentView === 'rest') {
-                    skipRest();
-                }
+                if (state.currentView === 'rest') skipRest();
             }, 1500);
         }
 
         function skipRest() {
             pauseRestTimer();
-            if (state.currentView === 'rest') {
-                showView('detail', 'backward');
-            }
+            if (state.currentView === 'rest') showView('detail', 'backward');
         }
 
         function playBeep() {
@@ -1063,14 +1302,12 @@
             } catch (e) { console.log('Audio play failed', e); }
         }
 
-        // === ЗАВЕРШЕНИЕ ===
         function checkWorkoutCompletion() {
             const w = workouts[state.activeWorkoutId];
             const allCompleted = w.exercises.every(ex => state.progress[state.activeWorkoutId][ex.id].completed);
             
-            if (allCompleted) {
-                showCompletionScreen();
-            } else {
+            if (allCompleted) showCompletionScreen();
+            else {
                 tg.showPopup({
                     title: 'Не всё выполнено',
                     message: 'Отметьте все упражнения как выполненные, чтобы завершить тренировку.',
@@ -1095,8 +1332,21 @@
                     state.stats.streak = 1;
                 }
                 state.stats.lastWorkoutDate = today;
+                
+                // Добавляем в историю
+                state.stats.workoutHistory.push({
+                    date: new Date().toISOString(),
+                    workoutId: state.activeWorkoutId,
+                    duration: w.duration
+                });
+                
                 localStorage.setItem('gym_stats', JSON.stringify(state.stats));
             }
+            
+            // Обновляем сообщение о серии
+            const streak = state.stats.streak;
+            document.getElementById('completion-streak-count').textContent = `${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд`;
+            document.getElementById('completion-message').textContent = streakMessages[streak] || 'Отличная работа!';
             
             showView('completion');
             tg.HapticFeedback.notificationOccurred('success');
@@ -1104,7 +1354,7 @@
 
         function shareResult() {
             const w = workouts[state.activeWorkoutId];
-            const text = `Завершил тренировку "${w.title}" в Gym Motivation!\nВремя: ${w.duration}\nВсе упражнения выполнены.`;
+            const text = `Завершил тренировку "${w.title}" в Gym Motivation!\nВремя: ${w.duration}\nСерия: ${state.stats.streak} дней подряд 🔥`;
             
             if (navigator.share) {
                 navigator.share({ title: 'Gym Motivation', text: text });
@@ -1118,13 +1368,94 @@
         function finishWorkoutFlow() {
             delete state.progress[state.activeWorkoutId];
             saveProgress();
-            showView('home');
+            renderHome();
         }
 
-        // === ПРОФИЛЬ ===
+        function updateProfileStats() {
+            if (state.profile) {
+                document.getElementById('profile-age').textContent = state.profile.age;
+                document.getElementById('profile-height').textContent = state.profile.height;
+                document.getElementById('profile-weight').textContent = state.profile.weight;
+            }
+        }
+
+        function renderCharts() {
+            // График тренировок
+            const workoutChart = document.getElementById('workout-chart');
+            const history = state.stats.workoutHistory.slice(-7);
+            
+            if (history.length === 0) {
+                workoutChart.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="var(--text-secondary)" font-size="14">Нет данных</text>';
+            } else {
+                const maxVal = history.length;
+                const width = workoutChart.clientWidth || 300;
+                const height = 150;
+                const barWidth = (width - 40) / maxVal - 4;
+                
+                let svg = '';
+                history.forEach((item, i) => {
+                    const barHeight = (1 / maxVal) * (height - 30);
+                    const x = 20 + i * (barWidth + 4);
+                    const y = height - barHeight - 20;
+                    svg += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="var(--accent)" rx="4"/>`;
+                });
+                workoutChart.innerHTML = svg;
+            }
+            
+            // График веса
+            const weightChart = document.getElementById('weight-chart');
+            const weightHistory = state.stats.weightHistory.slice(-7);
+            
+            if (weightHistory.length === 0) {
+                weightChart.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="var(--text-secondary)" font-size="14">Нет данных</text>';
+            } else {
+                const weights = weightHistory.map(w => w.weight);
+                const minWeight = Math.min(...weights);
+                const maxWeight = Math.max(...weights);
+                const range = maxWeight - minWeight || 1;
+                const width = weightChart.clientWidth || 300;
+                const height = 150;
+                const padding = 20;
+                
+                let svg = '';
+                const points = weightHistory.map((item, i) => {
+                    const x = padding + (i / (weightHistory.length - 1 || 1)) * (width - 2 * padding);
+                    const y = height - padding - ((item.weight - minWeight) / range) * (height - 2 * padding);
+                    return `${x},${y}`;
+                });
+                
+                svg += `<polyline points="${points.join(' ')}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+                points.forEach((point, i) => {
+                    const [x, y] = point.split(',');
+                    svg += `<circle cx="${x}" cy="${y}" r="4" fill="var(--accent)"/>`;
+                });
+                weightChart.innerHTML = svg;
+            }
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievements-grid');
+            container.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const unlocked = achievement.condition(state.stats);
+                const div = document.createElement('div');
+                div.className = `achievement ${unlocked ? 'unlocked' : ''}`;
+                div.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-name">${achievement.name}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
         function updateStats() {
             document.getElementById('stat-streak').textContent = state.stats.streak;
             document.getElementById('stat-total').textContent = state.stats.totalWorkouts;
+            updateProfileStats();
+            renderCharts();
+            renderAchievements();
+            renderStreak();
         }
 
         function setDailyTip() {
@@ -1139,7 +1470,7 @@
                 buttons: [{ type: 'destructive', text: 'Удалить', id: 'delete' }, { type: 'cancel' }]
             }, (btnId) => {
                 if (btnId === 'delete') {
-                    state.stats = { streak: 0, totalWorkouts: 0, lastWorkoutDate: null };
+                    state.stats = { streak: 0, totalWorkouts: 0, lastWorkoutDate: null, workoutHistory: [], weightHistory: [] };
                     state.progress = {};
                     localStorage.removeItem('gym_stats');
                     localStorage.removeItem('gym_progress');
@@ -1151,6 +1482,41 @@
 
         function saveProgress() {
             localStorage.setItem('gym_progress', JSON.stringify(state.progress));
+        }
+
+        function showView(viewId, direction = 'forward') {
+            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+            const view = document.getElementById(`view-${viewId}`);
+            view.classList.remove('hidden');
+            
+            view.classList.remove('animate-in', 'slide-right', 'slide-left', 'slide-up');
+            void view.offsetWidth;
+            
+            if (viewId === 'detail' || viewId === 'rest') {
+                view.classList.add(direction === 'forward' ? 'slide-right' : 'slide-left');
+            } else if (viewId === 'onboarding') {
+                view.classList.add('slide-up');
+            } else {
+                view.classList.add('animate-in');
+            }
+            
+            state.currentView = viewId;
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (viewId === 'home') {
+                document.getElementById('nav-home').classList.add('active');
+                renderHome();
+            }
+            if (viewId === 'profile') {
+                document.getElementById('nav-profile').classList.add('active');
+                updateStats();
+                setDailyTip();
+            }
+
+            if (viewId === 'home' || viewId === 'profile' || viewId === 'onboarding') tg.BackButton.hide();
+            else tg.BackButton.show();
+
+            tg.HapticFeedback.impactOccurred('light');
         }
 
         init();
