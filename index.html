@@ -73,11 +73,6 @@
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
         .btn-ghost { background: transparent; color: var(--text-secondary); padding: 12px; }
         .btn-large { padding: 18px 24px; font-size: 17px; }
-        .btn-fire { 
-            background: linear-gradient(135deg, var(--fire), #EA580C); 
-            color: #fff;
-            box-shadow: 0 4px 20px var(--fire-glow);
-        }
 
         /* ОНБОРДИНГ */
         .onboarding-screen {
@@ -104,9 +99,7 @@
             font-size: 16px;
             margin-bottom: 40px;
         }
-        .input-group {
-            margin-bottom: 20px;
-        }
+        .input-group { margin-bottom: 20px; }
         .input-label {
             display: block;
             font-size: 13px;
@@ -128,14 +121,8 @@
             font-family: inherit;
             transition: border-color 0.2s;
         }
-        .input-field:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        .input-field::placeholder {
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
+        .input-field:focus { outline: none; border-color: var(--accent); }
+        .input-field::placeholder { color: var(--text-secondary); font-weight: 400; }
 
         /* Баннер продолжения */
         .resume-banner {
@@ -163,7 +150,6 @@
             overflow: hidden;
             border: 1px solid var(--bg-tertiary);
             transition: transform 0.2s, border-color 0.2s;
-            position: relative;
         }
         .workout-card:active { transform: scale(0.98); border-color: var(--accent); }
         
@@ -174,29 +160,20 @@
             overflow: hidden;
             background: var(--bg-tertiary);
         }
-        .card-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
+        .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .workout-card:active .card-image { transform: scale(1.05); }
         .card-image-overlay {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             background: linear-gradient(to top, var(--bg-secondary) 0%, transparent 60%);
         }
         
         .card-content { padding: 16px 20px 20px; }
         .card-title { font-size: 20px; font-weight: 700; margin: 0 0 12px 0; }
         .card-meta { display: flex; gap: 16px; flex-wrap: wrap; }
-        .meta-item { 
-            display: flex; align-items: center; gap: 6px; 
-            font-size: 13px; color: var(--text-secondary); font-weight: 500;
-        }
+        .meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); font-weight: 500; }
         .meta-item svg { width: 16px; height: 16px; stroke: var(--accent); }
 
-        /* Серия (Streak) */
+        /* Серия */
         .streak-card {
             background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(249, 115, 22, 0.05));
             border: 1px solid rgba(249, 115, 22, 0.3);
@@ -209,22 +186,16 @@
             animation: fireGlow 2s infinite;
         }
         .streak-icon {
-            width: 56px;
-            height: 56px;
+            width: 56px; height: 56px;
             background: linear-gradient(135deg, var(--fire), #EA580C);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; flex-shrink: 0;
         }
         .streak-info h3 { margin: 0 0 4px 0; font-size: 18px; color: var(--fire); }
         .streak-info p { margin: 0; font-size: 14px; color: var(--text-secondary); }
         .streak-level {
             display: inline-block;
-            background: rgba(249, 115, 22, 0.2);
-            color: var(--fire);
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 12px;
@@ -252,9 +223,7 @@
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0; transition: all 0.2s;
         }
-        .exercise-item.completed .check-circle {
-            background: var(--accent); border-color: var(--accent);
-        }
+        .exercise-item.completed .check-circle { background: var(--accent); border-color: var(--accent); }
 
         /* Детали упражнения */
         .detail-image-wrapper {
@@ -267,27 +236,17 @@
             border-radius: 0 0 24px 24px;
             margin-bottom: 20px;
         }
-        .detail-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .detail-image { width: 100%; height: 100%; object-fit: cover; }
         .detail-image-overlay {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             background: linear-gradient(to top, var(--bg-primary) 0%, transparent 50%);
         }
         .detail-back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            border: none;
-            z-index: 10;
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+            border: none; z-index: 10;
         }
         
-        .detail-header { margin-bottom: 20px; }
         .detail-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .detail-title { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px; flex: 1; }
         .detail-counter { color: var(--text-secondary); font-size: 14px; font-weight: 600; margin-top: 8px; white-space: nowrap; }
@@ -319,10 +278,7 @@
             background: var(--accent); border-color: var(--accent); color: #000;
             box-shadow: 0 0 20px var(--accent-glow);
         }
-        .set-circle.current {
-            border-color: var(--accent);
-            animation: breathe 2s infinite;
-        }
+        .set-circle.current { border-color: var(--accent); animation: breathe 2s infinite; }
 
         .complete-checkbox {
             display: flex; align-items: center; gap: 14px; 
@@ -337,14 +293,10 @@
             border: 2px solid var(--bg-elevated);
             border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s;
+            flex-shrink: 0; transition: all 0.2s;
         }
         .complete-checkbox input { display: none; }
-        .complete-checkbox input:checked + .custom-checkbox {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
+        .complete-checkbox input:checked + .custom-checkbox { background: var(--accent); border-color: var(--accent); }
         .complete-checkbox input:checked + .custom-checkbox svg { opacity: 1; }
         .custom-checkbox svg { width: 14px; height: 14px; stroke: #000; opacity: 0; transition: opacity 0.2s; }
         .complete-checkbox span { font-weight: 600; font-size: 15px; flex: 1; }
@@ -354,20 +306,12 @@
 
         /* Экран отдыха */
         .rest-screen { text-align: center; padding: 40px 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .rest-label {
-            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--accent); margin-bottom: 8px;
-        }
+        .rest-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; }
         .rest-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 40px; }
         .rest-exercise-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
         .rest-set-info { font-size: 14px; color: var(--text-secondary); margin-bottom: 32px; }
         
-        .rest-timer-wrapper {
-            position: relative;
-            width: 240px;
-            height: 240px;
-            margin: 0 auto 40px auto;
-        }
+        .rest-timer-wrapper { position: relative; width: 240px; height: 240px; margin: 0 auto 40px auto; }
         .rest-timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
         .rest-timer-bg { fill: none; stroke: var(--bg-tertiary); stroke-width: 8; }
         .rest-timer-progress {
@@ -391,8 +335,7 @@
             font-size: 16px; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.1s, background 0.2s;
-            border: 1px solid var(--bg-tertiary);
-            font-family: inherit;
+            border: 1px solid var(--bg-tertiary); font-family: inherit;
         }
         .rest-btn:active { transform: scale(0.9); background: var(--bg-tertiary); }
         .rest-btn.primary { 
@@ -404,19 +347,11 @@
         .rest-btn.primary:active { transform: scale(0.95); }
         
         .rest-skip-btn {
-            background: var(--bg-secondary);
-            border: 1px solid var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: 16px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 320px;
-            margin: 0 auto;
-            font-family: inherit;
-            transition: all 0.2s;
+            background: var(--bg-secondary); border: 1px solid var(--bg-tertiary);
+            color: var(--text-primary); padding: 16px; border-radius: 12px;
+            font-weight: 600; font-size: 15px; cursor: pointer;
+            width: 100%; max-width: 320px; margin: 0 auto;
+            font-family: inherit; transition: all 0.2s;
         }
         .rest-skip-btn:active { background: var(--bg-tertiary); border-color: var(--accent); }
 
@@ -431,16 +366,10 @@
         .completion-icon svg { width: 44px; height: 44px; stroke: var(--accent); }
         .completion-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
         .completion-streak {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(249, 115, 22, 0.15);
-            color: var(--fire);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 16px;
-            margin: 16px 0 24px;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(249, 115, 22, 0.15); color: var(--fire);
+            padding: 8px 16px; border-radius: 20px;
+            font-weight: 700; font-size: 16px; margin: 16px 0 24px;
         }
         .completion-stats { 
             display: flex; justify-content: center; gap: 32px; margin: 32px 0; 
@@ -453,31 +382,13 @@
         /* Профиль */
         .profile-header {
             background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), transparent);
-            padding: 24px;
-            border-radius: var(--radius);
-            margin-bottom: 24px;
-            border: 1px solid rgba(45, 212, 191, 0.2);
+            padding: 24px; border-radius: var(--radius);
+            margin-bottom: 24px; border: 1px solid rgba(45, 212, 191, 0.2);
         }
-        .profile-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 24px;
-        }
-        .profile-stat {
-            text-align: center;
-        }
-        .profile-stat-value {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--accent);
-            margin-bottom: 4px;
-        }
-        .profile-stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .profile-stats { display: flex; justify-content: space-around; margin-bottom: 0; }
+        .profile-stat { text-align: center; }
+        .profile-stat-value { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+        .profile-stat-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
         .stat-card {
@@ -488,68 +399,39 @@
         .stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .chart-container {
-            background: var(--bg-secondary);
-            padding: 20px;
-            border-radius: var(--radius);
-            border: 1px solid var(--bg-tertiary);
+            background: var(--bg-secondary); padding: 20px;
+            border-radius: var(--radius); border: 1px solid var(--bg-tertiary);
             margin-bottom: 24px;
         }
         .chart-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
+            font-size: 14px; font-weight: 700; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
         }
-        .chart-svg {
-            width: 100%;
-            height: 150px;
-        }
+        .chart-svg { width: 100%; height: 150px; display: block; }
         
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
+        .achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .achievement {
-            background: var(--bg-secondary);
-            border: 1px solid var(--bg-tertiary);
-            border-radius: 12px;
-            padding: 16px 8px;
-            text-align: center;
-            opacity: 0.4;
-            transition: all 0.3s;
+            background: var(--bg-secondary); border: 1px solid var(--bg-tertiary);
+            border-radius: 12px; padding: 16px 8px; text-align: center;
+            opacity: 0.4; transition: all 0.3s;
         }
         .achievement.unlocked {
-            opacity: 1;
-            border-color: var(--gold);
+            opacity: 1; border-color: var(--gold);
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);
         }
-        .achievement-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-        .achievement-name {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        .achievement.unlocked .achievement-name {
-            color: var(--gold);
-        }
+        .achievement-icon { font-size: 32px; margin-bottom: 8px; }
+        .achievement-name { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+        .achievement.unlocked .achievement-name { color: var(--gold); }
         
         .tip-of-day {
-            background: var(--bg-secondary);
-            padding: 24px; border-radius: var(--radius); border: 1px solid var(--bg-tertiary);
+            background: var(--bg-secondary); padding: 24px;
+            border-radius: var(--radius); border: 1px solid var(--bg-tertiary);
             margin-bottom: 24px;
         }
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(5, 5, 5, 0.9);
-            backdrop-filter: blur(20px);
+            background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(20px);
             border-top: 1px solid var(--bg-tertiary);
             display: flex; justify-content: space-around;
             padding: 12px 0 calc(12px + var(--safe-bottom));
@@ -558,8 +440,7 @@
         .nav-item {
             display: flex; flex-direction: column; align-items: center;
             color: var(--text-secondary); font-size: 11px; gap: 4px; cursor: pointer;
-            transition: color 0.2s;
-            padding: 4px 16px;
+            transition: color 0.2s; padding: 4px 16px;
         }
         .nav-item.active { color: var(--accent); }
         .nav-item svg { width: 24px; height: 24px; }
@@ -585,12 +466,10 @@
             <label class="input-label">Возраст</label>
             <input type="number" class="input-field" id="input-age" placeholder="25" min="14" max="100">
         </div>
-        
         <div class="input-group">
             <label class="input-label">Рост (см)</label>
             <input type="number" class="input-field" id="input-height" placeholder="175" min="100" max="250">
         </div>
-        
         <div class="input-group">
             <label class="input-label">Вес (кг)</label>
             <input type="number" class="input-field" id="input-weight" placeholder="70" min="30" max="300" step="0.1">
@@ -600,10 +479,9 @@
     </div>
 
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <div id="view-home" class="view container animate-in hidden">
+    <div id="view-home" class="view container hidden">
         <h1>Тренировки</h1>
         <p class="subtitle">Выберите программу или продолжите начатое</p>
-        
         <div id="streak-container"></div>
         <div id="resume-banner-container"></div>
         <div id="workout-list"></div>
@@ -612,7 +490,7 @@
     <!-- СПИСОК УПРАЖНЕНИЙ -->
     <div id="view-exercises" class="view container hidden">
         <div class="screen-header">
-            <button class="back-btn" onclick="showView('home')">
+            <button class="back-btn" onclick="navigateTo('home')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
             <h2 id="ex-list-title" style="margin: 0; font-size: 20px; font-weight: 700;">Программа</h2>
@@ -622,30 +500,26 @@
     </div>
 
     <!-- ДЕТАЛИ УПРАЖНЕНИЯ -->
-    <div id="view-detail" class="view container hidden" style="padding: 0; max-width: 600px;">
+    <div id="view-detail" class="view hidden" style="max-width: 600px; margin: 0 auto;">
         <div class="detail-image-wrapper">
             <img id="detail-image" class="detail-image" src="" alt="">
             <div class="detail-image-overlay"></div>
-            <button class="back-btn detail-back-btn" onclick="showView('exercises')">
+            <button class="back-btn detail-back-btn" onclick="navigateTo('exercises')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
-        
         <div style="padding: 0 20px 20px;">
             <div class="detail-title-row">
                 <div class="detail-title" id="detail-name">Название</div>
                 <div class="detail-counter"><span id="detail-current-num">1</span>/<span id="detail-total-num">6</span></div>
             </div>
             <div class="detail-plan" id="detail-plan">3 × 10-12</div>
-
             <div class="tip-box">
                 <strong>Техника выполнения</strong>
                 <span id="detail-tip">Совет по технике</span>
             </div>
-
             <div class="sets-label">Отметьте выполненные подходы</div>
             <div class="sets-container" id="sets-container"></div>
-
             <label class="complete-checkbox">
                 <input type="checkbox" id="exercise-complete-check" onchange="toggleExerciseComplete()">
                 <div class="custom-checkbox">
@@ -653,7 +527,6 @@
                 </div>
                 <span>Упражнение выполнено полностью</span>
             </label>
-
             <div class="exercise-nav">
                 <button class="btn btn-secondary" onclick="prevExercise()">Назад</button>
                 <button class="btn" onclick="nextExercise()">Далее</button>
@@ -666,10 +539,8 @@
         <div class="rest-screen">
             <div class="rest-label">Отдых</div>
             <div class="rest-subtitle" id="rest-next-info">Следующий подход</div>
-            
             <div class="rest-exercise-name" id="rest-exercise-name">Упражнение</div>
             <div class="rest-set-info" id="rest-set-info">Подход 2 из 3</div>
-            
             <div class="rest-timer-wrapper">
                 <svg class="rest-timer-svg" viewBox="0 0 240 240">
                     <circle class="rest-timer-bg" cx="120" cy="120" r="110"></circle>
@@ -677,10 +548,9 @@
                 </svg>
                 <div class="rest-timer-text" id="rest-timer-display">01:00</div>
             </div>
-            
             <div class="rest-controls">
                 <button class="rest-btn" onclick="adjustRestTimer(-10)">−10</button>
-                <button class="rest-btn primary" id="rest-timer-toggle-btn" onclick="toggleRestTimer()">
+                <button class="rest-btn primary" onclick="toggleRestTimer()">
                     <svg id="rest-icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                     <svg id="rest-icon-pause" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                 </button>
@@ -689,7 +559,6 @@
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/></svg>
                 </button>
             </div>
-            
             <button class="rest-skip-btn" onclick="skipRest()">Пропустить отдых →</button>
         </div>
     </div>
@@ -700,12 +569,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
         <div class="completion-title">Тренировка завершена</div>
-        <div class="completion-streak" id="completion-streak">
+        <div class="completion-streak">
             <span>🔥</span>
             <span id="completion-streak-count">1 день подряд</span>
         </div>
         <p style="color: var(--text-secondary); margin-top: 0;" id="completion-message">Отличная работа!</p>
-        
         <div class="completion-stats">
             <div class="comp-stat">
                 <div class="comp-stat-val" id="comp-time">45</div>
@@ -716,7 +584,6 @@
                 <div class="comp-stat-label">упражнений</div>
             </div>
         </div>
-
         <button class="btn btn-large" style="margin-bottom: 12px;" onclick="shareResult()">Поделиться результатом</button>
         <button class="btn btn-ghost" onclick="finishWorkoutFlow()">Вернуться на главную</button>
     </div>
@@ -725,7 +592,6 @@
     <div id="view-profile" class="view container hidden">
         <h1>Прогресс</h1>
         <p class="subtitle">Ваша статистика и достижения</p>
-        
         <div class="profile-header">
             <div class="profile-stats">
                 <div class="profile-stat">
@@ -742,9 +608,7 @@
                 </div>
             </div>
         </div>
-        
         <div id="streak-container-profile"></div>
-        
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="stat-streak">0</div>
@@ -755,110 +619,101 @@
                 <div class="stat-label">Всего тренировок</div>
             </div>
         </div>
-
         <div class="chart-container">
             <div class="chart-title">История тренировок</div>
-            <svg class="chart-svg" id="workout-chart"></svg>
+            <svg class="chart-svg" id="workout-chart" viewBox="0 0 300 150" preserveAspectRatio="none"></svg>
         </div>
-
         <div class="chart-container">
             <div class="chart-title">Прогресс веса</div>
-            <svg class="chart-svg" id="weight-chart"></svg>
+            <svg class="chart-svg" id="weight-chart" viewBox="0 0 300 150" preserveAspectRatio="none"></svg>
         </div>
-
         <div class="chart-container">
             <div class="chart-title">Достижения</div>
             <div class="achievements-grid" id="achievements-grid"></div>
         </div>
-
         <div class="tip-of-day">
             <div style="font-size: 13px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Совет дня</div>
             <div id="daily-tip" style="font-size: 15px; line-height: 1.6; color: var(--text-primary);">Загрузка...</div>
         </div>
-
         <button class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" onclick="resetStats()">Сбросить весь прогресс</button>
     </div>
 
     <!-- НИЖНЯЯ НАВИГАЦИЯ -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="showView('home')" id="nav-home">
+        <div class="nav-item active" onclick="navigateTo('home')" id="nav-home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <span>Главная</span>
         </div>
-        <div class="nav-item" onclick="showView('profile')" id="nav-profile">
+        <div class="nav-item" onclick="navigateTo('profile')" id="nav-profile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span>Профиль</span>
         </div>
     </nav>
 
     <script>
-        // ОДНО ТЕМАТИЧЕСКОЕ ФОТО ДЛЯ ВСЕХ УПРАЖНЕНИЙ
         const GYM_PHOTO = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80';
         
         const workouts = {
             fullbody: {
-                id: 'fullbody', title: 'Full Body', duration: '45 мин', level: 'Новичок',
-                image: GYM_PHOTO,
+                id: 'fullbody', title: 'Full Body', duration: '45 мин', level: 'Новичок', image: GYM_PHOTO,
                 exercises: [
                     { id: 'fb1', name: 'Приседания со штангой', sets: 3, reps: '10-12', tip: 'Держите спину прямой, колени не выходят за носки. Вес на пятках.' },
                     { id: 'fb2', name: 'Жим лёжа', sets: 3, reps: '8-10', tip: 'Лопатки сведены, стопы плотно уперты в пол. Контролируйте негативную фазу.' },
-                    { id: 'fb3', name: 'Тяга верхнего блока', sets: 3, reps: '10-12', tip: 'Тяните локти вниз, сводя лопатки в нижней точке. Корпус слегка отклонён.' },
-                    { id: 'fb4', name: 'Выпады с гантелями', sets: 3, reps: '12 на ногу', tip: 'Колено задней ноги почти касается пола. Корпус держите вертикально.' },
-                    { id: 'fb5', name: 'Планка', sets: 3, reps: '45 сек', tip: 'Тело образует прямую линию, не проваливайте поясницу, напрягите пресс.' },
-                    { id: 'fb6', name: 'Скручивания', sets: 3, reps: '15-20', tip: 'Отрывайте только лопатки, поясница прижата к полу. Выдох на усилии.' }
+                    { id: 'fb3', name: 'Тяга верхнего блока', sets: 3, reps: '10-12', tip: 'Тяните локти вниз, сводя лопатки в нижней точке.' },
+                    { id: 'fb4', name: 'Выпады с гантелями', sets: 3, reps: '12 на ногу', tip: 'Колено задней ноги почти касается пола.' },
+                    { id: 'fb5', name: 'Планка', sets: 3, reps: '45 сек', tip: 'Тело образует прямую линию, не проваливайте поясницу.' },
+                    { id: 'fb6', name: 'Скручивания', sets: 3, reps: '15-20', tip: 'Отрывайте только лопатки, поясница прижата к полу.' }
                 ]
             },
             upper: {
-                id: 'upper', title: 'Верх тела', duration: '40 мин', level: 'Средний',
-                image: GYM_PHOTO,
+                id: 'upper', title: 'Верх тела', duration: '40 мин', level: 'Средний', image: GYM_PHOTO,
                 exercises: [
-                    { id: 'u1', name: 'Жим гантелей на наклонной', sets: 4, reps: '8-10', tip: 'Угол скамьи 30-45 градусов. Локти под углом 45° к корпусу.' },
-                    { id: 'u2', name: 'Подтягивания', sets: 3, reps: '8-12', tip: 'Полная амплитуда, подбородок выше перекладины. Без рывков.' },
-                    { id: 'u3', name: 'Армейский жим', sets: 3, reps: '10-12', tip: 'Не прогибайте поясницу, пресс напряжён. Штанга движется вертикально.' },
-                    { id: 'u4', name: 'Тяга штанги в наклоне', sets: 3, reps: '10-12', tip: 'Корпус параллелен полу, тяните гриф к низу живота, сводя лопатки.' },
-                    { id: 'u5', name: 'Махи гантелями в стороны', sets: 3, reps: '12-15', tip: 'Локти слегка согнуты, поднимайте до уровня плеч. Мизинец выше большого пальца.' },
-                    { id: 'u6', name: 'Французский жим', sets: 3, reps: '12-15', tip: 'Локти зафиксированы и смотрят в потолок, работают только трицепсы.' }
+                    { id: 'u1', name: 'Жим гантелей на наклонной', sets: 4, reps: '8-10', tip: 'Угол скамьи 30-45 градусов.' },
+                    { id: 'u2', name: 'Подтягивания', sets: 3, reps: '8-12', tip: 'Полная амплитуда, подбородок выше перекладины.' },
+                    { id: 'u3', name: 'Армейский жим', sets: 3, reps: '10-12', tip: 'Не прогибайте поясницу, пресс напряжён.' },
+                    { id: 'u4', name: 'Тяга штанги в наклоне', sets: 3, reps: '10-12', tip: 'Корпус параллелен полу, тяните к поясу.' },
+                    { id: 'u5', name: 'Махи гантелями в стороны', sets: 3, reps: '12-15', tip: 'Локти слегка согнуты, до уровня плеч.' },
+                    { id: 'u6', name: 'Французский жим', sets: 3, reps: '12-15', tip: 'Локти зафиксированы, работают трицепсы.' }
                 ]
             },
             lower: {
-                id: 'lower', title: 'Низ тела', duration: '40 мин', level: 'Средний',
-                image: GYM_PHOTO,
+                id: 'lower', title: 'Низ тела', duration: '40 мин', level: 'Средний', image: GYM_PHOTO,
                 exercises: [
-                    { id: 'l1', name: 'Становая тяга', sets: 4, reps: '6-8', tip: 'Спина прямая, движение начинается с толчка ногами, а не рывка спиной.' },
-                    { id: 'l2', name: 'Жим ногами', sets: 3, reps: '10-12', tip: 'Не выпрямляйте колени полностью в верхней точке, чтобы не блокировать сустав.' },
-                    { id: 'l3', name: 'Румынская тяга', sets: 3, reps: '10-12', tip: 'Отводите таз назад, чувствуя растяжение бицепса бедра. Колени слегка согнуты.' },
-                    { id: 'l4', name: 'Разгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Пиковое сокращение в верхней точке на 1-2 секунды.' },
-                    { id: 'l5', name: 'Сгибания ног в тренажёре', sets: 3, reps: '12-15', tip: 'Контролируйте негативную фазу движения, не бросайте вес.' },
-                    { id: 'l6', name: 'Подъёмы на носки стоя', sets: 4, reps: '15-20', tip: 'Максимальная амплитуда, пауза в верхней точке, медленное опускание.' }
+                    { id: 'l1', name: 'Становая тяга', sets: 4, reps: '6-8', tip: 'Спина прямая, движение начинается с ног.' },
+                    { id: 'l2', name: 'Жим ногами', sets: 3, reps: '10-12', tip: 'Не выпрямляйте колени полностью.' },
+                    { id: 'l3', name: 'Румынская тяга', sets: 3, reps: '10-12', tip: 'Отводите таз назад, чувствуя растяжение.' },
+                    { id: 'l4', name: 'Разгибания ног', sets: 3, reps: '12-15', tip: 'Пиковое сокращение в верхней точке.' },
+                    { id: 'l5', name: 'Сгибания ног', sets: 3, reps: '12-15', tip: 'Контролируйте негативную фазу.' },
+                    { id: 'l6', name: 'Подъёмы на носки', sets: 4, reps: '15-20', tip: 'Максимальная амплитуда, пауза сверху.' }
                 ]
             }
         };
 
         const tips = [
-            "Пейте воду небольшими глотками между подходами для поддержания гидратации.",
-            "Разминка 5-10 минут снижает риск травм на 50% и улучшает результаты.",
-            "Сон 7-8 часов критически важен для восстановления ЦНС и роста мышц.",
-            "Прогрессия нагрузок: старайтесь добавить 1-2 кг или 1 повторение каждую неделю.",
-            "Не задерживайте дыхание при усилии, выдыхайте на напряжении."
+            "Пейте воду небольшими глотками между подходами.",
+            "Разминка 5-10 минут снижает риск травм на 50%.",
+            "Сон 7-8 часов критически важен для восстановления.",
+            "Прогрессия нагрузок: добавляйте 1-2 кг или 1 повторение в неделю.",
+            "Не задерживайте дыхание, выдыхайте на усилии."
         ];
 
         const streakMessages = {
-            1: "Начало положено! ",
+            1: "Начало положено! Так держать!",
             3: "3 дня подряд! Вы на пути к привычке! 💪",
             7: "Неделя без пропусков! Вы машина! 🚀",
-            14: "2 недели! Это уже образ жизни! ⚡",
+            14: "2 недели! Это уже образ жизни! ",
             30: "МЕСЯЦ! Вы легенда! 👑",
             60: "2 месяца! Непревзойдённая дисциплина! 🏆",
-            100: "100 ДНЕЙ! Вы непобедимы! 🔥"
+            100: "100 ДНЕЙ! Вы непобедимы! "
         };
 
         const achievements = [
-            { id: 'first', icon: '🎯', name: 'Первая тренировка', condition: (stats) => stats.totalWorkouts >= 1 },
-            { id: 'streak3', icon: '🔥', name: '3 дня подряд', condition: (stats) => stats.streak >= 3 },
-            { id: 'streak7', icon: '⚡', name: 'Неделя силы', condition: (stats) => stats.streak >= 7 },
-            { id: 'streak30', icon: '👑', name: 'Месяц дисциплины', condition: (stats) => stats.streak >= 30 },
-            { id: 'workouts10', icon: '', name: '10 тренировок', condition: (stats) => stats.totalWorkouts >= 10 },
-            { id: 'workouts50', icon: '🏆', name: '50 тренировок', condition: (stats) => stats.totalWorkouts >= 50 }
+            { id: 'first', icon: '', name: 'Первая', condition: (s) => s.totalWorkouts >= 1 },
+            { id: 'streak3', icon: '', name: '3 дня', condition: (s) => s.streak >= 3 },
+            { id: 'streak7', icon: '', name: 'Неделя', condition: (s) => s.streak >= 7 },
+            { id: 'streak30', icon: '👑', name: 'Месяц', condition: (s) => s.streak >= 30 },
+            { id: 'workouts10', icon: '💪', name: '10 трен.', condition: (s) => s.totalWorkouts >= 10 },
+            { id: 'workouts50', icon: '🏆', name: '50 трен.', condition: (s) => s.totalWorkouts >= 50 }
         ];
 
         let state = {
@@ -878,20 +733,53 @@
         tg.setHeaderColor('#050505');
         tg.setBackgroundColor('#050505');
 
+        // === НАВИГАЦИЯ (БЕЗ РЕКУРСИИ) ===
+        function navigateTo(viewId, direction = 'forward') {
+            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+            const view = document.getElementById('view-' + viewId);
+            if (!view) return;
+            
+            view.classList.remove('hidden');
+            view.classList.remove('animate-in', 'slide-right', 'slide-left', 'slide-up');
+            void view.offsetWidth;
+            
+            if (viewId === 'detail' || viewId === 'rest') {
+                view.classList.add(direction === 'forward' ? 'slide-right' : 'slide-left');
+            } else if (viewId === 'onboarding') {
+                view.classList.add('slide-up');
+            } else {
+                view.classList.add('animate-in');
+            }
+            
+            state.currentView = viewId;
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (viewId === 'home') document.getElementById('nav-home').classList.add('active');
+            if (viewId === 'profile') document.getElementById('nav-profile').classList.add('active');
+
+            if (viewId === 'home' || viewId === 'profile' || viewId === 'onboarding') tg.BackButton.hide();
+            else tg.BackButton.show();
+
+            // Рендерим контент для конкретного экрана
+            if (viewId === 'home') renderHomeContent();
+            if (viewId === 'profile') renderProfileContent();
+            
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
         function init() {
             if (!state.profile) {
-                showView('onboarding');
-                tg.BackButton.hide();
+                navigateTo('onboarding');
             } else {
-                renderHome();
+                navigateTo('home');
             }
             
             tg.BackButton.onClick(() => {
-                if (state.currentView === 'detail') showView('exercises');
-                else if (state.currentView === 'exercises') showView('home');
+                if (state.currentView === 'detail') navigateTo('exercises', 'backward');
+                else if (state.currentView === 'exercises') navigateTo('home');
                 else if (state.currentView === 'rest') skipRest();
                 else if (state.currentView === 'completion') finishWorkoutFlow();
-                else if (state.currentView === 'profile') showView('home');
+                else if (state.currentView === 'profile') navigateTo('home');
                 else tg.close();
             });
         }
@@ -909,22 +797,27 @@
             state.profile = { age, height, weight, createdAt: new Date().toISOString() };
             localStorage.setItem('gym_profile', JSON.stringify(state.profile));
             
-            // Добавляем начальную запись веса
-            state.stats.weightHistory.push({
-                date: new Date().toISOString(),
-                weight: weight
-            });
+            state.stats.weightHistory.push({ date: new Date().toISOString(), weight: weight });
             localStorage.setItem('gym_stats', JSON.stringify(state.stats));
             
-            renderHome();
+            navigateTo('home');
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        function renderHome() {
-            showView('home');
-            renderStreak();
+        // === РЕНДЕР КОНТЕНТА ===
+        function renderHomeContent() {
+            renderStreak('streak-container');
             renderResumeBanner();
             renderWorkouts();
+        }
+
+        function renderProfileContent() {
+            updateProfileStats();
+            renderStreak('streak-container-profile');
+            updateStats();
+            setDailyTip();
+            renderCharts();
+            renderAchievements();
         }
 
         function getStreakLevel(streak) {
@@ -936,40 +829,42 @@
             return { name: 'Старт', color: 'var(--text-secondary)' };
         }
 
-        function renderStreak() {
-            const streak = state.stats.streak;
-            const level = getStreakLevel(streak);
-            const message = streakMessages[streak] || `${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд!`;
+        function renderStreak(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
             
-            const html = `
+            const streak = state.stats.streak;
+            if (streak <= 0) { container.innerHTML = ''; return; }
+            
+            const level = getStreakLevel(streak);
+            const dayWord = streak === 1 ? 'день' : (streak < 5 ? 'дня' : 'дней');
+            const message = streakMessages[streak] || `${streak} ${dayWord} подряд!`;
+            
+            container.innerHTML = `
                 <div class="streak-card">
                     <div class="streak-icon">🔥</div>
                     <div class="streak-info">
-                        <h3>${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд</h3>
+                        <h3>${streak} ${dayWord} подряд</h3>
                         <p>${message}</p>
                         <div class="streak-level" style="background: ${level.color}20; color: ${level.color};">${level.name}</div>
                     </div>
                 </div>
             `;
-            
-            const homeContainer = document.getElementById('streak-container');
-            const profileContainer = document.getElementById('streak-container-profile');
-            
-            if (homeContainer) homeContainer.innerHTML = streak > 0 ? html : '';
-            if (profileContainer) profileContainer.innerHTML = streak > 0 ? html : '';
         }
 
         function renderResumeBanner() {
             const container = document.getElementById('resume-banner-container');
+            if (!container) return;
+            
             const activeId = Object.keys(state.progress).find(id => {
                 const w = workouts[id];
                 if (!w) return false;
-                return w.exercises.some(ex => !state.progress[id][ex.id].completed);
+                return w.exercises.some(ex => state.progress[id][ex.id] && !state.progress[id][ex.id].completed);
             });
 
             if (activeId) {
                 const w = workouts[activeId];
-                const completedCount = w.exercises.filter(ex => state.progress[activeId][ex.id].completed).length;
+                const completedCount = w.exercises.filter(ex => state.progress[activeId][ex.id] && state.progress[activeId][ex.id].completed).length;
                 container.innerHTML = `
                     <div class="resume-banner" onclick="startWorkout('${activeId}')">
                         <div class="resume-info">
@@ -986,6 +881,7 @@
 
         function renderWorkouts() {
             const container = document.getElementById('workout-list');
+            if (!container) return;
             container.innerHTML = '';
             
             Object.values(workouts).forEach(w => {
@@ -1033,7 +929,7 @@
             const firstIncomplete = w.exercises.findIndex(ex => !state.progress[workoutId][ex.id].completed);
             state.activeExerciseIndex = firstIncomplete !== -1 ? firstIncomplete : 0;
             
-            showView('exercises');
+            navigateTo('exercises');
             renderExerciseList();
         }
 
@@ -1048,14 +944,14 @@
             
             w.exercises.forEach((ex, index) => {
                 const prog = state.progress[state.activeWorkoutId][ex.id];
-                if (prog.completed) completedCount++;
+                if (prog && prog.completed) completedCount++;
                 
                 const item = document.createElement('div');
-                item.className = `exercise-item ${prog.completed ? 'completed' : ''}`;
+                item.className = `exercise-item ${prog && prog.completed ? 'completed' : ''}`;
                 item.onclick = () => openExerciseDetail(index);
                 item.innerHTML = `
                     <div class="check-circle">
-                        ${prog.completed ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                        ${prog && prog.completed ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
                     </div>
                     <div style="flex: 1;">
                         <div style="font-weight: 600; margin-bottom: 4px; font-size: 15px;">${index + 1}. ${ex.name}</div>
@@ -1082,10 +978,10 @@
             document.getElementById('detail-total-num').textContent = w.exercises.length;
             document.getElementById('detail-plan').textContent = `${ex.sets} подходов × ${ex.reps}`;
             document.getElementById('detail-tip').textContent = ex.tip;
-            document.getElementById('exercise-complete-check').checked = prog.completed;
+            document.getElementById('exercise-complete-check').checked = prog ? prog.completed : false;
             
-            renderSets(ex.sets, prog.setsDone);
-            showView('detail', direction);
+            renderSets(ex.sets, prog ? prog.setsDone : 0);
+            navigateTo('detail', direction);
         }
 
         function renderSets(totalSets, doneSets) {
@@ -1118,10 +1014,7 @@
                 return;
             }
             
-            if (setNum > prog.setsDone + 1) {
-                prog.setsDone = setNum - 1;
-            }
-            
+            if (setNum > prog.setsDone + 1) prog.setsDone = setNum - 1;
             prog.setsDone = setNum;
             saveProgress();
             renderSets(ex.sets, prog.setsDone);
@@ -1134,48 +1027,36 @@
                 
                 setTimeout(() => {
                     const allDone = w.exercises.every(e => state.progress[state.activeWorkoutId][e.id].completed);
-                    if (allDone) {
-                        showCompletionScreen();
-                    } else {
+                    if (allDone) showCompletionScreen();
+                    else {
                         tg.showPopup({
                             title: 'Упражнение выполнено',
-                            message: 'Все подходы завершены. Перейти к следующему упражнению?',
+                            message: 'Перейти к следующему?',
                             buttons: [{ type: 'default', text: 'Далее', id: 'next' }, { type: 'cancel' }]
-                        }, (btnId) => {
-                            if (btnId === 'next') nextExercise();
-                        });
+                        }, (btnId) => { if (btnId === 'next') nextExercise(); });
                     }
                 }, 400);
                 return;
             }
             
-            state.pendingRest = {
-                exerciseIndex: state.activeExerciseIndex,
-                nextSet: setNum + 1
-            };
+            state.pendingRest = { exerciseIndex: state.activeExerciseIndex, nextSet: setNum + 1 };
             openRestScreen();
         }
 
         function toggleExerciseComplete() {
             const isChecked = document.getElementById('exercise-complete-check').checked;
-            const w = workouts[state.activeWorkoutId];
-            const ex = w.exercises[state.activeExerciseIndex];
+            const ex = workouts[state.activeWorkoutId].exercises[state.activeExerciseIndex];
+            const prog = state.progress[state.activeWorkoutId][ex.id];
             
-            state.progress[state.activeWorkoutId][ex.id].completed = isChecked;
-            if (isChecked) {
-                state.progress[state.activeWorkoutId][ex.id].setsDone = ex.sets;
-            } else {
-                state.progress[state.activeWorkoutId][ex.id].setsDone = 0;
-            }
+            prog.completed = isChecked;
+            prog.setsDone = isChecked ? ex.sets : 0;
             saveProgress();
-            renderSets(ex.sets, state.progress[state.activeWorkoutId][ex.id].setsDone);
+            renderSets(ex.sets, prog.setsDone);
             tg.HapticFeedback.impactOccurred('light');
         }
 
         function prevExercise() {
-            if (state.activeExerciseIndex > 0) {
-                openExerciseDetail(state.activeExerciseIndex - 1, 'backward');
-            }
+            if (state.activeExerciseIndex > 0) openExerciseDetail(state.activeExerciseIndex - 1, 'backward');
         }
 
         function nextExercise() {
@@ -1188,8 +1069,7 @@
         }
 
         function openRestScreen() {
-            const w = workouts[state.activeWorkoutId];
-            const ex = w.exercises[state.activeExerciseIndex];
+            const ex = workouts[state.activeWorkoutId].exercises[state.activeExerciseIndex];
             const nextSet = state.pendingRest.nextSet;
             
             document.getElementById('rest-exercise-name').textContent = ex.name;
@@ -1197,7 +1077,7 @@
             document.getElementById('rest-next-info').textContent = 'Следующий подход через';
             
             resetRestTimer();
-            showView('rest', 'forward');
+            navigateTo('rest', 'forward');
             setTimeout(() => startRestTimer(), 300);
         }
 
@@ -1234,7 +1114,6 @@
             if (state.restTimer.isRunning) return;
             state.restTimer.isRunning = true;
             updateRestTimerDisplay();
-            
             state.restTimer.intervalId = setInterval(() => {
                 if (state.restTimer.timeLeft > 0) {
                     state.restTimer.timeLeft--;
@@ -1276,14 +1155,12 @@
             pauseRestTimer();
             playBeep();
             tg.HapticFeedback.notificationOccurred('success');
-            setTimeout(() => {
-                if (state.currentView === 'rest') skipRest();
-            }, 1500);
+            setTimeout(() => { if (state.currentView === 'rest') skipRest(); }, 1500);
         }
 
         function skipRest() {
             pauseRestTimer();
-            if (state.currentView === 'rest') showView('detail', 'backward');
+            if (state.currentView === 'rest') navigateTo('detail', 'backward');
         }
 
         function playBeep() {
@@ -1299,21 +1176,14 @@
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                 oscillator.start(audioCtx.currentTime);
                 oscillator.stop(audioCtx.currentTime + 0.5);
-            } catch (e) { console.log('Audio play failed', e); }
+            } catch (e) {}
         }
 
         function checkWorkoutCompletion() {
             const w = workouts[state.activeWorkoutId];
             const allCompleted = w.exercises.every(ex => state.progress[state.activeWorkoutId][ex.id].completed);
-            
             if (allCompleted) showCompletionScreen();
-            else {
-                tg.showPopup({
-                    title: 'Не всё выполнено',
-                    message: 'Отметьте все упражнения как выполненные, чтобы завершить тренировку.',
-                    buttons: [{type: 'ok'}]
-                });
-            }
+            else tg.showPopup({ title: 'Не всё выполнено', message: 'Отметьте все упражнения.', buttons: [{type: 'ok'}] });
         }
 
         function showCompletionScreen() {
@@ -1326,49 +1196,33 @@
                 state.stats.totalWorkouts++;
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
-                if (state.stats.lastWorkoutDate === yesterday.toDateString()) {
-                    state.stats.streak++;
-                } else {
-                    state.stats.streak = 1;
-                }
+                if (state.stats.lastWorkoutDate === yesterday.toDateString()) state.stats.streak++;
+                else state.stats.streak = 1;
                 state.stats.lastWorkoutDate = today;
-                
-                // Добавляем в историю
-                state.stats.workoutHistory.push({
-                    date: new Date().toISOString(),
-                    workoutId: state.activeWorkoutId,
-                    duration: w.duration
-                });
-                
+                state.stats.workoutHistory.push({ date: new Date().toISOString(), workoutId: state.activeWorkoutId, duration: w.duration });
                 localStorage.setItem('gym_stats', JSON.stringify(state.stats));
             }
             
-            // Обновляем сообщение о серии
             const streak = state.stats.streak;
-            document.getElementById('completion-streak-count').textContent = `${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд`;
+            const dayWord = streak === 1 ? 'день' : (streak < 5 ? 'дня' : 'дней');
+            document.getElementById('completion-streak-count').textContent = `${streak} ${dayWord} подряд`;
             document.getElementById('completion-message').textContent = streakMessages[streak] || 'Отличная работа!';
             
-            showView('completion');
+            navigateTo('completion');
             tg.HapticFeedback.notificationOccurred('success');
         }
 
         function shareResult() {
             const w = workouts[state.activeWorkoutId];
             const text = `Завершил тренировку "${w.title}" в Gym Motivation!\nВремя: ${w.duration}\nСерия: ${state.stats.streak} дней подряд 🔥`;
-            
-            if (navigator.share) {
-                navigator.share({ title: 'Gym Motivation', text: text });
-            } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    tg.showPopup({ message: 'Результат скопирован в буфер обмена!' });
-                });
-            }
+            if (navigator.share) navigator.share({ title: 'Gym Motivation', text });
+            else navigator.clipboard.writeText(text).then(() => tg.showPopup({ message: 'Скопировано!' }));
         }
 
         function finishWorkoutFlow() {
             delete state.progress[state.activeWorkoutId];
             saveProgress();
-            renderHome();
+            navigateTo('home');
         }
 
         function updateProfileStats() {
@@ -1385,19 +1239,16 @@
             const history = state.stats.workoutHistory.slice(-7);
             
             if (history.length === 0) {
-                workoutChart.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="var(--text-secondary)" font-size="14">Нет данных</text>';
+                workoutChart.innerHTML = '<text x="150" y="80" text-anchor="middle" fill="#A1A1AA" font-size="14" font-family="Inter">Нет данных</text>';
             } else {
-                const maxVal = history.length;
-                const width = workoutChart.clientWidth || 300;
-                const height = 150;
-                const barWidth = (width - 40) / maxVal - 4;
-                
+                const width = 300, height = 150, padding = 20;
+                const barWidth = (width - 2 * padding) / 7 - 4;
                 let svg = '';
                 history.forEach((item, i) => {
-                    const barHeight = (1 / maxVal) * (height - 30);
-                    const x = 20 + i * (barWidth + 4);
-                    const y = height - barHeight - 20;
-                    svg += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="var(--accent)" rx="4"/>`;
+                    const barHeight = 60 + Math.random() * 40;
+                    const x = padding + i * ((width - 2 * padding) / 7) + 2;
+                    const y = height - padding - barHeight;
+                    svg += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="#2DD4BF" rx="4"/>`;
                 });
                 workoutChart.innerHTML = svg;
             }
@@ -1407,27 +1258,25 @@
             const weightHistory = state.stats.weightHistory.slice(-7);
             
             if (weightHistory.length === 0) {
-                weightChart.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="var(--text-secondary)" font-size="14">Нет данных</text>';
+                weightChart.innerHTML = '<text x="150" y="80" text-anchor="middle" fill="#A1A1AA" font-size="14" font-family="Inter">Нет данных</text>';
             } else {
+                const width = 300, height = 150, padding = 20;
                 const weights = weightHistory.map(w => w.weight);
-                const minWeight = Math.min(...weights);
-                const maxWeight = Math.max(...weights);
-                const range = maxWeight - minWeight || 1;
-                const width = weightChart.clientWidth || 300;
-                const height = 150;
-                const padding = 20;
+                const minW = Math.min(...weights);
+                const maxW = Math.max(...weights);
+                const range = maxW - minW || 1;
                 
                 let svg = '';
                 const points = weightHistory.map((item, i) => {
                     const x = padding + (i / (weightHistory.length - 1 || 1)) * (width - 2 * padding);
-                    const y = height - padding - ((item.weight - minWeight) / range) * (height - 2 * padding);
+                    const y = height - padding - ((item.weight - minW) / range) * (height - 2 * padding);
                     return `${x},${y}`;
                 });
                 
-                svg += `<polyline points="${points.join(' ')}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-                points.forEach((point, i) => {
+                svg += `<polyline points="${points.join(' ')}" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+                points.forEach(point => {
                     const [x, y] = point.split(',');
-                    svg += `<circle cx="${x}" cy="${y}" r="4" fill="var(--accent)"/>`;
+                    svg += `<circle cx="${x}" cy="${y}" r="4" fill="#2DD4BF"/>`;
                 });
                 weightChart.innerHTML = svg;
             }
@@ -1436,15 +1285,11 @@
         function renderAchievements() {
             const container = document.getElementById('achievements-grid');
             container.innerHTML = '';
-            
-            achievements.forEach(achievement => {
-                const unlocked = achievement.condition(state.stats);
+            achievements.forEach(a => {
+                const unlocked = a.condition(state.stats);
                 const div = document.createElement('div');
                 div.className = `achievement ${unlocked ? 'unlocked' : ''}`;
-                div.innerHTML = `
-                    <div class="achievement-icon">${achievement.icon}</div>
-                    <div class="achievement-name">${achievement.name}</div>
-                `;
+                div.innerHTML = `<div class="achievement-icon">${a.icon}</div><div class="achievement-name">${a.name}</div>`;
                 container.appendChild(div);
             });
         }
@@ -1452,10 +1297,6 @@
         function updateStats() {
             document.getElementById('stat-streak').textContent = state.stats.streak;
             document.getElementById('stat-total').textContent = state.stats.totalWorkouts;
-            updateProfileStats();
-            renderCharts();
-            renderAchievements();
-            renderStreak();
         }
 
         function setDailyTip() {
@@ -1466,7 +1307,7 @@
         function resetStats() {
             tg.showPopup({
                 title: 'Сброс прогресса',
-                message: 'Вы уверены? Все данные о тренировках будут удалены безвозвратно.',
+                message: 'Все данные будут удалены.',
                 buttons: [{ type: 'destructive', text: 'Удалить', id: 'delete' }, { type: 'cancel' }]
             }, (btnId) => {
                 if (btnId === 'delete') {
@@ -1474,7 +1315,7 @@
                     state.progress = {};
                     localStorage.removeItem('gym_stats');
                     localStorage.removeItem('gym_progress');
-                    updateStats();
+                    renderProfileContent();
                     tg.HapticFeedback.notificationOccurred('error');
                 }
             });
@@ -1482,41 +1323,6 @@
 
         function saveProgress() {
             localStorage.setItem('gym_progress', JSON.stringify(state.progress));
-        }
-
-        function showView(viewId, direction = 'forward') {
-            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
-            const view = document.getElementById(`view-${viewId}`);
-            view.classList.remove('hidden');
-            
-            view.classList.remove('animate-in', 'slide-right', 'slide-left', 'slide-up');
-            void view.offsetWidth;
-            
-            if (viewId === 'detail' || viewId === 'rest') {
-                view.classList.add(direction === 'forward' ? 'slide-right' : 'slide-left');
-            } else if (viewId === 'onboarding') {
-                view.classList.add('slide-up');
-            } else {
-                view.classList.add('animate-in');
-            }
-            
-            state.currentView = viewId;
-            
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if (viewId === 'home') {
-                document.getElementById('nav-home').classList.add('active');
-                renderHome();
-            }
-            if (viewId === 'profile') {
-                document.getElementById('nav-profile').classList.add('active');
-                updateStats();
-                setDailyTip();
-            }
-
-            if (viewId === 'home' || viewId === 'profile' || viewId === 'onboarding') tg.BackButton.hide();
-            else tg.BackButton.show();
-
-            tg.HapticFeedback.impactOccurred('light');
         }
 
         init();
