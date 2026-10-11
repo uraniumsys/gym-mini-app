@@ -29,7 +29,6 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* СКРЫТИЕ СТРЕЛОЧЕК У INPUT NUMBER */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -88,7 +87,6 @@
         .btn-ghost { background: transparent; color: var(--text-secondary); padding: 12px; }
         .btn-large { padding: 18px 24px; font-size: 17px; }
 
-        /* ОНБОРДИНГ */
         .onboarding-screen {
             min-height: 100vh;
             display: flex;
@@ -138,7 +136,6 @@
         .input-field:focus { outline: none; border-color: var(--accent); }
         .input-field::placeholder { color: var(--text-secondary); font-weight: 400; }
 
-        /* Баннер продолжения */
         .resume-banner {
             background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(45, 212, 191, 0.05));
             border: 1px solid rgba(45, 212, 191, 0.3);
@@ -155,7 +152,6 @@
         .resume-info h3 { margin: 0 0 4px 0; font-size: 16px; color: var(--accent); }
         .resume-info p { margin: 0; font-size: 13px; color: var(--text-secondary); }
 
-        /* Кнопка создать программу */
         .create-program-btn {
             background: var(--bg-secondary);
             border: 2px dashed var(--bg-tertiary);
@@ -179,7 +175,6 @@
         }
         .create-program-btn svg { width: 24px; height: 24px; }
 
-        /* Карточки тренировок */
         .workout-card {
             background: var(--bg-secondary);
             border-radius: var(--radius);
@@ -223,7 +218,6 @@
         .meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); font-weight: 500; }
         .meta-item svg { width: 16px; height: 16px; stroke: var(--accent); }
 
-        /* Серия (Streak) — ИСПРАВЛЕНА */
         .streak-card {
             background: linear-gradient(135deg, #1a0f05, #0f0805);
             border: 1px solid rgba(249, 115, 22, 0.4);
@@ -270,7 +264,6 @@
             margin-top: 6px;
         }
 
-        /* Список упражнений */
         .progress-bar { height: 4px; background: var(--bg-tertiary); border-radius: 2px; margin: 16px 0; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; }
         
@@ -292,7 +285,6 @@
         }
         .exercise-item.completed .check-circle { background: var(--accent); border-color: var(--accent); }
 
-        /* Детали упражнения */
         .detail-image-wrapper {
             width: calc(100% + 40px);
             margin-left: -20px;
@@ -371,7 +363,6 @@
         .exercise-nav { display: flex; gap: 12px; }
         .exercise-nav .btn { flex: 1; }
 
-        /* Экран отдыха */
         .rest-screen { text-align: center; padding: 40px 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
         .rest-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; }
         .rest-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 40px; }
@@ -422,7 +413,6 @@
         }
         .rest-skip-btn:active { background: var(--bg-tertiary); border-color: var(--accent); }
 
-        /* Экран завершения */
         .completion-screen { text-align: center; padding-top: 60px; }
         .completion-icon { 
             width: 88px; height: 88px; margin: 0 auto 24px; 
@@ -446,7 +436,6 @@
         .comp-stat-val { font-size: 28px; font-weight: 800; color: var(--accent); }
         .comp-stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-top: 4px; }
 
-        /* Профиль */
         .profile-header {
             background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), transparent);
             padding: 24px; border-radius: var(--radius);
@@ -495,7 +484,6 @@
         .chart-btn:active { transform: scale(0.95); background: var(--accent); color: #000; }
         .chart-svg { width: 100%; height: 180px; display: block; }
         
-        /* ДОСТИЖЕНИЯ — ИСПРАВЛЕНЫ */
         .achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .achievement {
             background: var(--bg-secondary); 
@@ -529,7 +517,6 @@
             margin-bottom: 24px;
         }
 
-        /* КОНСТРУКТОР ПРОГРАММ */
         .builder-header {
             background: var(--bg-secondary);
             padding: 20px;
@@ -607,7 +594,6 @@
         .builder-exercise-name { font-weight: 600; font-size: 15px; flex: 1; }
         .builder-exercise-meta { font-size: 12px; color: var(--text-secondary); }
 
-        /* МОДАЛКА */
         .modal-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,0.85);
@@ -654,292 +640,10 @@
             transition: background 0.2s;
         }
         .back-btn:active { background: var(--bg-tertiary); }
-        /* === УПРАВЛЕНИЕ ПРОГРАММАМИ === */
-.workout-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-}
-.workout-action-btn {
-    flex: 1;
-    background: var(--bg-tertiary);
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-.workout-action-btn:active { transform: scale(0.95); }
-.workout-action-btn.edit { color: var(--accent); }
-.workout-action-btn.delete { color: var(--danger); }
-.workout-action-btn svg { width: 16px; height: 16px; }
-
-/* === КАЛЕНДАРЬ === */
-.calendar-container {
-    background: var(--bg-secondary);
-    padding: 20px;
-    border-radius: var(--radius);
-    border: 1px solid var(--bg-tertiary);
-    margin-bottom: 24px;
-}
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-.calendar-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.calendar-nav {
-    display: flex;
-    gap: 8px;
-}
-.calendar-nav button {
-    background: var(--bg-tertiary);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    color: var(--text-primary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: inherit;
-    transition: background 0.2s;
-}
-.calendar-nav button:active { background: var(--bg-elevated); }
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-}
-.calendar-day-header {
-    text-align: center;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    padding: 8px 0;
-    text-transform: uppercase;
-}
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    position: relative;
-}
-.calendar-day.other-month { opacity: 0.3; }
-.calendar-day.today { 
-    background: var(--accent-dim); 
-    color: var(--accent);
-    font-weight: 700;
-}
-.calendar-day.workout { 
-    background: var(--accent); 
-    color: #000;
-    font-weight: 700;
-}
-.calendar-day.workout::after {
-    content: '';
-    position: absolute;
-    bottom: 4px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: #000;
-}
-
-/* === НАСТРОЙКИ ПОДХОДОВ В КОНСТРУКТОРЕ === */
-.builder-exercise-settings {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--bg-tertiary);
-}
-.setting-input {
-    flex: 1;
-    background: var(--bg-primary);
-    border: 1px solid var(--bg-tertiary);
-    border-radius: 6px;
-    padding: 6px;
-    font-size: 12px;
-    color: var(--text-primary);
-    font-family: inherit;
-    text-align: center;
-}
-.setting-input:focus { outline: none; border-color: var(--accent); }
-.setting-label {
-    font-size: 10px;
-    color: var(--text-secondary);
-    text-align: center;
-    margin-top: 2px;
-}
-
-/* === ЭКСПОРТ/ИМПОРТ === */
-.data-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-.data-action-btn {
-    background: var(--bg-secondary);
-    border: 1px solid var(--bg-tertiary);
-    padding: 16px;
-    border-radius: 12px;
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-.data-action-btn:active { transform: scale(0.95); border-color: var(--accent); }
-.data-action-btn svg { width: 24px; height: 24px; stroke: var(--accent); }
-
-/* === СТАТИСТИКА ПО МЫШЦАМ === */
-.muscle-stats {
-    background: var(--bg-secondary);
-    padding: 20px;
-    border-radius: var(--radius);
-    border: 1px solid var(--bg-tertiary);
-    margin-bottom: 24px;
-}
-.muscle-stat-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.muscle-stat-item:last-child { margin-bottom: 0; }
-.muscle-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    width: 80px;
-}
-.muscle-bar-bg {
-    flex: 1;
-    height: 8px;
-    background: var(--bg-tertiary);
-    border-radius: 4px;
-    overflow: hidden;
-}
-.muscle-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), #14B8A6);
-    border-radius: 4px;
-    transition: width 0.5s ease;
-}
-.muscle-count {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent);
-    width: 30px;
-    text-align: right;
-}
-
-/* === МОДАЛКА РЕДАКТИРОВАНИЯ === */
-.modal-large {
-    max-width: 500px;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-.modal-large::-webkit-scrollbar { width: 6px; }
-.modal-large::-webkit-scrollbar-track { background: var(--bg-primary); }
-.modal-large::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
-
-.edit-exercise-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: var(--bg-primary);
-    border-radius: 10px;
-    margin-bottom: 8px;
-}
-.edit-exercise-name { flex: 1; font-weight: 600; font-size: 14px; }
-.edit-exercise-inputs { display: flex; gap: 8px; }
-.edit-input {
-    width: 60px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--bg-tertiary);
-    border-radius: 6px;
-    padding: 6px;
-    font-size: 13px;
-    color: var(--text-primary);
-    font-family: inherit;
-    text-align: center;
-}
-.edit-input:focus { outline: none; border-color: var(--accent); }
-.remove-exercise-btn {
-    background: transparent;
-    border: none;
-    color: var(--danger);
-    cursor: pointer;
-    padding: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.remove-exercise-btn svg { width: 18px; height: 18px; }
-
-/* === УВЕДОМЛЕНИЯ === */
-.notification-banner {
-    background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(45, 212, 191, 0.05));
-    border: 1px solid rgba(45, 212, 191, 0.3);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.notification-banner:active { transform: scale(0.98); }
-.notification-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--accent-dim);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-.notification-icon svg { width: 20px; height: 20px; stroke: var(--accent); }
-.notification-text { flex: 1; }
-.notification-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
-.notification-desc { font-size: 13px; color: var(--text-secondary); }
     </style>
 </head>
 <body>
 
-    <!-- ОНБОРДИНГ -->
     <div id="view-onboarding" class="view onboarding-screen hidden">
         <div class="onboarding-title">Gym Motivation</div>
         <div class="onboarding-subtitle">Давайте настроим ваш профиль</div>
@@ -960,14 +664,12 @@
         <button class="btn btn-large" style="margin-top: 20px;" onclick="completeOnboarding()">Начать тренировки</button>
     </div>
 
-    <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="view-home" class="view container hidden">
         <h1>Тренировки</h1>
         <p class="subtitle">Выберите программу или создайте свою</p>
         <div id="streak-container"></div>
         <div id="resume-banner-container"></div>
         
-        <!-- КНОПКА СОЗДАТЬ ПРОГРАММУ -->
         <div class="create-program-btn" onclick="navigateTo('builder')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -979,7 +681,6 @@
         <div id="workout-list"></div>
     </div>
 
-    <!-- КОНСТРУКТОР ПРОГРАММ -->
     <div id="view-builder" class="view container hidden">
         <div class="screen-header">
             <button class="back-btn" onclick="navigateTo('home', 'backward')">
@@ -1002,7 +703,6 @@
         <button class="btn btn-large" style="margin-top: 20px;" onclick="saveCustomProgram()">Сохранить программу</button>
     </div>
 
-    <!-- СПИСОК УПРАЖНЕНИЙ -->
     <div id="view-exercises" class="view container hidden">
         <div class="screen-header">
             <button class="back-btn" onclick="navigateTo('home')">
@@ -1014,7 +714,6 @@
         <div id="exercises-list-container"></div>
     </div>
 
-    <!-- ДЕТАЛИ УПРАЖНЕНИЯ -->
     <div id="view-detail" class="view hidden" style="max-width: 600px; margin: 0 auto;">
         <div class="detail-image-wrapper">
             <img id="detail-image" class="detail-image" src="" alt="">
@@ -1049,7 +748,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН ОТДЫХА -->
     <div id="view-rest" class="view hidden">
         <div class="rest-screen">
             <div class="rest-label">Отдых</div>
@@ -1078,7 +776,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН ЗАВЕРШЕНИЯ -->
     <div id="view-completion" class="view container hidden completion-screen">
         <div class="completion-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1103,7 +800,6 @@
         <button class="btn btn-ghost" onclick="finishWorkoutFlow()">Вернуться на главную</button>
     </div>
 
-    <!-- ПРОФИЛЬ -->
     <div id="view-profile" class="view container hidden">
         <h1>Прогресс</h1>
         <p class="subtitle">Ваша статистика и достижения</p>
@@ -1124,19 +820,6 @@
             </div>
         </div>
         <div id="streak-container-profile"></div>
-        <div id="notification-container"></div>
-<div class="calendar-container" id="calendar-container"></div>
-<div class="muscle-stats" id="muscle-stats-container"></div>
-<div class="data-actions">
-    <button class="data-action-btn" onclick="exportData()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        Экспорт
-    </button>
-    <button class="data-action-btn" onclick="importData()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-        Импорт
-    </button>
-</div>
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="stat-streak">0</div>
@@ -1169,7 +852,6 @@
         <button class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" onclick="resetStats()">Сбросить весь прогресс</button>
     </div>
 
-    <!-- МОДАЛКА ВВОСА ВЕСА -->
     <div id="weight-modal" class="modal-overlay hidden">
         <div class="modal">
             <h3>Текущий вес</h3>
@@ -1184,7 +866,6 @@
         </div>
     </div>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="navigateTo('home')" id="nav-home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -1195,37 +876,34 @@
             <span>Профиль</span>
         </div>
     </nav>
-<!-- МОДАЛКА РЕДАКТИРОВАНИЯ ПРОГРАММЫ -->
-<div id="edit-modal" class="modal-overlay hidden">
-    <div class="modal modal-large">
-        <h3>Редактировать программу</h3>
-        <div class="input-group">
-            <label class="input-label">Название</label>
-            <input type="text" class="input-field" id="edit-program-name" placeholder="Моя программа" maxlength="30">
-        </div>
-        <div id="edit-exercises-list"></div>
-        <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeEditModal()">Отмена</button>
-            <button class="btn" onclick="saveEditProgram()">Сохранить</button>
-        </div>
-    </div>
-</div>
 
-<!-- МОДАЛКА ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ -->
-<div id="delete-modal" class="modal-overlay hidden">
-    <div class="modal">
-        <h3>Удалить программу?</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">Это действие нельзя отменить.</p>
-        <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeDeleteModal()">Отмена</button>
-            <button class="btn" style="background: var(--danger);" onclick="confirmDeleteProgram()">Удалить</button>
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="modal modal-large">
+            <h3>Редактировать программу</h3>
+            <div class="input-group">
+                <label class="input-label">Название</label>
+                <input type="text" class="input-field" id="edit-program-name" placeholder="Моя программа" maxlength="30">
+            </div>
+            <div id="edit-exercises-list"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Отмена</button>
+                <button class="btn" onclick="saveEditProgram()">Сохранить</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <div id="delete-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>Удалить программу?</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Это действие нельзя отменить.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Отмена</button>
+                <button class="btn" style="background: var(--danger);" onclick="confirmDeleteProgram()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // === ДАННЫЕ ===
-        
-        // ПРОВЕРЕННЫЕ URL ФОТО (100% работают)
         const workoutImages = {
             fullbody: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
             upper: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80',
@@ -1233,9 +911,7 @@
         };
         const GYM_PHOTO = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80';
         
-        // ВСЕ УПРАЖНЕНИЯ ДЛЯ КОНСТРУКТОРА
         const allExercises = [
-            // Ноги
             { id: 'ex_squat', name: 'Приседания со штангой', sets: 3, reps: '10-12', tip: 'Держите спину прямой, колени не выходят за носки.', category: 'Ноги' },
             { id: 'ex_lunge', name: 'Выпады с гантелями', sets: 3, reps: '12 на ногу', tip: 'Колено задней ноги почти касается пола.', category: 'Ноги' },
             { id: 'ex_deadlift', name: 'Становая тяга', sets: 4, reps: '6-8', tip: 'Спина прямая, движение начинается с ног.', category: 'Ноги' },
@@ -1244,26 +920,20 @@
             { id: 'ex_legext', name: 'Разгибания ног', sets: 3, reps: '12-15', tip: 'Пиковое сокращение в верхней точке.', category: 'Ноги' },
             { id: 'ex_legcurl', name: 'Сгибания ног', sets: 3, reps: '12-15', tip: 'Контролируйте негативную фазу.', category: 'Ноги' },
             { id: 'ex_calf', name: 'Подъёмы на носки', sets: 4, reps: '15-20', tip: 'Максимальная амплитуда, пауза сверху.', category: 'Ноги' },
-            // Грудь
             { id: 'ex_bench', name: 'Жим лёжа', sets: 3, reps: '8-10', tip: 'Лопатки сведены, стопы плотно уперты в пол.', category: 'Грудь' },
             { id: 'ex_incline', name: 'Жим на наклонной', sets: 4, reps: '8-10', tip: 'Угол скамьи 30-45 градусов.', category: 'Грудь' },
-            // Спина
             { id: 'ex_pulldown', name: 'Тяга верхнего блока', sets: 3, reps: '10-12', tip: 'Тяните локти вниз, сводя лопатки.', category: 'Спина' },
             { id: 'ex_pullup', name: 'Подтягивания', sets: 3, reps: '8-12', tip: 'Полная амплитуда, подбородок выше перекладины.', category: 'Спина' },
             { id: 'ex_barbellrow', name: 'Тяга штанги в наклоне', sets: 3, reps: '10-12', tip: 'Корпус параллелен полу, тяните к поясу.', category: 'Спина' },
-            // Плечи
             { id: 'ex_ohp', name: 'Армейский жим', sets: 3, reps: '10-12', tip: 'Не прогибайте поясницу, пресс напряжён.', category: 'Плечи' },
             { id: 'ex_lateral', name: 'Махи гантелями в стороны', sets: 3, reps: '12-15', tip: 'Локти слегка согнуты, до уровня плеч.', category: 'Плечи' },
-            // Руки
             { id: 'ex_skull', name: 'Французский жим', sets: 3, reps: '12-15', tip: 'Локти зафиксированы, работают трицепсы.', category: 'Руки' },
-            // Кор
             { id: 'ex_plank', name: 'Планка', sets: 3, reps: '45 сек', tip: 'Тело образует прямую линию.', category: 'Кор' },
             { id: 'ex_crunch', name: 'Скручивания', sets: 3, reps: '15-20', tip: 'Отрывайте только лопатки.', category: 'Кор' }
         ];
         
         const categories = ['Ноги', 'Грудь', 'Спина', 'Плечи', 'Руки', 'Кор'];
         
-        // БАЗОВЫЕ ПРОГРАММЫ
         const baseWorkouts = {
             fullbody: {
                 id: 'fullbody', title: 'Full Body', duration: '45 мин', level: 'Новичок', image: workoutImages.fullbody, isCustom: false,
@@ -1279,7 +949,6 @@
             }
         };
         
-        // Загрузка пользовательских программ
         let customWorkouts = JSON.parse(localStorage.getItem('gym_custom_workouts')) || {};
         
         function getAllWorkouts() {
@@ -1313,7 +982,6 @@
             100: "100 ДНЕЙ! Вы непобедимы!"
         };
 
-        // SVG ИКОНКИ ДОСТИЖЕНИЙ
         const achievements = [
             { 
                 id: 'first', 
@@ -1370,6 +1038,61 @@
         tg.expand();
         tg.setHeaderColor('#050505');
         tg.setBackgroundColor('#050505');
+
+        // >>> ВОТ ЗДЕСЬ ОБРЫВАЕТСЯ ПЕРВАЯ ЧАСТЬ <<<
+        // Напиши "вторая часть" и я продолжу с этого места
+                // === ДИНАМИЧЕСКОЕ ДОБАВЛЕНИЕ CSS ДЛЯ НОВЫХ ЭЛЕМЕНТОВ ===
+        const extraStyles = document.createElement('style');
+        extraStyles.textContent = `
+            .workout-actions { display: flex; gap: 8px; margin-top: 12px; }
+            .workout-action-btn { flex: 1; background: var(--bg-tertiary); border: none; padding: 10px; border-radius: 8px; color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+            .workout-action-btn:active { transform: scale(0.95); }
+            .workout-action-btn.edit { color: var(--accent); }
+            .workout-action-btn.delete { color: var(--danger); }
+            .workout-action-btn svg { width: 16px; height: 16px; }
+            .calendar-container { background: var(--bg-secondary); padding: 20px; border-radius: var(--radius); border: 1px solid var(--bg-tertiary); margin-bottom: 24px; }
+            .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+            .calendar-title { font-size: 14px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+            .calendar-nav { display: flex; gap: 8px; }
+            .calendar-nav button { background: var(--bg-tertiary); border: none; width: 32px; height: 32px; border-radius: 8px; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; transition: background 0.2s; }
+            .calendar-nav button:active { background: var(--bg-elevated); }
+            .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+            .calendar-day-header { text-align: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); padding: 8px 0; text-transform: uppercase; }
+            .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); position: relative; }
+            .calendar-day.other-month { opacity: 0.3; }
+            .calendar-day.today { background: var(--accent-dim); color: var(--accent); font-weight: 700; }
+            .calendar-day.workout { background: var(--accent); color: #000; font-weight: 700; }
+            .muscle-stats { background: var(--bg-secondary); padding: 20px; border-radius: var(--radius); border: 1px solid var(--bg-tertiary); margin-bottom: 24px; }
+            .muscle-stats-title { font-size: 14px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+            .muscle-stat-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+            .muscle-stat-item:last-child { margin-bottom: 0; }
+            .muscle-name { font-size: 13px; font-weight: 600; color: var(--text-primary); width: 80px; }
+            .muscle-bar-bg { flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+            .muscle-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #14B8A6); border-radius: 4px; transition: width 0.5s ease; }
+            .muscle-count { font-size: 13px; font-weight: 700; color: var(--accent); width: 30px; text-align: right; }
+            .notification-banner { background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(45, 212, 191, 0.05)); border: 1px solid rgba(45, 212, 191, 0.3); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+            .notification-icon { width: 40px; height: 40px; background: var(--accent-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .notification-icon svg { width: 20px; height: 20px; stroke: var(--accent); }
+            .notification-text { flex: 1; }
+            .notification-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+            .notification-desc { font-size: 13px; color: var(--text-secondary); }
+            .data-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+            .data-action-btn { background: var(--bg-secondary); border: 1px solid var(--bg-tertiary); padding: 16px; border-radius: 12px; color: var(--text-primary); font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .data-action-btn:active { transform: scale(0.95); border-color: var(--accent); }
+            .data-action-btn svg { width: 24px; height: 24px; stroke: var(--accent); }
+            .modal-large { max-width: 500px; max-height: 80vh; overflow-y: auto; }
+            .modal-large::-webkit-scrollbar { width: 6px; }
+            .modal-large::-webkit-scrollbar-track { background: var(--bg-primary); }
+            .modal-large::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
+            .edit-exercise-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-primary); border-radius: 10px; margin-bottom: 8px; }
+            .edit-exercise-name { flex: 1; font-weight: 600; font-size: 14px; }
+            .edit-exercise-inputs { display: flex; gap: 8px; }
+            .edit-input { width: 60px; background: var(--bg-secondary); border: 1px solid var(--bg-tertiary); border-radius: 6px; padding: 6px; font-size: 13px; color: var(--text-primary); font-family: inherit; text-align: center; }
+            .edit-input:focus { outline: none; border-color: var(--accent); }
+            .remove-exercise-btn { background: transparent; border: none; color: var(--danger); cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; }
+            .remove-exercise-btn svg { width: 18px; height: 18px; }
+        `;
+        document.head.appendChild(extraStyles);
 
         // === НАВИГАЦИЯ ===
         function navigateTo(viewId, direction = 'forward') {
@@ -1453,6 +1176,9 @@
             setRandomTip();
             renderCharts();
             renderAchievements();
+            renderCalendar();
+            renderMuscleStats();
+            checkNotifications();
         }
 
         function getStreakLevel(streak) {
@@ -1524,6 +1250,93 @@
             } else {
                 container.innerHTML = '';
             }
+        }
+
+        function renderWorkouts() {
+            const container = document.getElementById('workout-list');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const allWorkouts = getAllWorkouts();
+            
+            Object.values(allWorkouts).forEach(w => {
+                const card = document.createElement('div');
+                card.className = 'workout-card';
+                
+                const exerciseCount = w.exercises.length;
+                const duration = w.duration || `${exerciseCount * 7} мин`;
+                const level = w.level || 'Свой';
+                const badge = w.isCustom ? '<div class="card-badge">Своя</div>' : '';
+                
+                let actionsHtml = '';
+                if (w.isCustom) {
+                    actionsHtml = `
+                        <div class="workout-actions" onclick="event.stopPropagation()">
+                            <button class="workout-action-btn edit" onclick="openEditModal('${w.id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                Изменить
+                            </button>
+                            <button class="workout-action-btn delete" onclick="openDeleteModal('${w.id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                Удалить
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div class="card-image-wrapper" onclick="startWorkout('${w.id}')">
+                        <img src="${w.image}" class="card-image" alt="${w.title}" loading="lazy" onerror="this.src='${GYM_PHOTO}'">
+                        <div class="card-image-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        ${badge}
+                        <h3 class="card-title">${w.title}</h3>
+                        <div class="card-meta">
+                            <div class="meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                ${duration}
+                            </div>
+                            <div class="meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                ${level}
+                            </div>
+                            <div class="meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                                ${exerciseCount} упр.
+                            </div>
+                        </div>
+                        ${actionsHtml}
+                    </div>
+                `;
+                
+                card.onclick = (e) => {
+                    if (!e.target.closest('.workout-actions')) {
+                        startWorkout(w.id);
+                    }
+                };
+                
+                container.appendChild(card);
+            });
+        }
+
+        function startWorkout(workoutId) {
+            state.activeWorkoutId = workoutId;
+            const allWorkouts = getAllWorkouts();
+            const w = allWorkouts[workoutId];
+            
+            if (!state.progress[workoutId]) {
+                state.progress[workoutId] = {};
+                w.exercises.forEach(exId => {
+                    state.progress[workoutId][exId] = { completed: false, setsDone: 0 };
+                });
+            }
+            
+            const firstIncomplete = w.exercises.findIndex(exId => !state.progress[workoutId][exId].completed);
+            state.activeExerciseIndex = firstIncomplete !== -1 ? firstIncomplete : 0;
+            
+            navigateTo('exercises');
+            renderExerciseList();
         }
 
         function renderExerciseList() {
@@ -1967,7 +1780,6 @@
             document.getElementById('daily-tip').textContent = tips[randomIndex];
         }
 
-        // === МОДАЛКА ВЕСА ===
         function openWeightModal() {
             const modal = document.getElementById('weight-modal');
             modal.classList.remove('hidden');
@@ -2002,7 +1814,6 @@
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // === КОНСТРУКТОР ПРОГРАММ ===
         function renderBuilder() {
             state.builderSelected.clear();
             document.getElementById('builder-name').value = '';
@@ -2088,6 +1899,410 @@
             tg.HapticFeedback.notificationOccurred('success');
         }
 
+        let editingWorkoutId = null;
+        let deletingWorkoutId = null;
+
+        function openEditModal(workoutId) {
+            editingWorkoutId = workoutId;
+            const allWorkouts = getAllWorkouts();
+            const w = allWorkouts[workoutId];
+            
+            document.getElementById('edit-program-name').value = w.title;
+            
+            const container = document.getElementById('edit-exercises-list');
+            container.innerHTML = '';
+            
+            w.exercises.forEach((exId, index) => {
+                const ex = getExerciseById(exId);
+                if (!ex) return;
+                
+                const item = document.createElement('div');
+                item.className = 'edit-exercise-item';
+                item.innerHTML = `
+                    <div class="edit-exercise-name">${index + 1}. ${ex.name}</div>
+                    <div class="edit-exercise-inputs">
+                        <div>
+                            <input type="number" class="edit-input" value="${ex.sets}" min="1" max="10" data-exercise="${exId}" data-field="sets">
+                            <div class="setting-label">Подходы</div>
+                        </div>
+                        <div>
+                            <input type="text" class="edit-input" value="${ex.reps}" data-exercise="${exId}" data-field="reps">
+                            <div class="setting-label">Повторы</div>
+                        </div>
+                    </div>
+                    <button class="remove-exercise-btn" onclick="removeExerciseFromProgram('${exId}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+            
+            document.getElementById('edit-modal').classList.remove('hidden');
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            editingWorkoutId = null;
+        }
+
+        function removeExerciseFromProgram(exId) {
+            const allWorkouts = getAllWorkouts();
+            const w = allWorkouts[editingWorkoutId];
+            w.exercises = w.exercises.filter(id => id !== exId);
+            openEditModal(editingWorkoutId);
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function saveEditProgram() {
+            const name = document.getElementById('edit-program-name').value.trim();
+            
+            if (!name) {
+                tg.showPopup({ message: 'Введите название программы' });
+                return;
+            }
+            
+            const allWorkouts = getAllWorkouts();
+            const w = allWorkouts[editingWorkoutId];
+            
+            if (w.exercises.length < 3) {
+                tg.showPopup({ message: 'Минимум 3 упражнения' });
+                return;
+            }
+            
+            document.querySelectorAll('.edit-input').forEach(input => {
+                const exId = input.dataset.exercise;
+                const field = input.dataset.field;
+                const ex = getExerciseById(exId);
+                if (ex) {
+                    if (field === 'sets') ex.sets = parseInt(input.value) || 3;
+                    if (field === 'reps') ex.reps = input.value;
+                }
+            });
+            
+            w.title = name;
+            w.duration = `${w.exercises.length * 7} мин`;
+            
+            customWorkouts[editingWorkoutId] = w;
+            localStorage.setItem('gym_custom_workouts', JSON.stringify(customWorkouts));
+            
+            closeEditModal();
+            renderHomeContent();
+            tg.showPopup({ message: 'Программа обновлена!' });
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        function openDeleteModal(workoutId) {
+            deletingWorkoutId = workoutId;
+            document.getElementById('delete-modal').classList.remove('hidden');
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+            deletingWorkoutId = null;
+        }
+
+        function confirmDeleteProgram() {
+            if (deletingWorkoutId && customWorkouts[deletingWorkoutId]) {
+                delete customWorkouts[deletingWorkoutId];
+                localStorage.setItem('gym_custom_workouts', JSON.stringify(customWorkouts));
+                
+                if (state.progress[deletingWorkoutId]) {
+                    delete state.progress[deletingWorkoutId];
+                    saveProgress();
+                }
+                
+                closeDeleteModal();
+                renderHomeContent();
+                tg.showPopup({ message: 'Программа удалена' });
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        let currentCalendarMonth = new Date().getMonth();
+        let currentCalendarYear = new Date().getFullYear();
+
+        function renderCalendar() {
+            const profileView = document.getElementById('view-profile');
+            let container = document.getElementById('calendar-container');
+            
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'calendar-container';
+                container.className = 'calendar-container';
+                const streakContainer = document.getElementById('streak-container-profile');
+                if (streakContainer) {
+                    streakContainer.parentNode.insertBefore(container, streakContainer.nextSibling);
+                } else {
+                    profileView.insertBefore(container, profileView.children[2]);
+                }
+            }
+            
+            const year = currentCalendarYear;
+            const month = currentCalendarMonth;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDayOfWeek = firstDay.getDay() || 7;
+            
+            const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+                                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            
+            const workoutDates = new Set();
+            state.stats.workoutHistory.forEach(h => {
+                const d = new Date(h.date);
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                    workoutDates.add(d.getDate());
+                }
+            });
+            
+            const today = new Date();
+            const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+            
+            let html = `
+                <div class="calendar-header">
+                    <div class="calendar-title">${monthNames[month]} ${year}</div>
+                    <div class="calendar-nav">
+                        <button onclick="changeCalendarMonth(-1)">‹</button>
+                        <button onclick="changeCalendarMonth(1)">›</button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+            `;
+            
+            dayNames.forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+            
+            for (let i = 1; i < startDayOfWeek; i++) {
+                const prevMonthDay = new Date(year, month, 0).getDate() - startDayOfWeek + i + 1;
+                html += `<div class="calendar-day other-month">${prevMonthDay}</div>`;
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = isCurrentMonth && today.getDate() === day;
+                const isWorkout = workoutDates.has(day);
+                
+                let classes = 'calendar-day';
+                if (isToday) classes += ' today';
+                if (isWorkout) classes += ' workout';
+                
+                html += `<div class="${classes}">${day}</div>`;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function changeCalendarMonth(delta) {
+            currentCalendarMonth += delta;
+            if (currentCalendarMonth > 11) {
+                currentCalendarMonth = 0;
+                currentCalendarYear++;
+            } else if (currentCalendarMonth < 0) {
+                currentCalendarMonth = 11;
+                currentCalendarYear--;
+            }
+            renderCalendar();
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function renderMuscleStats() {
+            const profileView = document.getElementById('view-profile');
+            let container = document.getElementById('muscle-stats-container');
+            
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'muscle-stats-container';
+                container.className = 'muscle-stats';
+                const calendarContainer = document.getElementById('calendar-container');
+                if (calendarContainer) {
+                    calendarContainer.parentNode.insertBefore(container, calendarContainer.nextSibling);
+                }
+            }
+            
+            const categoryCount = {};
+            state.stats.workoutHistory.forEach(h => {
+                const allWorkouts = getAllWorkouts();
+                const w = allWorkouts[h.workoutId];
+                if (w) {
+                    w.exercises.forEach(exId => {
+                        const ex = getExerciseById(exId);
+                        if (ex) {
+                            categoryCount[ex.category] = (categoryCount[ex.category] || 0) + 1;
+                        }
+                    });
+                }
+            });
+            
+            const cats = Object.keys(categoryCount);
+            if (cats.length === 0) {
+                container.innerHTML = '<div class="muscle-stats-title">Нагрузка по группам мышц</div><div style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет данных</div>';
+                return;
+            }
+            
+            const maxCount = Math.max(...Object.values(categoryCount));
+            
+            let html = '<div class="muscle-stats-title">Нагрузка по группам мышц</div>';
+            cats.forEach(cat => {
+                const count = categoryCount[cat];
+                const percentage = (count / maxCount) * 100;
+                html += `
+                    <div class="muscle-stat-item">
+                        <div class="muscle-name">${cat}</div>
+                        <div class="muscle-bar-bg">
+                            <div class="muscle-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="muscle-count">${count}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function exportData() {
+            const data = {
+                profile: state.profile,
+                stats: state.stats,
+                progress: state.progress,
+                customWorkouts: customWorkouts,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gym_motivation_backup_${Date.now()}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            tg.showPopup({ message: 'Данные экспортированы!' });
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (data.profile) {
+                            state.profile = data.profile;
+                            localStorage.setItem('gym_profile', JSON.stringify(data.profile));
+                        }
+                        if (data.stats) {
+                            state.stats = data.stats;
+                            localStorage.setItem('gym_stats', JSON.stringify(data.stats));
+                        }
+                        if (data.progress) {
+                            state.progress = data.progress;
+                            localStorage.setItem('gym_progress', JSON.stringify(data.progress));
+                        }
+                        if (data.customWorkouts) {
+                            customWorkouts = data.customWorkouts;
+                            localStorage.setItem('gym_custom_workouts', JSON.stringify(customWorkouts));
+                        }
+                        
+                        renderProfileContent();
+                        tg.showPopup({ message: 'Данные импортированы!' });
+                        tg.HapticFeedback.notificationOccurred('success');
+                    } catch (err) {
+                        tg.showPopup({ message: 'Ошибка импорта: неверный формат файла' });
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function checkNotifications() {
+            const profileView = document.getElementById('view-profile');
+            let container = document.getElementById('notification-container');
+            
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notification-container';
+                const streakContainer = document.getElementById('streak-container-profile');
+                if (streakContainer) {
+                    streakContainer.parentNode.insertBefore(container, streakContainer.nextSibling);
+                }
+            }
+            
+            const today = new Date();
+            const lastWorkout = state.stats.lastWorkoutDate ? new Date(state.stats.lastWorkoutDate) : null;
+            
+            let notifications = [];
+            
+            if (!lastWorkout || (today - lastWorkout) > 2 * 24 * 60 * 60 * 1000) {
+                notifications.push({
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>',
+                    title: 'Время тренироваться!',
+                    desc: 'Вы не тренировались несколько дней. Не теряйте серию!'
+                });
+            }
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = notifications.map(n => `
+                <div class="notification-banner">
+                    <div class="notification-icon">${n.icon}</div>
+                    <div class="notification-text">
+                        <div class="notification-title">${n.title}</div>
+                        <div class="notification-desc">${n.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addDataActions() {
+            const profileView = document.getElementById('view-profile');
+            if (document.getElementById('data-actions-container')) return;
+            
+            const container = document.createElement('div');
+            container.id = 'data-actions-container';
+            container.className = 'data-actions';
+            container.innerHTML = `
+                <button class="data-action-btn" onclick="exportData()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Экспорт
+                </button>
+                <button class="data-action-btn" onclick="importData()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Импорт
+                </button>
+            `;
+            
+            const tipOfDay = document.querySelector('.tip-of-day');
+            if (tipOfDay) {
+                tipOfDay.parentNode.insertBefore(container, tipOfDay);
+            }
+        }
+
+        const originalRenderProfileContent = renderProfileContent;
+        renderProfileContent = function() {
+            originalRenderProfileContent();
+            addDataActions();
+        };
+
         function resetStats() {
             tg.showPopup({
                 title: 'Сброс прогресса',
@@ -2108,470 +2323,7 @@
         function saveProgress() {
             localStorage.setItem('gym_progress', JSON.stringify(state.progress));
         }
-// === УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЬСКИМИ ПРОГРАММАМИ ===
-let editingWorkoutId = null;
-let deletingWorkoutId = null;
 
-function renderWorkouts() {
-    const container = document.getElementById('workout-list');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    const allWorkouts = getAllWorkouts();
-    
-    Object.values(allWorkouts).forEach(w => {
-        const card = document.createElement('div');
-        card.className = 'workout-card';
-        
-        const exerciseCount = w.exercises.length;
-        const duration = w.duration || `${exerciseCount * 7} мин`;
-        const level = w.level || 'Свой';
-        const badge = w.isCustom ? '<div class="card-badge">Своя</div>' : '';
-        
-        // Кнопки действий только для пользовательских программ
-        let actionsHtml = '';
-        if (w.isCustom) {
-            actionsHtml = `
-                <div class="workout-actions" onclick="event.stopPropagation()">
-                    <button class="workout-action-btn edit" onclick="openEditModal('${w.id}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                        Изменить
-                    </button>
-                    <button class="workout-action-btn delete" onclick="openDeleteModal('${w.id}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        Удалить
-                    </button>
-                </div>
-            `;
-        }
-        
-        card.innerHTML = `
-            <div class="card-image-wrapper" onclick="startWorkout('${w.id}')">
-                <img src="${w.image}" class="card-image" alt="${w.title}" loading="lazy" onerror="this.src='${GYM_PHOTO}'">
-                <div class="card-image-overlay"></div>
-            </div>
-            <div class="card-content">
-                ${badge}
-                <h3 class="card-title">${w.title}</h3>
-                <div class="card-meta">
-                    <div class="meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        ${duration}
-                    </div>
-                    <div class="meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                        ${level}
-                    </div>
-                    <div class="meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
-                        ${exerciseCount} упр.
-                    </div>
-                </div>
-                ${actionsHtml}
-            </div>
-        `;
-        
-        // Клик по карточке (не по кнопкам) запускает тренировку
-        card.onclick = (e) => {
-            if (!e.target.closest('.workout-actions')) {
-                startWorkout(w.id);
-            }
-        };
-        
-        container.appendChild(card);
-    });
-}
-
-// === РЕДАКТИРОВАНИЕ ПРОГРАММЫ ===
-function openEditModal(workoutId) {
-    editingWorkoutId = workoutId;
-    const allWorkouts = getAllWorkouts();
-    const w = allWorkouts[workoutId];
-    
-    document.getElementById('edit-program-name').value = w.title;
-    
-    const container = document.getElementById('edit-exercises-list');
-    container.innerHTML = '';
-    
-    w.exercises.forEach((exId, index) => {
-        const ex = getExerciseById(exId);
-        if (!ex) return;
-        
-        const item = document.createElement('div');
-        item.className = 'edit-exercise-item';
-        item.innerHTML = `
-            <div class="edit-exercise-name">${index + 1}. ${ex.name}</div>
-            <div class="edit-exercise-inputs">
-                <div>
-                    <input type="number" class="edit-input" value="${ex.sets}" min="1" max="10" data-exercise="${exId}" data-field="sets">
-                    <div class="setting-label">Подходы</div>
-                </div>
-                <div>
-                    <input type="text" class="edit-input" value="${ex.reps}" data-exercise="${exId}" data-field="reps">
-                    <div class="setting-label">Повторы</div>
-                </div>
-            </div>
-            <button class="remove-exercise-btn" onclick="removeExerciseFromProgram('${exId}')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        `;
-        container.appendChild(item);
-    });
-    
-    document.getElementById('edit-modal').classList.remove('hidden');
-    tg.HapticFeedback.impactOccurred('light');
-}
-
-function closeEditModal() {
-    document.getElementById('edit-modal').classList.add('hidden');
-    editingWorkoutId = null;
-}
-
-function removeExerciseFromProgram(exId) {
-    const allWorkouts = getAllWorkouts();
-    const w = allWorkouts[editingWorkoutId];
-    w.exercises = w.exercises.filter(id => id !== exId);
-    openEditModal(editingWorkoutId); // Перерисовать
-    tg.HapticFeedback.impactOccurred('light');
-}
-
-function saveEditProgram() {
-    const name = document.getElementById('edit-program-name').value.trim();
-    
-    if (!name) {
-        tg.showPopup({ message: 'Введите название программы' });
-        return;
-    }
-    
-    const allWorkouts = getAllWorkouts();
-    const w = allWorkouts[editingWorkoutId];
-    
-    if (w.exercises.length < 3) {
-        tg.showPopup({ message: 'Минимум 3 упражнения' });
-        return;
-    }
-    
-    // Обновляем настройки подходов
-    document.querySelectorAll('.edit-input').forEach(input => {
-        const exId = input.dataset.exercise;
-        const field = input.dataset.field;
-        const ex = getExerciseById(exId);
-        if (ex) {
-            if (field === 'sets') ex.sets = parseInt(input.value) || 3;
-            if (field === 'reps') ex.reps = input.value;
-        }
-    });
-    
-    w.title = name;
-    w.duration = `${w.exercises.length * 7} мин`;
-    
-    customWorkouts[editingWorkoutId] = w;
-    localStorage.setItem('gym_custom_workouts', JSON.stringify(customWorkouts));
-    
-    closeEditModal();
-    renderHomeContent();
-    tg.showPopup({ message: 'Программа обновлена!' });
-    tg.HapticFeedback.notificationOccurred('success');
-}
-
-// === УДАЛЕНИЕ ПРОГРАММЫ ===
-function openDeleteModal(workoutId) {
-    deletingWorkoutId = workoutId;
-    document.getElementById('delete-modal').classList.remove('hidden');
-    tg.HapticFeedback.impactOccurred('medium');
-}
-
-function closeDeleteModal() {
-    document.getElementById('delete-modal').classList.add('hidden');
-    deletingWorkoutId = null;
-}
-
-function confirmDeleteProgram() {
-    if (deletingWorkoutId && customWorkouts[deletingWorkoutId]) {
-        delete customWorkouts[deletingWorkoutId];
-        localStorage.setItem('gym_custom_workouts', JSON.stringify(customWorkouts));
-        
-        // Удаляем прогресс по этой программе
-        if (state.progress[deletingWorkoutId]) {
-            delete state.progress[deletingWorkoutId];
-            saveProgress();
-        }
-        
-        closeDeleteModal();
-        renderHomeContent();
-        tg.showPopup({ message: 'Программа удалена' });
-        tg.HapticFeedback.notificationOccurred('error');
-    }
-}
-
-// === КАЛЕНДАРЬ ТРЕНИРОВОК ===
-let currentCalendarMonth = new Date().getMonth();
-let currentCalendarYear = new Date().getFullYear();
-
-function renderCalendar() {
-    const container = document.getElementById('calendar-container');
-    if (!container) return;
-    
-    const year = currentCalendarYear;
-    const month = currentCalendarMonth;
-    
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startDayOfWeek = firstDay.getDay() || 7; // 1 = понедельник
-    
-    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-    const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-    
-    // Получаем даты тренировок
-    const workoutDates = new Set();
-    state.stats.workoutHistory.forEach(h => {
-        const d = new Date(h.date);
-        if (d.getFullYear() === year && d.getMonth() === month) {
-            workoutDates.add(d.getDate());
-        }
-    });
-    
-    const today = new Date();
-    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-    
-    let html = `
-        <div class="calendar-header">
-            <div class="calendar-title">${monthNames[month]} ${year}</div>
-            <div class="calendar-nav">
-                <button onclick="changeCalendarMonth(-1)">‹</button>
-                <button onclick="changeCalendarMonth(1)">›</button>
-            </div>
-        </div>
-        <div class="calendar-grid">
-    `;
-    
-    // Заголовки дней
-    dayNames.forEach(day => {
-        html += `<div class="calendar-day-header">${day}</div>`;
-    });
-    
-    // Пустые ячейки до первого дня
-    for (let i = 1; i < startDayOfWeek; i++) {
-        const prevMonthDay = new Date(year, month, 0).getDate() - startDayOfWeek + i + 1;
-        html += `<div class="calendar-day other-month">${prevMonthDay}</div>`;
-    }
-    
-    // Дни месяца
-    for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = isCurrentMonth && today.getDate() === day;
-        const isWorkout = workoutDates.has(day);
-        
-        let classes = 'calendar-day';
-        if (isToday) classes += ' today';
-        if (isWorkout) classes += ' workout';
-        
-        html += `<div class="${classes}">${day}</div>`;
-    }
-    
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function changeCalendarMonth(delta) {
-    currentCalendarMonth += delta;
-    if (currentCalendarMonth > 11) {
-        currentCalendarMonth = 0;
-        currentCalendarYear++;
-    } else if (currentCalendarMonth < 0) {
-        currentCalendarMonth = 11;
-        currentCalendarYear--;
-    }
-    renderCalendar();
-    tg.HapticFeedback.impactOccurred('light');
-}
-
-// === СТАТИСТИКА ПО МЫШЦАМ ===
-function renderMuscleStats() {
-    const container = document.getElementById('muscle-stats-container');
-    if (!container) return;
-    
-    // Считаем тренировки по категориям
-    const categoryCount = {};
-    state.stats.workoutHistory.forEach(h => {
-        const allWorkouts = getAllWorkouts();
-        const w = allWorkouts[h.workoutId];
-        if (w) {
-            w.exercises.forEach(exId => {
-                const ex = getExerciseById(exId);
-                if (ex) {
-                    categoryCount[ex.category] = (categoryCount[ex.category] || 0) + 1;
-                }
-            });
-        }
-    });
-    
-    const categories = Object.keys(categoryCount);
-    if (categories.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет данных</div>';
-        return;
-    }
-    
-    const maxCount = Math.max(...Object.values(categoryCount));
-    
-    let html = '';
-    categories.forEach(cat => {
-        const count = categoryCount[cat];
-        const percentage = (count / maxCount) * 100;
-        html += `
-            <div class="muscle-stat-item">
-                <div class="muscle-name">${cat}</div>
-                <div class="muscle-bar-bg">
-                    <div class="muscle-bar-fill" style="width: ${percentage}%"></div>
-                </div>
-                <div class="muscle-count">${count}</div>
-            </div>
-        `;
-    });
-    
-    container.innerHTML = html;
-}
-
-// === ЭКСПОРТ/ИМПОРТ ДАННЫХ ===
-function exportData() {
-    const data = {
-        profile: state.profile,
-        stats: state.stats,
-        progress: state.progress,
-        customWorkouts: customWorkouts,
-        exportDate: new Date().toISOString()
-    };
-    
-    const dataStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `gym_motivation_backup_${Date.now()}.json`;
-    a.click();
-    
-    URL.revokeObjectURL(url);
-    tg.showPopup({ message: 'Данные экспортированы!' });
-    tg.HapticFeedback.notificationOccurred('success');
-}
-
-function importData() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                
-                if (data.profile) {
-                    state.profile = data.profile;
-                    localStorage.setItem('gym_profile', JSON.stringify(data.profile));
-                }
-                if (data.stats) {
-                    state.stats = data.stats;
-                    localStorage.setItem('gym_stats', JSON.stringify(data.stats));
-                }
-                if (data.progress) {
-                    state.progress = data.progress;
-                    localStorage.setItem('gym_progress', JSON.stringify(data.progress));
-                }
-                if (data.customWorkouts) {
-                    customWorkouts = data.customWorkouts;
-                    localStorage.setItem('gym_custom_workouts', JSON.stringify(customWorkouts));
-                }
-                
-                renderProfileContent();
-                tg.showPopup({ message: 'Данные импортированы!' });
-                tg.HapticFeedback.notificationOccurred('success');
-            } catch (err) {
-                tg.showPopup({ message: 'Ошибка импорта: неверный формат файла' });
-            }
-        };
-        reader.readAsText(file);
-    };
-    
-    input.click();
-}
-
-// === УВЕДОМЛЕНИЯ ===
-function checkNotifications() {
-    const container = document.getElementById('notification-container');
-    if (!container) return;
-    
-    const today = new Date();
-    const lastWorkout = state.stats.lastWorkoutDate ? new Date(state.stats.lastWorkoutDate) : null;
-    
-    let notifications = [];
-    
-    // Напоминание о тренировке
-    if (!lastWorkout || (today - lastWorkout) > 2 * 24 * 60 * 60 * 1000) {
-        notifications.push({
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>',
-            title: 'Время тренироваться!',
-            desc: 'Вы не тренировались несколько дней. Не теряйте серию!'
-        });
-    }
-    
-    // Достижение
-    const newAchievement = achievements.find(a => a.condition(state.stats));
-    if (newAchievement) {
-        notifications.push({
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>',
-            title: 'Новое достижение!',
-            desc: `Вы получили "${newAchievement.name}"!`
-        });
-    }
-    
-    if (notifications.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    container.innerHTML = notifications.map(n => `
-        <div class="notification-banner">
-            <div class="notification-icon">${n.icon}</div>
-            <div class="notification-text">
-                <div class="notification-title">${n.title}</div>
-                <div class="notification-desc">${n.desc}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// === ОБНОВЛЕНИЕ РЕНДЕРА ПРОФИЛЯ ===
-const originalRenderProfileContent = renderProfileContent;
-renderProfileContent = function() {
-    originalRenderProfileContent();
-    renderCalendar();
-    renderMuscleStats();
-    checkNotifications();
-};
-
-// === ИНИЦИАЛИЗАЦИЯ КАЛЕНДАРЯ ===
-// Добавьте в HTML профиля перед chart-container:
-/*
-<div class="calendar-container" id="calendar-container"></div>
-<div class="muscle-stats" id="muscle-stats-container"></div>
-<div id="notification-container"></div>
-<div class="data-actions">
-    <button class="data-action-btn" onclick="exportData()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        Экспорт
-    </button>
-    <button class="data-action-btn" onclick="importData()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-        Импорт
-    </button>
-</div>
-*/
         init();
     </script>
 </body>
