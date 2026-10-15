@@ -1063,7 +1063,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow-glow);
-            animation: completionPulse 2s ease-in-out infinite;
+            animation: completionPulse 2s ease-in-out infe;
         }
 
         @keyframes completionPulse {
@@ -3421,7 +3421,7 @@ const workoutRecord = {
                     saveState();
                     hapticFeedback('success');
                     showToast('Импортировано', 'Данные восстановлены', 'default');
-                    init();
+                    ();
                 } catch (err) {
                     showToast('Ошибка', 'Неверный формат файла', 'default');
                 }
@@ -3576,22 +3576,7 @@ const workoutRecord = {
         // ============================================
         // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
         // ============================================
-        function init() {
-            loadState();
-            setupEventListeners();
-            
-            // Проверяем, прошел ли пользователь онбординг
-            if (state.user.age && state.user.height && state.user.weight) {
-                navigateTo('view-home');
-                renderPrograms();
-                renderActivityRing();
-            } else {
-                navigateTo('view-onboarding');
-            }
-        }
-
-        // Запуск приложения
-        init();
+        
     </script>
 </body>
 </html>
