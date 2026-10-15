@@ -2849,7 +2849,6 @@
     set.completed = !set.completed;
 
     if (set.completed) {
-        // ✅ ИСПРАВЛЕНИЕ: Сохраняем время завершения
         set.completedAt = new Date().getTime(); 
         
         state.workoutData.completedSets.push({
@@ -2862,7 +2861,6 @@
         hapticFeedback('success');
         startRestTimer();
     } else {
-        // Теперь фильтр сможет найти этот сет по completedAt
         state.workoutData.completedSets = state.workoutData.completedSets.filter(
             s => !(s.exerciseId === exercise.id && s.timestamp.getTime() === set.completedAt)
         );
@@ -2872,11 +2870,6 @@
     renderSets();
     renderExercisesList();
 }
-            
-            saveState();
-            renderSets();
-            renderExercisesList();
-        }
 
         // ============================================
         // ПРОВЕРКА ЛИЧНЫХ РЕКОРДОВ (PR)
@@ -3421,7 +3414,7 @@ const workoutRecord = {
                     saveState();
                     hapticFeedback('success');
                     showToast('Импортировано', 'Данные восстановлены', 'default');
-                    ();
+                                      init();
                 } catch (err) {
                     showToast('Ошибка', 'Неверный формат файла', 'default');
                 }
@@ -3573,9 +3566,26 @@ const workoutRecord = {
             });
         }
 
-        // ============================================
+                // ============================================
         // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
         // ============================================
+        function init() {
+            loadState();
+            setupEventListeners();
+            
+            // Проверяем, прошел ли пользователь онбординг
+            if (state.user.age && state.user.height && state.user.weight) {
+                navigateTo('view-home');
+                renderPrograms();
+                renderActivityRing();
+            } else {
+                navigateTo('view-onboarding');
+            }
+        }
+
+        // Запуск приложения
+        init();
+    </script>
         
     </script>
 </body>
