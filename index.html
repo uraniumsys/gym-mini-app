@@ -2475,34 +2475,37 @@
         // НАВИГАЦИЯ
         // ============================================
         function navigateTo(viewId, direction = 'forward') {
-            // Скрываем все экраны
-            document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('active');
-            });
+    // 🛑 ИСПРАВЛЕНИЕ: Очищаем таймер, если уходим с экрана отдыха
+    if (viewId !== 'view-rest' && timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerRunning = false;
+    }
 
-            // Показываем нужный экран
-            const targetView = document.getElementById(viewId);
-            if (targetView) {
-                targetView.classList.add('active');
-                targetView.style.animation = direction === 'back' ? 'slideInLeft 0.3s ease-out' : 'viewEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
-            }
+    // Скрываем все экраны
+    document.querySelectorAll('.view').forEach(view => {
+        view.classList.remove('active');
+    });
 
-            // Обновляем текущий экран
-            state.currentView = viewId;
-            saveState();
+    // Показываем нужный экран
+    const targetView = document.getElementById(viewId);
+    if (targetView) {
+        targetView.classList.add('active');
+        targetView.style.animation = direction === 'back' ? 'slideInLeft 0.3s ease-out' : 'viewEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+    }
 
-            // Обновляем Tab Bar
-            updateTabBar(viewId);
+    state.currentView = viewId;
+    saveState();
+    updateTabBar(viewId);
 
-            // Telegram Back Button
-            if (tg) {
-                if (viewId === 'view-home' || viewId === 'view-profile') {
-                    tg.BackButton.hide();
-                } else {
-                    tg.BackButton.show();
-                }
-            }
+    if (tg) {
+        if (viewId === 'view-home' || viewId === 'view-profile') {
+            tg.BackButton.hide();
+        } else {
+            tg.BackButton.show();
         }
+    }
+}
 
         function updateTabBar(viewId) {
             document.querySelectorAll('.tab-item').forEach(item => {
@@ -2599,22 +2602,7 @@
         // ============================================
         // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
         // ============================================
-        function init() {
-            loadState();
-
-            // Проверяем, прошел ли пользователь онбординг
-            if (state.user.age && state.user.height && state.user.weight) {
-                navigateTo('view-home');
-                renderPrograms();
-            } else {
-                navigateTo('view-onboarding');
-            }
-
-            // Обработчики событий будут добавлены в следующей части
-        }
-
-        // Запуск приложения
-        init();
+        
             // ============================================
         // РЕНДЕРИНГ КОЛЬЦА АКТИВНОСТИ
         // ============================================
@@ -2848,37 +2836,42 @@
         }
 
         function toggleSet(setIndex) {
-            const exercise = state.workoutData.exercises[state.currentExerciseIndex];
-            const set = exercise.sets[setIndex];
-            
-            // Проверка на PR (личный рекорд)
-            const weight = parseFloat(set.weight) || 0;
-            const reps = parseFloat(set.reps) || 0;
-            
-            if (!set.completed && weight > 0 && reps > 0) {
-                checkPersonalRecord(exercise.id, weight, reps);
-            }
-            
-            set.completed = !set.completed;
-            
-            if (set.completed) {
-                state.workoutData.completedSets.push({
-                    exerciseId: exercise.id,
-                    exerciseName: exercise.name,
-                    weight: weight,
-                    reps: reps,
-                    timestamp: new Date()
-                });
-                hapticFeedback('success');
-                
-                // Автозапуск таймера отдыха
-                startRestTimer();
-            } else {
-                // Убираем из завершенных
-                state.workoutData.completedSets = state.workoutData.completedSets.filter(
-                    s => !(s.exerciseId === exercise.id && s.timestamp.getTime() === set.completedAt)
-                );
-            }
+    const exercise = state.workoutData.exercises[state.currentExerciseIndex];
+    const set = exercise.sets[setIndex];
+
+    const weight = parseFloat(set.weight) || 0;
+    const reps = parseFloat(set.reps) || 0;
+
+    if (!set.completed && weight > 0 && reps > 0) {
+        checkPersonalRecord(exercise.id, weight, reps);
+    }
+
+    set.completed = !set.completed;
+
+    if (set.completed) {
+        // ✅ ИСПРАВЛЕНИЕ: Сохраняем время завершения
+        set.completedAt = new Date().getTime(); 
+        
+        state.workoutData.completedSets.push({
+            exerciseId: exercise.id,
+            exerciseName: exercise.name,
+            weight: weight,
+            reps: reps,
+            timestamp: new Date()
+        });
+        hapticFeedback('success');
+        startRestTimer();
+    } else {
+        // Теперь фильтр сможет найти этот сет по completedAt
+        state.workoutData.completedSets = state.workoutData.completedSets.filter(
+            s => !(s.exerciseId === exercise.id && s.timestamp.getTime() === set.completedAt)
+        );
+    }
+    
+    saveState();
+    renderSets();
+    renderExercisesList();
+}
             
             saveState();
             renderSets();
@@ -2916,11 +2909,16 @@
                 }
             });
             
-            // Если новый вес больше прошлого максимума — PR!
-            if (weight > maxWeight && maxWeight > 0) {
-                showToast('🏆 Новый рекорд!', `${exerciseId}: ${weight} кг`, 'pr');
-                hapticFeedback('heavy');
-            }
+            // Если это первое выполнение — просто уведомляем
+if (maxWeight === 0) {
+    showToast('🎯 Первое выполнение!', `${weight} кг`, 'pr');
+    hapticFeedback('medium');
+} 
+// Если вес больше прошлого максимума — новый рекорд!
+else if (weight > maxWeight) {
+    showToast('🏆 Новый рекорд!', `${weight} кг (было ${maxWeight} кг)`, 'pr');
+    hapticFeedback('heavy');
+}
         }
 
         // ============================================
@@ -3076,19 +3074,21 @@
             ).length;
             
             // Сохраняем в историю
-            const workoutRecord = {
-                date: new Date().toISOString(),
-                programName: state.workoutData.programName,
-                duration: duration,
-                exercises: state.workoutData.exercises.map(ex => ({
-                    id: ex.id,
-                    name: ex.name,
-                    category: ex.category,
-                    sets: ex.sets
-                })),
-                tonnage: tonnage,
-                completedExercises: completedExercises
-            };
+            // Найди в completeWorkout блок const workoutRecord = { ... } и замени на:
+const workoutRecord = {
+    date: new Date().toISOString(),
+    programName: state.workoutData.programName,
+    duration: duration,
+    weight: state.user.weight, // ✅ ДОБАВЛЕНО: Снимок веса на момент тренировки
+    exercises: state.workoutData.exercises.map(ex => ({
+        id: ex.id,
+        name: ex.name,
+        category: ex.category,
+        sets: ex.sets
+    })),
+    tonnage: tonnage,
+    completedExercises: completedExercises
+};
             
             state.history.push(workoutRecord);
             state.workoutInProgress = false;
@@ -3193,44 +3193,45 @@
         }
 
         function renderWeightChart() {
-            const svg = document.getElementById('weight-chart');
-            if (!svg) return;
-            
-            // Собираем вес по датам тренировок
-            const weightData = state.history.map(w => ({
-                date: new Date(w.date),
-                weight: state.user.weight // Пока используем текущий вес
-            }));
-            
-            if (weightData.length < 2) {
-                svg.innerHTML = '<text x="150" y="60" text-anchor="middle" fill="#71717A" font-size="12">Недостаточно данных</text>';
-                return;
-            }
-            
-            const weights = weightData.map(d => d.weight);
-            const minW = Math.min(...weights) - 2;
-            const maxW = Math.max(...weights) + 2;
-            const range = maxW - minW || 1;
-            
-            const width = 300;
-            const height = 120;
-            const padding = 20;
-            
-            const points = weightData.map((d, i) => {
-                const x = padding + (i / (weightData.length - 1)) * (width - 2 * padding);
-                const y = height - padding - ((d.weight - minW) / range) * (height - 2 * padding);
-                return `${x},${y}`;
-            }).join(' ');
-            
-            svg.innerHTML = `
-                <polyline points="${points}" fill="none" stroke="#C6FF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                ${weightData.map((d, i) => {
-                    const x = padding + (i / (weightData.length - 1)) * (width - 2 * padding);
-                    const y = height - padding - ((d.weight - minW) / range) * (height - 2 * padding);
-                    return `<circle cx="${x}" cy="${y}" r="3" fill="#C6FF00"/>`;
-                }).join('')}
-            `;
-        }
+    const svg = document.getElementById('weight-chart');
+    if (!svg) return;
+
+    // ✅ ИСПРАВЛЕНИЕ: Берем вес из истории (снимок), а не текущий
+    const weightData = state.history
+        .filter(w => w.weight) // Фильтруем старые записи, где еще не было поля weight
+        .map(w => ({
+            date: new Date(w.date),
+            weight: w.weight 
+        }));
+
+    if (weightData.length < 2) {
+        svg.innerHTML = '<text x="150" y="60" text-anchor="middle" fill="#71717A" font-size="12">Нужно минимум 2 тренировки</text>';
+        return;
+    }
+
+    const weights = weightData.map(d => d.weight);
+    const minW = Math.min(...weights) - 2;
+    const maxW = Math.max(...weights) + 2;
+    const range = maxW - minW || 1;
+    const width = 300;
+    const height = 120;
+    const padding = 20;
+
+    const points = weightData.map((d, i) => {
+        const x = padding + (i / (weightData.length - 1)) * (width - 2 * padding);
+        const y = height - padding - ((d.weight - minW) / range) * (height - 2 * padding);
+        return `${x},${y}`;
+    }).join(' ');
+
+    svg.innerHTML = `
+        <polyline points="${points}" fill="none" stroke="#C6FF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${weightData.map((d, i) => {
+            const x = padding + (i / (weightData.length - 1)) * (width - 2 * padding);
+            const y = height - padding - ((d.weight - minW) / range) * (height - 2 * padding);
+            return `<circle cx="${x}" cy="${y}" r="3" fill="#C6FF00"/>`;
+        }).join('')}
+    `;
+}
 
         function renderMuscleRecovery() {
             const container = document.getElementById('muscle-recovery-grid');
