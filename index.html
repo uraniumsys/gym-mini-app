@@ -7,70 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* ============================================
-           CSS ПЕРЕМЕННЫЕ ТЕМЫ (Новый дизайн)
-           ============================================ */
-        :root {
-            /* Фоны */
-            --bg-primary: #000000;
-            --bg-secondary: #0F0F0F;
-            --bg-tertiary: #1A1A1A;
-            --bg-elevated: #222222;
-            
-            /* Границы (полупрозрачные, тонкие) */
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-default: rgba(255, 255, 255, 0.1);
-            --border-strong: rgba(255, 255, 255, 0.15);
-            
-            /* Текст */
-            --text-primary: #FFFFFF;
-            --text-secondary: #A1A1AA;
-            --text-tertiary: #71717A;
-            --text-disabled: #52525B;
-            
-            /* Акценты */
-            --accent: #C6FF00;
-            --accent-hover: #B8F100;
-            --accent-glow: rgba(198, 255, 0, 0.15);
-            --accent-gradient: linear-gradient(135deg, #C6FF00 0%, #00E676 100%);
-            
-            /* Статусы */
-            --success: #00E676;
-            --warning: #FFB300;
-            --danger: #FF3D00;
-            --gold: #FFD700;
-            --silver: #C0C0C0;
-            --bronze: #CD7F32;
-            
-            /* Радиусы */
-            --radius-xs: 6px;
-            --radius-sm: 10px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
-            --radius-full: 999px;
-            
-            /* Тени */
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 24px var(--accent-glow);
-            
-            /* Анимации */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Отступы */
-            --spacing-xs: 4px;
-            --spacing-sm: 8px;
-            --spacing-md: 16px;
-            --spacing-lg: 24px;
-            --spacing-xl: 32px;
-            --spacing-2xl: 48px;
-        }
-
-        /* ============================================
-           БАЗОВЫЕ СТИЛИ
+           CSS ПЕРЕМЕННЫЕ
            ============================================ */
         * {
             margin: 0;
@@ -79,35 +16,80 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.5;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-feature-settings: 'cv11', 'ss01';
+        :root {
+            --bg: #000000;
+            --card: #0A0A0A;
+            --card-hover: #111111;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #C6FF00;
+            --accent-dim: rgba(198, 255, 0, 0.15);
+            --accent-glow: rgba(198, 255, 0, 0.3);
+            --text: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --text-muted: #666666;
+            --success: #00E676;
+            --warning: #FFB300;
+            --danger: #FF3D00;
+            --gold: #FFD700;
+            --radius: 20px;
+            --radius-sm: 12px;
         }
 
-        /* Скрываем стрелки у number input */
+        /* ============================================
+           БАЗОВЫЕ СТИЛИ
+           ============================================ */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
+
         input[type="number"] {
             -moz-appearance: textfield;
         }
 
         /* ============================================
-           КОНТЕЙНЕР ЭКРАНОВ
+           АНИМИРОВАННЫЙ ФОН (GLOW ЭФФЕКТ)
+           ============================================ */
+        .bg-glow {
+            position: fixed;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* ============================================
+           ЭКРАНЫ
            ============================================ */
         .view {
             display: none;
             min-height: 100vh;
-            padding: var(--spacing-lg);
-            padding-bottom: 120px;
+            padding: 20px;
+            padding-bottom: 100px;
+            position: relative;
+            z-index: 1;
             animation: viewEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -116,116 +98,72 @@
         }
 
         @keyframes viewEnter {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ============================================
-           ТИПОГРАФИКА (Крупная, выразительная)
+           ТИПОГРАФИКА
            ============================================ */
-        .display-large {
-            font-size: 40px;
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .display-medium {
-            font-size: 32px;
-            font-weight: 700;
-            line-height: 1.15;
-            letter-spacing: -1px;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        h1, .h1 {
-            font-size: 28px;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.8px;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        h2, .h2 {
-            font-size: 22px;
-            font-weight: 600;
-            line-height: 1.3;
-            letter-spacing: -0.4px;
-            margin-bottom: var(--spacing-md);
-        }
-
-        h3, .h3 {
-            font-size: 17px;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .body-large {
-            font-size: 17px;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        .body-default {
-            font-size: 15px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: var(--text-secondary);
-        }
-
-        .body-small {
+        .greeting {
             font-size: 13px;
-            font-weight: 400;
-            line-height: 1.4;
-            color: var(--text-tertiary);
-        }
-
-        .caption {
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            color: var(--accent);
+            font-weight: 600;
             text-transform: uppercase;
-            color: var(--text-tertiary);
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
         }
 
-        .text-accent { color: var(--accent); }
-        .text-secondary { color: var(--text-secondary); }
-        .text-tertiary { color: var(--text-tertiary); }
-        .text-success { color: var(--success); }
-        .text-warning { color: var(--warning); }
-        .text-danger { color: var(--danger); }
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            margin-top: 24px;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
 
         /* ============================================
            КАРТОЧКИ
            ============================================ */
         .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            transition: var(--transition-base);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .card-gradient {
+            background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 100%);
+            border: 1px solid var(--border);
         }
 
         .card-interactive {
             cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
         }
 
         .card-interactive:active {
             transform: scale(0.98);
-            background: var(--bg-tertiary);
-        }
-
-        .card-elevated {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-default);
+            background: var(--card-hover);
         }
 
         /* ============================================
@@ -235,17 +173,17 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: var(--spacing-sm);
+            gap: 8px;
             padding: 14px 24px;
             font-size: 16px;
             font-weight: 600;
-            border-radius: var(--radius-full);
+            border-radius: 999px;
             border: none;
             cursor: pointer;
-            transition: var(--transition-fast);
+            transition: all 0.2s ease;
             text-decoration: none;
-            white-space: nowrap;
             min-height: 48px;
+            white-space: nowrap;
         }
 
         .btn:active {
@@ -255,21 +193,25 @@
         .btn-primary {
             background: var(--accent);
             color: #000000;
-            box-shadow: var(--shadow-glow);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .btn-primary:hover {
-            background: var(--accent-hover);
+        .btn-primary:active {
+            background: #B8F100;
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border-default);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
-        .btn-secondary:hover {
-            background: var(--bg-tertiary);
+        .btn-secondary:active {
+            background: var(--card-hover);
+        }
+
+        .btn-block {
+            width: 100%;
         }
 
         .btn-ghost {
@@ -279,22 +221,11 @@
             min-height: auto;
         }
 
-        .btn-block {
-            width: 100%;
-        }
-
-        .btn-icon {
-            width: 44px;
-            height: 44px;
-            padding: 0;
-            border-radius: var(--radius-full);
-        }
-
         /* ============================================
            ИНПУТЫ
            ============================================ */
         .input-group {
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
         }
 
         .input-label {
@@ -302,7 +233,7 @@
             font-size: 13px;
             font-weight: 500;
             color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -310,178 +241,114 @@
         .input {
             width: 100%;
             padding: 14px 16px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
             font-size: 16px;
             font-weight: 500;
-            transition: var(--transition-fast);
+            transition: border-color 0.2s ease;
         }
 
         .input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         .input::placeholder {
-            color: var(--text-tertiary);
+            color: var(--text-muted);
         }
 
         /* ============================================
-           КАСТОМНЫЙ ЧЕКБОКС
-           ============================================ */
-        .checkbox {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .checkbox input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .checkbox-mark {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--border-strong);
-            border-radius: var(--radius-xs);
-            background: transparent;
-            transition: var(--transition-fast);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .checkbox input:checked ~ .checkbox-mark {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .checkbox-mark svg {
-            width: 14px;
-            height: 14px;
-            stroke: #000;
-            stroke-width: 3;
-            fill: none;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: var(--transition-fast);
-        }
-
-        .checkbox input:checked ~ .checkbox-mark svg {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* ============================================
-           БЕЙДЖИ И ТЕГИ
+           БЕЙДЖИ (уровни сложности)
            ============================================ */
         .badge {
             display: inline-flex;
             align-items: center;
             gap: 4px;
             padding: 4px 10px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            border-radius: var(--radius-full);
-            background: var(--bg-tertiary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-subtle);
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .badge-accent {
-            background: var(--accent-glow);
-            color: var(--accent);
-            border-color: transparent;
-        }
-
-        .badge-success {
+        .badge-beginner {
             background: rgba(0, 230, 118, 0.15);
             color: var(--success);
         }
 
-        .badge-warning {
+        .badge-intermediate {
             background: rgba(255, 179, 0, 0.15);
             color: var(--warning);
         }
 
-        .badge-danger {
+        .badge-advanced {
             background: rgba(255, 61, 0, 0.15);
             color: var(--danger);
         }
 
-        /* ============================================
-           УТИЛИТЫ
-           ============================================ */
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .gap-xs { gap: var(--spacing-xs); }
-        .gap-sm { gap: var(--spacing-sm); }
-        .gap-md { gap: var(--spacing-md); }
-        .gap-lg { gap: var(--spacing-lg); }
-        .mt-sm { margin-top: var(--spacing-sm); }
-        .mt-md { margin-top: var(--spacing-md); }
-        .mt-lg { margin-top: var(--spacing-lg); }
-        .mt-xl { margin-top: var(--spacing-xl); }
-        .mb-sm { margin-bottom: var(--spacing-sm); }
-        .mb-md { margin-bottom: var(--spacing-md); }
-        .mb-lg { margin-bottom: var(--spacing-lg); }
-        .text-center { text-align: center; }
-        .hidden { display: none !important; }
-
-        /* ============================================
-           ЗАГОЛОВОК ЭКРАНА С КНОПКОЙ НАЗАД
-           ============================================ */
-        .screen-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
+        .badge-accent {
+            background: var(--accent-dim);
+            color: var(--accent);
         }
 
-        .back-btn {
-            width: 40px;
-            height: 40px;
+        /* ============================================
+           ПРОГРАММЫ (карточки на главном)
+           ============================================ */
+        .program-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .program-card:active {
+            transform: scale(0.98);
+            background: var(--card-hover);
+        }
+
+        .program-info {
+            flex: 1;
+        }
+
+        .program-name {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .program-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .program-arrow {
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-full);
-            cursor: pointer;
-            transition: var(--transition-fast);
-            flex-shrink: 0;
-        }
-
-        .back-btn:active {
-            transform: scale(0.92);
-            background: var(--bg-tertiary);
-        }
-
-        .back-btn svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--text-primary);
-            stroke-width: 2;
-            fill: none;
+            color: var(--text-muted);
         }
 
         /* ============================================
-           КОЛЬЦО АКТИВНОСТИ (Apple Fitness стиль)
+           КОЛЬЦО АКТИВНОСТИ
            ============================================ */
         .activity-ring-container {
             position: relative;
-            width: 180px;
-            height: 180px;
+            width: 160px;
+            height: 160px;
             margin: 0 auto;
         }
 
@@ -493,16 +360,17 @@
 
         .activity-ring-bg {
             fill: none;
-            stroke: var(--bg-tertiary);
-            stroke-width: 14;
+            stroke: var(--card);
+            stroke-width: 12;
         }
 
         .activity-ring-progress {
             fill: none;
-            stroke: url(#ringGradient);
-            stroke-width: 14;
+            stroke: var(--accent);
+            stroke-width: 12;
             stroke-linecap: round;
             transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 8px var(--accent-glow));
         }
 
         .activity-ring-center {
@@ -514,153 +382,273 @@
         }
 
         .activity-ring-value {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 800;
-            letter-spacing: -1.5px;
+            color: var(--accent);
             line-height: 1;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            letter-spacing: -1px;
         }
 
         .activity-ring-label {
-            font-size: 12px;
-            color: var(--text-tertiary);
+            font-size: 11px;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 4px;
         }
 
         /* ============================================
-           НИЖНЯЯ НАВИГАЦИЯ (Tab Bar)
+           СПИСОК УПРАЖНЕНИЙ
            ============================================ */
-        .tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-            z-index: 100;
-        }
-
-        .tab-item {
-            flex: 1;
+        .exercise-list {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px;
+            gap: 12px;
+        }
+
+        .exercise-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
             cursor: pointer;
-            color: var(--text-tertiary);
-            transition: var(--transition-fast);
+            transition: all 0.2s ease;
         }
 
-        .tab-item.active {
-            color: var(--accent);
+        .exercise-card:active {
+            transform: scale(0.98);
+            background: var(--card-hover);
         }
 
-        .tab-item svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
+        .exercise-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
         }
 
-        .tab-item span {
-            font-size: 11px;
-            font-weight: 500;
+        .exercise-card-title {
+            font-size: 16px;
+            font-weight: 600;
         }
-                /* ============================================
-           МОДАЛЬНЫЕ ОКНА
+
+        .exercise-card-meta {
+            color: var(--text-secondary);
+            font-size: 13px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .exercise-progress-bar {
+            height: 4px;
+            background: var(--card);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .exercise-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        /* ============================================
+           ДЕТАЛИ УПРАЖНЕНИЯ
            ============================================ */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+        .exercise-detail-image {
+            width: 100%;
+            height: 180px;
+            background: var(--card);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition-base);
-            padding: var(--spacing-lg);
+            color: var(--text-muted);
+            font-size: 14px;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        .exercise-plan {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .modal {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            max-width: 400px;
-            width: 100%;
-            transform: scale(0.9) translateY(20px);
-            transition: var(--transition-base);
-            box-shadow: var(--shadow-lg);
+        .exercise-plan-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
         }
 
-        .modal-overlay.active .modal {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-header {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .modal-title {
-            font-size: 22px;
+        .exercise-plan-value {
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: var(--spacing-xs);
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 4px;
         }
 
-        .modal-description {
+        .exercise-plan-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .exercise-tip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .exercise-tip-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .exercise-tip-text {
+            font-size: 14px;
             color: var(--text-secondary);
-            font-size: 15px;
+            line-height: 1.6;
         }
 
-        .modal-actions {
+        /* ============================================
+           ПОДХОДЫ (МОБИЛЬНАЯ ВЕРСИЯ)
+           ============================================ */
+        .sets-container {
+            margin-top: 20px;
+        }
+
+        .set-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-xl);
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
         }
 
-        .modal-actions .btn {
+        .set-item.completed {
+            opacity: 0.6;
+        }
+
+        .set-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .set-checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .set-checkbox svg {
+            width: 14px;
+            height: 14px;
+            stroke: #000;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .set-checkbox.checked svg {
+            opacity: 1;
+        }
+
+        .set-number {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .set-inputs {
             flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .set-input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .set-input {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .set-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .set-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .set-unit {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 2px;
+            text-transform: uppercase;
         }
 
         /* ============================================
            ТАЙМЕР ОТДЫХА
            ============================================ */
-        .rest-timer-container {
+        .timer-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: var(--spacing-xl);
-            padding: var(--spacing-xl) 0;
+            padding: 40px 0;
         }
 
         .timer-circle {
             position: relative;
             width: 240px;
             height: 240px;
+            margin-bottom: 32px;
         }
 
         .timer-circle svg {
@@ -671,7 +659,7 @@
 
         .timer-circle-bg {
             fill: none;
-            stroke: var(--bg-tertiary);
+            stroke: var(--card);
             stroke-width: 12;
         }
 
@@ -680,18 +668,8 @@
             stroke: var(--accent);
             stroke-width: 12;
             stroke-linecap: round;
-            transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
-        }
-
-        .timer-circle-progress.warning {
-            stroke: var(--warning);
-            filter: drop-shadow(0 0 8px rgba(255, 179, 0, 0.3));
-        }
-
-        .timer-circle-progress.danger {
-            stroke: var(--danger);
-            filter: drop-shadow(0 0 8px rgba(255, 61, 0, 0.3));
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0 0 12px var(--accent-glow));
         }
 
         .timer-display {
@@ -707,45 +685,45 @@
             font-weight: 800;
             letter-spacing: -2px;
             line-height: 1;
-            font-variant-numeric: tabular-nums;
+            color: var(--accent);
         }
 
         .timer-label {
-            font-size: 13px;
-            color: var(--text-tertiary);
+            font-size: 12px;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-top: var(--spacing-xs);
+            margin-top: 4px;
         }
 
         .timer-controls {
             display: flex;
-            gap: var(--spacing-md);
+            gap: 16px;
             align-items: center;
         }
 
         .timer-btn {
             width: 56px;
             height: 56px;
-            border-radius: var(--radius-full);
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-default);
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition-fast);
+            transition: all 0.2s ease;
         }
 
         .timer-btn:active {
             transform: scale(0.92);
-            background: var(--bg-elevated);
+            background: var(--card-hover);
         }
 
         .timer-btn svg {
             width: 24px;
             height: 24px;
-            stroke: var(--text-primary);
+            stroke: var(--text);
             stroke-width: 2;
             fill: none;
         }
@@ -764,453 +742,21 @@
         }
 
         /* ============================================
-           КАРТОЧКИ УПРАЖНЕНИЙ
+           ДОСТИЖЕНИЯ И МЫШЦЫ (2 колонки)
            ============================================ */
-        .exercise-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-        }
-
-        .exercise-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            cursor: pointer;
-            transition: var(--transition-base);
-        }
-
-        .exercise-card:active {
-            transform: scale(0.98);
-            background: var(--bg-tertiary);
-        }
-
-        .exercise-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .exercise-card-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .exercise-card-meta {
-            display: flex;
-            gap: var(--spacing-md);
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .exercise-card-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .exercise-card-meta-item svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .exercise-progress-bar {
-            height: 6px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            margin-top: var(--spacing-md);
-        }
-
-        .exercise-progress-fill {
-            height: 100%;
-            background: var(--accent-gradient);
-            border-radius: var(--radius-full);
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ============================================
-           ДЕТАЛИ УПРАЖНЕНИЯ
-           ============================================ */
-        .exercise-detail-image {
-            width: 100%;
-            height: 200px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--spacing-lg);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .exercise-detail-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .exercise-detail-image-placeholder {
-            color: var(--text-tertiary);
-            font-size: 14px;
-        }
-
-        .exercise-plan {
-            display: flex;
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .exercise-plan-item {
-            flex: 1;
-            text-align: center;
-            padding: var(--spacing-md);
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-        }
-
-        .exercise-plan-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .exercise-plan-label {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .exercise-tip {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-top: var(--spacing-lg);
-        }
-
-        .exercise-tip-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent);
-            margin-bottom: var(--spacing-sm);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .exercise-tip-title svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .exercise-tip-text {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* ============================================
-           ПОДХОДЫ (Сеты)
-           ============================================ */
-        .sets-container {
-            margin-top: var(--spacing-xl);
-        }
-
-        .set-item {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            padding: var(--spacing-md);
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--spacing-sm);
-            transition: var(--transition-base);
-        }
-
-        .set-item.completed {
-            opacity: 0.6;
-            background: var(--bg-tertiary);
-        }
-
-        .set-number {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-full);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            flex-shrink: 0;
-        }
-
-        .set-item.completed .set-number {
-            background: var(--accent);
-            color: #000;
-        }
-
-        .set-inputs {
-            display: flex;
-            gap: var(--spacing-sm);
-            flex: 1;
-        }
-
-        .set-input {
-            flex: 1;
-            padding: 10px 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            transition: var(--transition-fast);
-        }
-
-        .set-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: var(--bg-elevated);
-        }
-
-        .set-input::placeholder {
-            color: var(--text-tertiary);
-            font-weight: 400;
-        }
-
-        .set-unit {
-            font-size: 13px;
-            color: var(--text-tertiary);
-            margin-top: 2px;
-            text-align: center;
-        }
-
-        /* ============================================
-           ПРОГРЕСС-БАР ТРЕНИРОВКИ
-           ============================================ */
-        .workout-progress {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .workout-progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .workout-progress-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .workout-progress-count {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .workout-progress-bar {
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-        }
-
-        .workout-progress-fill {
-            height: 100%;
-            background: var(--accent-gradient);
-            border-radius: var(--radius-full);
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ============================================
-           ЭКРАН ЗАВЕРШЕНИЯ
-           ============================================ */
-        .completion-container {
-            text-align: center;
-            padding: var(--spacing-xl) 0;
-        }
-
-        .completion-icon {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto var(--spacing-xl);
-            background: var(--accent-gradient);
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-glow);
-            animation: completionPulse 2s ease-in-out infe;
-        }
-
-        @keyframes completionPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .completion-icon svg {
-            width: 64px;
-            height: 64px;
-            stroke: #000;
-            stroke-width: 2.5;
-            fill: none;
-        }
-
-        .completion-stats {
+        .grid-2 {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--spacing-md);
-            margin: var(--spacing-xl) 0;
-        }
-
-        .completion-stat {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-        }
-
-        .completion-stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .completion-stat-label {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ============================================
-           ПРОФИЛЬ
-           ============================================ */
-        .profile-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--spacing-md);
-            background: var(--accent-gradient);
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 700;
-            color: #000;
-        }
-
-        .profile-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .profile-stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-        }
-
-        .profile-stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .profile-stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .profile-section {
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .profile-section-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: var(--spacing-md);
-        }
-
-        /* ============================================
-           ГРАФИКИ
-           ============================================ */
-        .chart-container {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .chart-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .chart-svg {
-            width: 100%;
-            height: 120px;
-        }
-
-        /* ============================================
-           ДОСТИЖЕНИЯ
-           ============================================ */
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--spacing-md);
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .achievement-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
             text-align: center;
-            transition: var(--transition-base);
+            transition: all 0.2s ease;
         }
 
         .achievement-card.unlocked {
@@ -1221,7 +767,7 @@
         .achievement-icon {
             width: 48px;
             height: 48px;
-            margin: 0 auto var(--spacing-sm);
+            margin: 0 auto 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1233,7 +779,7 @@
         }
 
         .achievement-card:not(.unlocked) .achievement-icon svg {
-            stroke: var(--text-tertiary);
+            stroke: var(--text-muted);
             fill: none;
         }
 
@@ -1245,186 +791,26 @@
         .achievement-title {
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: 4px;
         }
 
         .achievement-description {
             font-size: 11px;
-            color: var(--text-tertiary);
-        }
-
-        /* ============================================
-           КОНСТРУКТОР ПРОГРАММ
-           ============================================ */
-        .builder-categories {
-            display: flex;
-            gap: var(--spacing-sm);
-            overflow-x: auto;
-            padding-bottom: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-            scrollbar-width: none;
-        }
-
-        .builder-categories::-webkit-scrollbar {
-            display: none;
-        }
-
-        .builder-category {
-            padding: 10px 18px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-full);
-            font-size: 14px;
-            font-weight: 500;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .builder-category.active {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-        }
-
-        .builder-exercise-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
-        }
-
-        .builder-exercise-item {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            padding: var(--spacing-md);
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition-base);
-        }
-
-        .builder-exercise-item:active {
-            transform: scale(0.98);
-        }
-
-        .builder-exercise-item.selected {
-            border-color: var(--accent);
-            background: var(--accent-glow);
-        }
-
-        .builder-exercise-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .builder-exercise-icon svg {
-            width: 24px;
-            height: 24px;
-            stroke: var(--text-secondary);
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .builder-exercise-info {
-            flex: 1;
-        }
-
-        .builder-exercise-name {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .builder-exercise-muscle {
-            font-size: 13px;
-            color: var(--text-tertiary);
-        }
-
-        /* ============================================
-           УВЕДОМЛЕНИЯ (PR, ТОСТЫ)
-           ============================================ */
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md) var(--spacing-lg);
-            box-shadow: var(--shadow-lg);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            max-width: 90%;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .toast-icon {
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
-        }
-
-        .toast-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .toast-content {
-            flex: 1;
-        }
-
-        .toast-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .toast-message {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .pr-toast .toast-icon svg {
-            stroke: var(--gold);
-            fill: var(--gold);
-        }
-
-        /* ============================================
-           ИНДИКАТОР ВОССТАНОВЛЕНИЯ МЫШЦ
-           ============================================ */
-        .muscle-recovery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--spacing-md);
+            color: var(--text-muted);
         }
 
         .muscle-recovery-item {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
             text-align: center;
         }
 
         .muscle-recovery-icon {
             width: 48px;
             height: 48px;
-            margin: 0 auto var(--spacing-sm);
+            margin: 0 auto 8px;
             position: relative;
         }
 
@@ -1440,23 +826,15 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 16px;
-            height: 16px;
-            border-radius: var(--radius-full);
-            border: 2px solid var(--bg-secondary);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--card);
         }
 
-        .muscle-recovery-status.ready {
-            background: var(--success);
-        }
-
-        .muscle-recovery-status.recovering {
-            background: var(--warning);
-        }
-
-        .muscle-recovery-status.fatigued {
-            background: var(--danger);
-        }
+        .muscle-recovery-status.ready { background: var(--success); }
+        .muscle-recovery-status.recovering { background: var(--warning); }
+        .muscle-recovery-status.fatigued { background: var(--danger); }
 
         .muscle-recovery-name {
             font-size: 13px;
@@ -1466,20 +844,294 @@
 
         .muscle-recovery-days {
             font-size: 11px;
-            color: var(--text-tertiary);
+            color: var(--text-muted);
         }
-        </style>
-        </head>
+
+        /* ============================================
+           МОДАЛЬНЫЕ ОКНА
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        /* ============================================
+           НАВИГАЦИЯ
+           ============================================ */
+        .screen-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .back-btn:active {
+            transform: scale(0.92);
+            background: var(--card-hover);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* ============================================
+           TAB BAR
+           ============================================ */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .tab-item.active {
+            color: var(--accent);
+        }
+
+        .tab-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .tab-item span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           УТИЛИТЫ
+           ============================================ */
+        .text-center { text-align: center; }
+        .mt-lg { margin-top: 24px; }
+        .mb-lg { margin-bottom: 24px; }
+        .hidden { display: none !important; }
+
+        /* ============================================
+           КОНСТРУКТОР ПРОГРАММ
+           ============================================ */
+        .builder-categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            scrollbar-width: none;
+        }
+
+        .builder-categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .builder-category {
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .builder-category.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        .builder-exercise-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .builder-exercise-item:active {
+            transform: scale(0.98);
+        }
+
+        .builder-exercise-item.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .builder-exercise-name {
+            font-size: 15px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .builder-exercise-muscle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           TOAST УВЕДОМЛЕНИЯ
+           ============================================ */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-width: 90%;
+            backdrop-filter: blur(12px);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .toast-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--gold);
+            fill: var(--gold);
+        }
+
+        .toast-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
 <body>
-    <!-- ============================================
-         ЭКРАН 1: ОНБОРДИНГ
-         ============================================ -->
+    <!-- Анимированный фон -->
+    <div class="bg-glow"></div>
+
+    <!-- ЭКРАН 1: ОНБОРДИНГ -->
     <div id="view-onboarding" class="view active">
         <div class="text-center" style="padding: 40px 0;">
-            <h1 class="display-large">Добро пожаловать</h1>
-            <p class="body-default">Давай настроим приложение под тебя</p>
+            <h1>Добро пожаловать</h1>
+            <p class="subtitle">Давай настроим приложение под тебя</p>
             
-            <div class="card mt-xl" style="text-align: left;">
+            <div class="card" style="text-align: left;">
                 <div class="input-group">
                     <label class="input-label">Возраст</label>
                     <input type="number" id="onboarding-age" class="input" placeholder="25" min="14" max="100">
@@ -1502,110 +1154,61 @@
         </div>
     </div>
 
-    <!-- ============================================
-         ЭКРАН 2: ГЛАВНЫЙ ЭКРАН
-         ============================================ -->
+    <!-- ЭКРАН 2: ГЛАВНЫЙ -->
     <div id="view-home" class="view">
-        <div class="screen-header">
-            <h1 class="h1">Gym Motivation</h1>
-        </div>
+        <div class="greeting">ПРИВЕТ</div>
+        <h1>Gym Motivation</h1>
+        <p class="subtitle">Готов к тренировке?</p>
 
         <!-- Кольцо активности -->
-        <div class="card mb-lg">
+        <div class="card card-gradient text-center">
             <div class="activity-ring-container">
-                <svg viewBox="0 0 180 180">
-                    <defs>
-                        <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#C6FF00"/>
-                            <stop offset="100%" style="stop-color:#00E676"/>
-                        </linearGradient>
-                    </defs>
-                    <circle class="activity-ring-bg" cx="90" cy="90" r="75"/>
-                    <circle class="activity-ring-progress" cx="90" cy="90" r="75" 
-                            stroke-dasharray="471" stroke-dashoffset="471"/>
+                <svg viewBox="0 0 160 160">
+                    <circle class="activity-ring-bg" cx="80" cy="80" r="70"/>
+                    <circle class="activity-ring-progress" cx="80" cy="80" r="70" 
+                            stroke-dasharray="440" stroke-dashoffset="440" id="activity-ring"/>
                 </svg>
                 <div class="activity-ring-center">
-                    <div class="activity-ring-value" id="activity-ring-value">0/3</div>
+                    <div class="activity-ring-value" id="activity-value">0/3</div>
                     <div class="activity-ring-label">на этой неделе</div>
                 </div>
             </div>
-            <p class="text-center body-default mt-md" id="activity-message">
+            <p class="subtitle" style="margin-top: 16px; margin-bottom: 0;" id="activity-message">
                 Начни свою первую тренировку!
             </p>
         </div>
 
-        <!-- Баннер продолжения тренировки -->
-        <div id="continue-workout-banner" class="card card-interactive mb-lg hidden">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="h3">Продолжить тренировку</h3>
-                    <p class="body-small" id="continue-workout-name">Full Body</p>
-                </div>
-                <div class="back-btn" style="background: var(--accent); border: none;">
-                    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Программы тренировок -->
-        <h2 class="h2">Программы</h2>
-        <div class="exercise-list" id="programs-list">
-            <!-- Заполняется JS -->
-        </div>
+        <h2>Программы</h2>
+        <div id="programs-list"></div>
 
         <button class="btn btn-secondary btn-block mt-lg" id="create-program-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"/>
-            </svg>
-            Создать свою программу
+            + Создать свою программу
         </button>
     </div>
 
-    <!-- ============================================
-         ЭКРАН 3: СПИСОК УПРАЖНЕНИЙ
-         ============================================ -->
+    <!-- ЭКРАН 3: СПИСОК УПРАЖНЕНИЙ -->
     <div id="view-exercises" class="view">
         <div class="screen-header">
-            <button class="back-btn" onclick="navigateTo('view-home', 'back')">
+            <button class="back-btn" onclick="navigateTo('view-home')">
                 <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <h1 class="h1" id="exercises-title">Тренировка</h1>
+            <h1 id="exercises-title">Тренировка</h1>
         </div>
 
-        <!-- Прогресс тренировки -->
-        <div class="workout-progress">
-            <div class="workout-progress-header">
-                <span class="workout-progress-title">Прогресс</span>
-                <span class="workout-progress-count" id="workout-progress-count">0/0</span>
-            </div>
-            <div class="workout-progress-bar">
-                <div class="workout-progress-fill" id="workout-progress-fill" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Список упражнений -->
-        <div class="exercise-list" id="exercise-list">
-            <!-- Заполняется JS -->
-        </div>
+        <div class="exercise-list" id="exercise-list"></div>
     </div>
 
-    <!-- ============================================
-         ЭКРАН 4: ДЕТАЛИ УПРАЖНЕНИЯ
-         ============================================ -->
+    <!-- ЭКРАН 4: ДЕТАЛИ УПРАЖНЕНИЯ -->
     <div id="view-exercise-detail" class="view">
         <div class="screen-header">
-            <button class="back-btn" onclick="navigateTo('view-exercises', 'back')">
+            <button class="back-btn" onclick="navigateTo('view-exercises')">
                 <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <h1 class="h1" id="exercise-detail-title">Упражнение</h1>
+            <h1 id="exercise-detail-title">Упражнение</h1>
         </div>
 
-        <!-- Изображение -->
-        <div class="exercise-detail-image">
-            <span class="exercise-detail-image-placeholder">Изображение упражнения</span>
-        </div>
+        <div class="exercise-detail-image">Изображение упражнения</div>
 
-        <!-- План -->
         <div class="exercise-plan">
             <div class="exercise-plan-item">
                 <div class="exercise-plan-value" id="exercise-sets">3</div>
@@ -1617,45 +1220,29 @@
             </div>
         </div>
 
-        <!-- Подходы -->
-        <div class="sets-container" id="sets-container">
-            <!-- Заполняется JS -->
-        </div>
+        <div class="sets-container" id="sets-container"></div>
 
-        <!-- Совет по технике -->
         <div class="exercise-tip">
-            <div class="exercise-tip-title">
-                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                Техника выполнения
-            </div>
-            <p class="exercise-tip-text" id="exercise-tip-text">
-                Следите за техникой и контролируйте движение.
-            </p>
+            <div class="exercise-tip-title">Техника выполнения</div>
+            <p class="exercise-tip-text" id="exercise-tip-text">Следите за техникой.</p>
         </div>
 
-        <!-- Навигация -->
-        <div class="flex gap-sm mt-xl">
-            <button class="btn btn-secondary" id="prev-exercise-btn" style="flex: 1;">
-                ← Назад
-            </button>
-            <button class="btn btn-primary" id="next-exercise-btn" style="flex: 1;">
-                Далее →
-            </button>
+        <div style="display: flex; gap: 8px; margin-top: 20px;">
+            <button class="btn btn-secondary" id="prev-exercise-btn" style="flex: 1;">← Назад</button>
+            <button class="btn btn-primary" id="next-exercise-btn" style="flex: 1;">Далее →</button>
         </div>
     </div>
 
-    <!-- ============================================
-         ЭКРАН 5: ТАЙМЕР ОТДЫХА
-         ============================================ -->
+    <!-- ЭКРАН 5: ТАЙМЕР ОТДЫХА -->
     <div id="view-rest" class="view">
         <div class="screen-header">
-            <button class="back-btn" onclick="navigateTo('view-exercise-detail', 'back')">
+            <button class="back-btn" onclick="navigateTo('view-exercise-detail')">
                 <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <h1 class="h1">Отдых</h1>
+            <h1>Отдых</h1>
         </div>
 
-        <div class="rest-timer-container">
+        <div class="timer-container">
             <div class="timer-circle">
                 <svg viewBox="0 0 240 240">
                     <circle class="timer-circle-bg" cx="120" cy="120" r="100"/>
@@ -1683,147 +1270,86 @@
                 </button>
             </div>
 
-            <button class="btn btn-ghost" id="timer-skip">
-                Пропустить отдых →
-            </button>
+            <button class="btn btn-ghost mt-lg" id="timer-skip">Пропустить отдых →</button>
         </div>
     </div>
 
-    <!-- ============================================
-         ЭКРАН 6: ЗАВЕРШЕНИЕ ТРЕНИРОВКИ
-         ============================================ -->
+    <!-- ЭКРАН 6: ЗАВЕРШЕНИЕ -->
     <div id="view-completion" class="view">
-        <div class="completion-container">
-            <div class="completion-icon">
-                <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="text-center" style="padding: 40px 0;">
+            <div style="width: 120px; height: 120px; margin: 0 auto 24px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px var(--accent-glow);">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
             </div>
             
-            <h1 class="display-large">Отличная работа!</h1>
-            <p class="body-default">Тренировка завершена</p>
+            <h1>Отличная работа!</h1>
+            <p class="subtitle">Тренировка завершена</p>
 
-            <div class="completion-stats">
-                <div class="completion-stat">
-                    <div class="completion-stat-value" id="completion-time">0:00</div>
-                    <div class="completion-stat-label">Время</div>
+            <div class="grid-2" style="margin: 24px 0;">
+                <div class="card text-center">
+                    <div style="font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1;" id="completion-time">0:00</div>
+                    <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">Время</div>
                 </div>
-                <div class="completion-stat">
-                    <div class="completion-stat-value" id="completion-exercises">0</div>
-                    <div class="completion-stat-label">Упражнений</div>
-                </div>
-                <div class="completion-stat">
-                    <div class="completion-stat-value" id="completion-tonnage">0</div>
-                    <div class="completion-stat-label">Тоннаж (кг)</div>
+                <div class="card text-center">
+                    <div style="font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1;" id="completion-exercises">0</div>
+                    <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">Упражнений</div>
                 </div>
             </div>
 
-            <button class="btn btn-primary btn-block" id="share-workout-btn">
-                Поделиться результатом
-            </button>
-            <button class="btn btn-secondary btn-block mt-sm" onclick="navigateTo('view-home', 'back')">
-                На главную
-            </button>
+            <div class="card text-center mb-lg">
+                <div style="font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1;" id="completion-tonnage">0</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">Тоннаж (кг)</div>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="share-workout-btn">Поделиться результатом</button>
+            <button class="btn btn-secondary btn-block mt-lg" onclick="navigateTo('view-home')">На главную</button>
         </div>
     </div>
-            <!-- ============================================
-         ЭКРАН 7: ПРОФИЛЬ
-         ============================================ -->
+
+    <!-- ЭКРАН 7: ПРОФИЛЬ -->
     <div id="view-profile" class="view">
-        <div class="screen-header">
-            <h1 class="h1">Профиль</h1>
-        </div>
+        <h1>Профиль</h1>
+        <p class="subtitle" id="profile-stats-text">Возраст: -- | Рост: -- | Вес: --</p>
 
-        <!-- Аватар и статистика -->
-        <div class="profile-header">
-            <div class="profile-avatar" id="profile-avatar">У</div>
-            <h2 class="h2" id="profile-name">Пользователь</h2>
-            <p class="body-small" id="profile-stats-text">Возраст: -- | Рост: -- | Вес: --</p>
-        </div>
-
-        <!-- Статистика -->
-        <div class="profile-stats-grid">
-            <div class="profile-stat-card">
-                <div class="profile-stat-value" id="profile-workouts-week">0</div>
-                <div class="profile-stat-label">Тренировок за неделю</div>
+        <div class="grid-2 mb-lg">
+            <div class="card text-center">
+                <div style="font-size: 32px; font-weight: 700; color: var(--accent); line-height: 1;" id="profile-workouts-week">0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">За неделю</div>
             </div>
-            <div class="profile-stat-card">
-                <div class="profile-stat-value" id="profile-workouts-total">0</div>
-                <div class="profile-stat-label">Всего тренировок</div>
+            <div class="card text-center">
+                <div style="font-size: 32px; font-weight: 700; color: var(--accent); line-height: 1;" id="profile-workouts-total">0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Всего</div>
             </div>
         </div>
 
-        <!-- График веса -->
-        <div class="chart-container">
-            <div class="chart-header">
-                <h3 class="chart-title">Динамика веса</h3>
-                <span class="body-small" id="weight-chart-period">Последние 30 дней</span>
-            </div>
-            <svg class="chart-svg" id="weight-chart" viewBox="0 0 300 120">
-                <!-- Заполняется JS -->
-            </svg>
-        </div>
+        <h2>Восстановление мышц</h2>
+        <div class="grid-2" id="muscle-recovery-grid"></div>
 
-        <!-- Индикатор восстановления мышц -->
-        <div class="profile-section">
-            <h3 class="profile-section-title">Восстановление мышц</h3>
-            <div class="muscle-recovery-grid" id="muscle-recovery-grid">
-                <!-- Заполняется JS -->
-            </div>
-        </div>
+        <h2>Достижения</h2>
+        <div class="grid-2" id="achievements-grid"></div>
 
-        <!-- Достижения -->
-        <div class="profile-section">
-            <h3 class="profile-section-title">Достижения</h3>
-            <div class="achievements-grid" id="achievements-grid">
-                <!-- Заполняется JS -->
-            </div>
-        </div>
-
-        <!-- Совет дня -->
-        <div class="card mb-lg">
-            <h3 class="h3" style="color: var(--accent);">💡 Совет дня</h3>
-            <p class="body-default" id="daily-tip-text">
-                Загрузка совета...
-            </p>
-        </div>
-
-        <!-- Настройки -->
-        <div class="profile-section">
-            <h3 class="profile-section-title">Настройки</h3>
-            <div class="card">
-                <button class="btn btn-secondary btn-block mb-sm" id="edit-profile-btn">
-                    Редактировать профиль
-                </button>
-                <button class="btn btn-secondary btn-block mb-sm" id="export-data-btn">
-                    Экспорт данных
-                </button>
-                <button class="btn btn-secondary btn-block mb-sm" id="import-data-btn">
-                    Импорт данных
-                </button>
-                <button class="btn btn-secondary btn-block" id="reset-progress-btn" style="color: var(--danger);">
-                    Сбросить прогресс
-                </button>
-            </div>
+        <h2>Настройки</h2>
+        <div class="card">
+            <button class="btn btn-secondary btn-block mb-lg" id="export-data-btn">Экспорт данных</button>
+            <button class="btn btn-secondary btn-block" id="reset-progress-btn" style="color: var(--danger);">Сбросить прогресс</button>
         </div>
     </div>
 
-    <!-- ============================================
-         ЭКРАН 8: КОНСТРУКТОР ПРОГРАММ
-         ============================================ -->
+    <!-- ЭКРАН 8: КОНСТРУКТОР -->
     <div id="view-builder" class="view">
         <div class="screen-header">
-            <button class="back-btn" onclick="navigateTo('view-home', 'back')">
+            <button class="back-btn" onclick="navigateTo('view-home')">
                 <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <h1 class="h1">Создать программу</h1>
+            <h1>Создать программу</h1>
         </div>
 
-        <!-- Название программы -->
         <div class="input-group">
             <label class="input-label">Название программы</label>
             <input type="text" id="builder-program-name" class="input" placeholder="Моя тренировка">
         </div>
 
-        <!-- Категории упражнений -->
         <div class="builder-categories" id="builder-categories">
             <div class="builder-category active" data-category="all">Все</div>
             <div class="builder-category" data-category="legs">Ноги</div>
@@ -1834,24 +1360,31 @@
             <div class="builder-category" data-category="core">Кор</div>
         </div>
 
-        <!-- Список упражнений -->
-        <div class="builder-exercise-list" id="builder-exercise-list">
-            <!-- Заполняется JS -->
-        </div>
+        <div id="builder-exercise-list"></div>
 
-        <!-- Выбранные упражнения -->
         <div class="card mt-lg">
-            <h3 class="h3">Выбрано: <span id="builder-selected-count">0</span></h3>
-            <button class="btn btn-primary btn-block mt-md" id="builder-save-btn">
-                Сохранить программу
-            </button>
+            <h3>Выбрано: <span id="builder-selected-count">0</span></h3>
+            <button class="btn btn-primary btn-block mt-lg" id="builder-save-btn">Сохранить программу</button>
         </div>
     </div>
 
-    <!-- ============================================
-         НИЖНЯЯ НАВИГАЦИЯ (TAB BAR)
-         ============================================ -->
-    <nav class="tab-bar" id="tab-bar">
+    <!-- МОДАЛКА: ПОДТВЕРЖДЕНИЕ СБРОСА -->
+    <div class="modal-overlay" id="modal-confirm-reset">
+        <div class="modal">
+            <div class="modal-title">Сбросить прогресс?</div>
+            <p class="modal-description">Все данные будут удалены. Это действие нельзя отменить.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal-confirm-reset')">Отмена</button>
+                <button class="btn btn-primary" id="confirm-reset-btn" style="background: var(--danger);">Сбросить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast-container" class="toast"></div>
+
+    <!-- TAB BAR -->
+    <nav class="tab-bar">
         <div class="tab-item active" data-view="view-home">
             <svg viewBox="0 0 24 24">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -1868,92 +1401,11 @@
         </div>
     </nav>
 
-    <!-- ============================================
-         МОДАЛКА: РЕДАКТИРОВАНИЕ ПРОФИЛЯ
-         ============================================ -->
-    <div class="modal-overlay" id="modal-edit-profile">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Редактировать профиль</h2>
-                <p class="modal-description">Обновите свои данные</p>
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label">Возраст</label>
-                <input type="number" id="edit-age" class="input" min="14" max="100">
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label">Рост (см)</label>
-                <input type="number" id="edit-height" class="input" min="100" max="250">
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label">Вес (кг)</label>
-                <input type="number" id="edit-weight" class="input" min="30" max="300">
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeModal('modal-edit-profile')">Отмена</button>
-                <button class="btn btn-primary" id="save-profile-btn">Сохранить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================
-         МОДАЛКА: ПОДТВЕРЖДЕНИЕ СБРОСА
-         ============================================ -->
-    <div class="modal-overlay" id="modal-confirm-reset">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Сбросить прогресс?</h2>
-                <p class="modal-description">Все ваши данные будут удалены. Это действие нельзя отменить.</p>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeModal('modal-confirm-reset')">Отмена</button>
-                <button class="btn btn-primary" id="confirm-reset-btn" style="background: var(--danger);">Сбросить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================
-         МОДАЛКА: НАСТРОЙКИ ОТДЫХА
-         ============================================ -->
-    <div class="modal-overlay" id="modal-rest-settings">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Время отдыха</h2>
-                <p class="modal-description">Настройте длительность отдыха между подходами</p>
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label">Секунд: <span id="rest-time-display">60</span></label>
-                <input type="range" id="rest-time-slider" class="input" min="30" max="180" step="5" value="60" 
-                       style="padding: 8px;">
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeModal('modal-rest-settings')">Отмена</button>
-                <button class="btn btn-primary" id="save-rest-settings-btn">Сохранить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================
-         КОНТЕЙНЕР ДЛЯ ТОСТОВ (PR УВЕДОМЛЕНИЯ)
-         ============================================ -->
-    <div id="toast-container" class="toast"></div>
-
-    <!-- ============================================
-         СКРЫТЫЙ INPUT ДЛЯ ИМПОРТА ДАННЫХ
-         ============================================ -->
-    <input type="file" id="import-file-input" accept=".json" style="display: none;">
-
-    <!-- ============================================
-         JAVASCRIPT: ДАННЫЕ И ИНИЦИАЛИЗАЦИЯ
-         ============================================ -->
     <script>
+        // Здесь будет JavaScript (вторая часть)
+    </script>
+</body>
+</html>
         // ============================================
         // TELEGRAM WEB APP API
         // ============================================
@@ -1965,402 +1417,84 @@
         }
 
         // ============================================
-        // ДАННЫЕ: УПРАЖНЕНИЯ (40+ штук)
+        // ДАННЫЕ: УПРАЖНЕНИЯ
         // ============================================
         const exercises = [
             // НОГИ
-            {
-                id: 'squat',
-                name: 'Приседания со штангой',
-                category: 'legs',
-                muscle: 'Квадрицепсы, Ягодицы',
-                sets: 4,
-                reps: 8,
-                tip: 'Держите спину прямой, колени не выходят за носки. Опускайтесь до параллели бедер с полом.',
-                icon: 'legs'
-            },
-            {
-                id: 'leg_press',
-                name: 'Жим ногами',
-                category: 'legs',
-                muscle: 'Квадрицепсы',
-                sets: 3,
-                reps: 12,
-                tip: 'Не выпрямляйте колени полностью в верхней точке. Контролируйте движение вниз.',
-                icon: 'legs'
-            },
-            {
-                id: 'lunges',
-                name: 'Выпады с гантелями',
-                category: 'legs',
-                muscle: 'Квадрицепсы, Ягодицы',
-                sets: 3,
-                reps: 10,
-                tip: 'Шаг достаточно широкий, заднее колено почти касается пола. Корпус держите вертикально.',
-                icon: 'legs'
-            },
-            {
-                id: 'deadlift',
-                name: 'Становая тяга',
-                category: 'legs',
-                muscle: 'Бицепс бедра, Спина',
-                sets: 4,
-                reps: 6,
-                tip: 'Спина прямая, штанга близко к телу. Движение начинается с ног, а не со спины.',
-                icon: 'legs'
-            },
-            {
-                id: 'leg_curl',
-                name: 'Сгибание ног лежа',
-                category: 'legs',
-                muscle: 'Бицепс бедра',
-                sets: 3,
-                reps: 12,
-                tip: 'Не отрывайте таз от скамьи. Контролируемое движение без рывков.',
-                icon: 'legs'
-            },
-            {
-                id: 'calf_raise',
-                name: 'Подъем на носки',
-                category: 'legs',
-                muscle: 'Икроножные',
-                sets: 4,
-                reps: 15,
-                tip: 'Полная амплитуда: максимальное растяжение внизу и пиковое сокращение вверху.',
-                icon: 'legs'
-            },
+            { id: 'squat', name: 'Приседания со штангой', category: 'legs', muscle: 'Квадрицепсы, Ягодицы', sets: 4, reps: 8, tip: 'Держите спину прямой, колени не выходят за носки. Опускайтесь до параллели бедер с полом.' },
+            { id: 'leg_press', name: 'Жим ногами', category: 'legs', muscle: 'Квадрицепсы', sets: 3, reps: 12, tip: 'Не выпрямляйте колени полностью в верхней точке. Контролируйте движение вниз.' },
+            { id: 'lunges', name: 'Выпады с гантелями', category: 'legs', muscle: 'Квадрицепсы, Ягодицы', sets: 3, reps: 10, tip: 'Шаг достаточно широкий, заднее колено почти касается пола. Корпус держите вертикально.' },
+            { id: 'deadlift', name: 'Становая тяга', category: 'legs', muscle: 'Бицепс бедра, Спина', sets: 4, reps: 6, tip: 'Спина прямая, штанга близко к телу. Движение начинается с ног, а не со спины.' },
+            { id: 'leg_curl', name: 'Сгибание ног лежа', category: 'legs', muscle: 'Бицепс бедра', sets: 3, reps: 12, tip: 'Не отрывайте таз от скамьи. Контролируемое движение без рывков.' },
+            { id: 'calf_raise', name: 'Подъем на носки', category: 'legs', muscle: 'Икроножные', sets: 4, reps: 15, tip: 'Полная амплитуда: максимальное растяжение внизу и пиковое сокращение вверху.' },
 
             // ГРУДЬ
-            {
-                id: 'bench_press',
-                name: 'Жим штанги лежа',
-                category: 'chest',
-                muscle: 'Грудь, Трицепс',
-                sets: 4,
-                reps: 8,
-                tip: 'Лопатки сведены, ноги упираются в пол. Штанга опускается к нижней части груди.',
-                icon: 'chest'
-            },
-            {
-                id: 'dumbbell_press',
-                name: 'Жим гантелей лежа',
-                category: 'chest',
-                muscle: 'Грудь',
-                sets: 3,
-                reps: 10,
-                tip: 'Большая амплитуда движения. Гантели опускайте ниже уровня скамьи.',
-                icon: 'chest'
-            },
-            {
-                id: 'incline_press',
-                name: 'Жим на наклонной скамье',
-                category: 'chest',
-                muscle: 'Верх груди',
-                sets: 3,
-                reps: 10,
-                tip: 'Угол наклона 30-45 градусов. Фокус на верхней части груди.',
-                icon: 'chest'
-            },
-            {
-                id: 'push_ups',
-                name: 'Отжимания',
-                category: 'chest',
-                muscle: 'Грудь, Трицепс',
-                sets: 3,
-                reps: 15,
-                tip: 'Тело как прямая линия. Локти под углом 45 градусов к телу.',
-                icon: 'chest'
-            },
-            {
-                id: 'chest_fly',
-                name: 'Разводка гантелей',
-                category: 'chest',
-                muscle: 'Грудь',
-                sets: 3,
-                reps: 12,
-                tip: 'Небольшой сгиб в локтях. Контролируемое движение без рывков.',
-                icon: 'chest'
-            },
-            {
-                id: 'cable_crossover',
-                name: 'Сведение рук в кроссовере',
-                category: 'chest',
-                muscle: 'Грудь',
-                sets: 3,
-                reps: 12,
-                tip: 'Небольшой наклон вперед. Пиковое сокращение в нижней точке.',
-                icon: 'chest'
-            },
+            { id: 'bench_press', name: 'Жим штанги лежа', category: 'chest', muscle: 'Грудь, Трицепс', sets: 4, reps: 8, tip: 'Лопатки сведены, ноги упираются в пол. Штанга опускается к нижней части груди.' },
+            { id: 'dumbbell_press', name: 'Жим гантелей лежа', category: 'chest', muscle: 'Грудь', sets: 3, reps: 10, tip: 'Большая амплитуда движения. Гантели опускайте ниже уровня скамьи.' },
+            { id: 'incline_press', name: 'Жим на наклонной скамье', category: 'chest', muscle: 'Верх груди', sets: 3, reps: 10, tip: 'Угол наклона 30-45 градусов. Фокус на верхней части груди.' },
+            { id: 'push_ups', name: 'Отжимания', category: 'chest', muscle: 'Грудь, Трицепс', sets: 3, reps: 15, tip: 'Тело как прямая линия. Локти под углом 45 градусов к телу.' },
+            { id: 'chest_fly', name: 'Разводка гантелей', category: 'chest', muscle: 'Грудь', sets: 3, reps: 12, tip: 'Небольшой сгиб в локтях. Контролируемое движение без рывков.' },
+            { id: 'cable_crossover', name: 'Сведение рук в кроссовере', category: 'chest', muscle: 'Грудь', sets: 3, reps: 12, tip: 'Небольшой наклон вперед. Пиковое сокращение в нижней точке.' },
 
             // СПИНА
-            {
-                id: 'pull_ups',
-                name: 'Подтягивания',
-                category: 'back',
-                muscle: 'Широчайшие',
-                sets: 4,
-                reps: 8,
-                tip: 'Тяните локтями вниз и назад. Подбородок выше перекладины.',
-                icon: 'back'
-            },
-            {
-                id: 'lat_pulldown',
-                name: 'Тяга верхнего блока',
-                category: 'back',
-                muscle: 'Широчайшие',
-                sets: 3,
-                reps: 10,
-                tip: 'Тяните к верху груди. Лопатки сводятся в нижней точке.',
-                icon: 'back'
-            },
-            {
-                id: 'barbell_row',
-                name: 'Тяга штанги в наклоне',
-                category: 'back',
-                muscle: 'Спина',
-                sets: 4,
-                reps: 8,
-                tip: 'Спина прямая, наклон 45 градусов. Тяните к нижней части живота.',
-                icon: 'back'
-            },
-            {
-                id: 'dumbbell_row',
-                name: 'Тяга гантели в наклоне',
-                category: 'back',
-                muscle: 'Широчайшие',
-                sets: 3,
-                reps: 10,
-                tip: 'Одно колено на скамье. Тяните локтем вверх и назад.',
-                icon: 'back'
-            },
-            {
-                id: 'seated_row',
-                name: 'Тяга нижнего блока',
-                category: 'back',
-                muscle: 'Спина',
-                sets: 3,
-                reps: 12,
-                tip: 'Спина прямая. Тяните к поясу, сводя лопатки.',
-                icon: 'back'
-            },
-            {
-                id: 'face_pull',
-                name: 'Тяга к лицу',
-                category: 'back',
-                muscle: 'Задние дельты, Трапеция',
-                sets: 3,
-                reps: 15,
-                tip: 'Тяните к переносице. Локти выше плеч.',
-                icon: 'back'
-            },
+            { id: 'pull_ups', name: 'Подтягивания', category: 'back', muscle: 'Широчайшие', sets: 4, reps: 8, tip: 'Тяните локтями вниз и назад. Подбородок выше перекладины.' },
+            { id: 'lat_pulldown', name: 'Тяга верхнего блока', category: 'back', muscle: 'Широчайшие', sets: 3, reps: 10, tip: 'Тяните к верху груди. Лопатки сводятся в нижней точке.' },
+            { id: 'barbell_row', name: 'Тяга штанги в наклоне', category: 'back', muscle: 'Спина', sets: 4, reps: 8, tip: 'Спина прямая, наклон 45 градусов. Тяните к нижней части живота.' },
+            { id: 'dumbbell_row', name: 'Тяга гантели в наклоне', category: 'back', muscle: 'Широчайшие', sets: 3, reps: 10, tip: 'Одно колено на скамье. Тяните локтем вверх и назад.' },
+            { id: 'seated_row', name: 'Тяга нижнего блока', category: 'back', muscle: 'Спина', sets: 3, reps: 12, tip: 'Спина прямая. Тяните к поясу, сводя лопатки.' },
+            { id: 'face_pull', name: 'Тяга к лицу', category: 'back', muscle: 'Задние дельты, Трапеция', sets: 3, reps: 15, tip: 'Тяните к переносице. Локти выше плеч.' },
 
             // ПЛЕЧИ
-            {
-                id: 'overhead_press',
-                name: 'Жим штанги стоя',
-                category: 'shoulders',
-                muscle: 'Дельты',
-                sets: 4,
-                reps: 8,
-                tip: 'Штанга над головой, локти не полностью выпрямлены. Корпус стабилен.',
-                icon: 'shoulders'
-            },
-            {
-                id: 'dumbbell_press',
-                name: 'Жим гантелей сидя',
-                category: 'shoulders',
-                muscle: 'Дельты',
-                sets: 3,
-                reps: 10,
-                tip: 'Спинка скамьи 90 градусов. Не касайтесь гантелями плеч в нижней точке.',
-                icon: 'shoulders'
-            },
-            {
-                id: 'lateral_raise',
-                name: 'Махи гантелями в стороны',
-                category: 'shoulders',
-                muscle: 'Средние дельты',
-                sets: 3,
-                reps: 12,
-                tip: 'Небольшой сгиб в локтях. Поднимайте до параллели с полом.',
-                icon: 'shoulders'
-            },
-            {
-                id: 'front_raise',
-                name: 'Подъем гантелей перед собой',
-                category: 'shoulders',
-                muscle: 'Передние дельты',
-                sets: 3,
-                reps: 12,
-                tip: 'Чередуйте руки или поднимайте обе сразу. Контролируемое движение.',
-                icon: 'shoulders'
-            },
-            {
-                id: 'rear_delt_fly',
-                name: 'Махи в наклоне',
-                category: 'shoulders',
-                muscle: 'Задние дельты',
-                sets: 3,
-                reps: 15,
-                tip: 'Наклон вперед 45 градусов. Разводите руки в стороны.',
-                icon: 'shoulders'
-            },
-            {
-                id: 'shrugs',
-                name: 'Шраги с гантелями',
-                category: 'shoulders',
-                muscle: 'Трапеция',
-                sets: 3,
-                reps: 15,
-                tip: 'Поднимайте плечи вертикально вверх. Пауза в верхней точке.',
-                icon: 'shoulders'
-            },
+            { id: 'overhead_press', name: 'Жим штанги стоя', category: 'shoulders', muscle: 'Дельты', sets: 4, reps: 8, tip: 'Штанга над головой, локти не полностью выпрямлены. Корпус стабилен.' },
+            { id: 'dumbbell_shoulder_press', name: 'Жим гантелей сидя', category: 'shoulders', muscle: 'Дельты', sets: 3, reps: 10, tip: 'Спинка скамьи 90 градусов. Не касайтесь гантелями плеч в нижней точке.' },
+            { id: 'lateral_raise', name: 'Махи гантелями в стороны', category: 'shoulders', muscle: 'Средние дельты', sets: 3, reps: 12, tip: 'Небольшой сгиб в локтях. Поднимайте до параллели с полом.' },
+            { id: 'front_raise', name: 'Подъем гантелей перед собой', category: 'shoulders', muscle: 'Передние дельты', sets: 3, reps: 12, tip: 'Чередуйте руки или поднимайте обе сразу. Контролируемое движение.' },
+            { id: 'rear_delt_fly', name: 'Махи в наклоне', category: 'shoulders', muscle: 'Задние дельты', sets: 3, reps: 15, tip: 'Наклон вперед 45 градусов. Разводите руки в стороны.' },
+            { id: 'shrugs', name: 'Шраги с гантелями', category: 'shoulders', muscle: 'Трапеция', sets: 3, reps: 15, tip: 'Поднимайте плечи вертикально вверх. Пауза в верхней точке.' },
 
             // РУКИ
-            {
-                id: 'bicep_curl',
-                name: 'Подъем штанги на бицепс',
-                category: 'arms',
-                muscle: 'Бицепс',
-                sets: 3,
-                reps: 10,
-                tip: 'Локти прижаты к телу. Не раскачивайтесь.',
-                icon: 'arms'
-            },
-            {
-                id: 'hammer_curl',
-                name: 'Молотки с гантелями',
-                category: 'arms',
-                muscle: 'Бицепс, Брахиалис',
-                sets: 3,
-                reps: 12,
-                tip: 'Ладони смотрят друг на друга. Чередуйте руки.',
-                icon: 'arms'
-            },
-            {
-                id: 'tricep_extension',
-                name: 'Разгибание рук на блоке',
-                category: 'arms',
-                muscle: 'Трицепс',
-                sets: 3,
-                reps: 12,
-                tip: 'Локти прижаты к телу. Полное выпрямление в нижней точке.',
-                icon: 'arms'
-            },
-            {
-                id: 'tricep_dips',
-                name: 'Отжимания на брусьях',
-                category: 'arms',
-                muscle: 'Трицепс',
-                sets: 3,
-                reps: 10,
-                tip: 'Корпус вертикально. Опускайтесь до угла 90 градусов в локтях.',
-                icon: 'arms'
-            },
-            {
-                id: 'skull_crusher',
-                name: 'Французский жим',
-                category: 'arms',
-                muscle: 'Трицепс',
-                sets: 3,
-                reps: 10,
-                tip: 'Локти направлены вперед. Опускайте штангу ко лбу.',
-                icon: 'arms'
-            },
-            {
-                id: 'concentration_curl',
-                name: 'Концентрированный подъем',
-                category: 'arms',
-                muscle: 'Бицепс',
-                sets: 3,
-                reps: 10,
-                tip: 'Локоть упирается в бедро. Изолированное движение.',
-                icon: 'arms'
-            },
+            { id: 'bicep_curl', name: 'Подъем штанги на бицепс', category: 'arms', muscle: 'Бицепс', sets: 3, reps: 10, tip: 'Локти прижаты к телу. Не раскачивайтесь.' },
+            { id: 'hammer_curl', name: 'Молотки с гантелями', category: 'arms', muscle: 'Бицепс, Брахиалис', sets: 3, reps: 12, tip: 'Ладони смотрят друг на друга. Чередуйте руки.' },
+            { id: 'tricep_extension', name: 'Разгибание рук на блоке', category: 'arms', muscle: 'Трицепс', sets: 3, reps: 12, tip: 'Локти прижаты к телу. Полное выпрямление в нижней точке.' },
+            { id: 'tricep_dips', name: 'Отжимания на брусьях', category: 'arms', muscle: 'Трицепс', sets: 3, reps: 10, tip: 'Корпус вертикально. Опускайтесь до угла 90 градусов в локтях.' },
+            { id: 'skull_crusher', name: 'Французский жим', category: 'arms', muscle: 'Трицепс', sets: 3, reps: 10, tip: 'Локти направлены вперед. Опускайте штангу ко лбу.' },
+            { id: 'concentration_curl', name: 'Концентрированный подъем', category: 'arms', muscle: 'Бицепс', sets: 3, reps: 10, tip: 'Локоть упирается в бедро. Изолированное движение.' },
 
             // КОР
-            {
-                id: 'plank',
-                name: 'Планка',
-                category: 'core',
-                muscle: 'Кор',
-                sets: 3,
-                reps: 60,
-                tip: 'Тело как прямая линия. Напряжение в животе и ягодицах.',
-                icon: 'core'
-            },
-            {
-                id: 'crunches',
-                name: 'Скручивания',
-                category: 'core',
-                muscle: 'Пресс',
-                sets: 3,
-                reps: 20,
-                tip: 'Поднимайте только верхнюю часть спины. Не тяните шею.',
-                icon: 'core'
-            },
-            {
-                id: 'leg_raise',
-                name: 'Подъем ног лежа',
-                category: 'core',
-                muscle: 'Нижний пресс',
-                sets: 3,
-                reps: 15,
-                tip: 'Поясница прижата к полу. Контролируемое опускание ног.',
-                icon: 'core'
-            },
-            {
-                id: 'russian_twist',
-                name: 'Русские скручивания',
-                category: 'core',
-                muscle: 'Косые мышцы',
-                sets: 3,
-                reps: 20,
-                tip: 'Ноги на весу. Повороты корпуса в стороны.',
-                icon: 'core'
-            },
-            {
-                id: 'mountain_climber',
-                name: 'Скалолаз',
-                category: 'core',
-                muscle: 'Кор',
-                sets: 3,
-                reps: 30,
-                tip: 'Планка на прямых руках. Быстрое подтягивание коленей.',
-                icon: 'core'
-            },
-            {
-                id: 'side_plank',
-                name: 'Боковая планка',
-                category: 'core',
-                muscle: 'Косые мышцы',
-                sets: 3,
-                reps: 45,
-                tip: 'Тело как прямая линия. Упор на предплечье.',
-                icon: 'core'
-            }
+            { id: 'plank', name: 'Планка', category: 'core', muscle: 'Кор', sets: 3, reps: 60, tip: 'Тело как прямая линия. Напряжение в животе и ягодицах.' },
+            { id: 'crunches', name: 'Скручивания', category: 'core', muscle: 'Пресс', sets: 3, reps: 20, tip: 'Поднимайте только верхнюю часть спины. Не тяните шею.' },
+            { id: 'leg_raise', name: 'Подъем ног лежа', category: 'core', muscle: 'Нижний пресс', sets: 3, reps: 15, tip: 'Поясница прижата к полу. Контролируемое опускание ног.' },
+            { id: 'russian_twist', name: 'Русские скручивания', category: 'core', muscle: 'Косые мышцы', sets: 3, reps: 20, tip: 'Ноги на весу. Повороты корпуса в стороны.' },
+            { id: 'mountain_climber', name: 'Скалолаз', category: 'core', muscle: 'Кор', sets: 3, reps: 30, tip: 'Планка на прямых руках. Быстрое подтягивание коленей.' },
+            { id: 'side_plank', name: 'Боковая планка', category: 'core', muscle: 'Косые мышцы', sets: 3, reps: 45, tip: 'Тело как прямая линия. Упор на предплечье.' }
         ];
 
         // ============================================
-        // ДАННЫЕ: БАЗОВЫЕ ПРОГРАММЫ
+        // ДАННЫЕ: ПРОГРАММЫ С УРОВНЯМИ СЛОЖНОСТИ
         // ============================================
         const defaultPrograms = [
             {
                 id: 'full_body',
                 name: 'Full Body',
                 description: 'Тренировка на все тело',
+                difficulty: 'beginner',
+                difficultyText: 'Для новичков',
                 exercises: ['squat', 'bench_press', 'barbell_row', 'overhead_press', 'plank']
             },
             {
                 id: 'upper_body',
                 name: 'Верх тела',
                 description: 'Грудь, спина, руки',
-                exercises: ['bench_press', 'pull_ups', 'dumbbell_press', 'bicep_curl', 'tricep_extension']
+                difficulty: 'intermediate',
+                difficultyText: 'Средний уровень',
+                exercises: ['bench_press', 'pull_ups', 'dumbbell_shoulder_press', 'bicep_curl', 'tricep_extension']
             },
             {
                 id: 'lower_body',
                 name: 'Низ тела',
                 description: 'Ноги и кор',
+                difficulty: 'advanced',
+                difficultyText: 'Продвинутый',
                 exercises: ['squat', 'deadlift', 'lunges', 'leg_curl', 'calf_raise']
             }
         ];
@@ -2369,48 +1503,12 @@
         // ДАННЫЕ: ДОСТИЖЕНИЯ
         // ============================================
         const achievements = [
-            {
-                id: 'first_workout',
-                title: 'Первый шаг',
-                description: 'Завершить первую тренировку',
-                icon: 'trophy',
-                condition: (stats) => stats.totalWorkouts >= 1
-            },
-            {
-                id: 'week_warrior',
-                title: 'Недельный воин',
-                description: '3 тренировки за неделю',
-                icon: 'fire',
-                condition: (stats) => stats.weekWorkouts >= 3
-            },
-            {
-                id: 'tonnage_master',
-                title: 'Мастер тоннажа',
-                description: 'Поднять 10 000 кг за тренировку',
-                icon: 'weight',
-                condition: (stats) => stats.maxTonnage >= 10000
-            },
-            {
-                id: 'consistency',
-                title: 'Постоянство',
-                description: '10 тренировок всего',
-                icon: 'calendar',
-                condition: (stats) => stats.totalWorkouts >= 10
-            },
-            {
-                id: 'strength',
-                title: 'Силач',
-                description: '25 тренировок всего',
-                icon: 'muscle',
-                condition: (stats) => stats.totalWorkouts >= 25
-            },
-            {
-                id: 'legend',
-                title: 'Легенда',
-                description: '50 тренировок всего',
-                icon: 'crown',
-                condition: (stats) => stats.totalWorkouts >= 50
-            }
+            { id: 'first_workout', title: 'Первый шаг', description: 'Завершить первую тренировку', icon: 'trophy', condition: (stats) => stats.totalWorkouts >= 1 },
+            { id: 'week_warrior', title: 'Недельный воин', description: '3 тренировки за неделю', icon: 'fire', condition: (stats) => stats.weekWorkouts >= 3 },
+            { id: 'tonnage_master', title: 'Мастер тоннажа', description: 'Поднять 10 000 кг', icon: 'weight', condition: (stats) => stats.maxTonnage >= 10000 },
+            { id: 'consistency', title: 'Постоянство', description: '10 тренировок всего', icon: 'calendar', condition: (stats) => stats.totalWorkouts >= 10 },
+            { id: 'strength', title: 'Силач', description: '25 тренировок всего', icon: 'muscle', condition: (stats) => stats.totalWorkouts >= 25 },
+            { id: 'legend', title: 'Легенда', description: '50 тренировок всего', icon: 'crown', condition: (stats) => stats.totalWorkouts >= 50 }
         ];
 
         // ============================================
@@ -2426,45 +1524,37 @@
             'Контролируйте негативную фазу движения — это стимулирует рост.',
             'Отдых между подходами: 60-90 сек для гипертрофии, 2-3 мин для силы.',
             'Записывайте свои результаты — это мотивирует и показывает прогресс.',
-            'Слушайте свое тело. Боль в суставах — сигнал остановиться.',
-            'Растяжка после тренировки улучшает гибкость и снижает крепатуру.',
-            'Не тренируйте одну группу мышц чаще 2 раз в неделю.',
-            'Кардио после силовой — оптимально для жиросжигания.',
-            'Правильная техника важнее большого веса.',
-            'Ведите дневник тренировок для анализа прогресса.'
+            'Слушайте свое тело. Боль в суставах — сигнал остановиться.'
         ];
 
         // ============================================
         // СОСТОЯНИЕ ПРИЛОЖЕНИЯ
         // ============================================
         let state = {
-            user: {
-                age: null,
-                height: null,
-                weight: null
-            },
+            user: { age: null, height: null, weight: null },
             currentView: 'view-onboarding',
             currentProgram: null,
             currentExerciseIndex: 0,
             workoutInProgress: false,
-            workoutData: {
-                startTime: null,
-                exercises: [],
-                completedSets: []
-            },
+            workoutData: null,
             history: [],
             customPrograms: [],
             restTime: 60,
-            achievements: []
+            achievements: [],
+            maxTonnage: 0
         };
 
         // ============================================
-        // ИНИЦИАЛИЗАЦИЯ LOCALSTORAGE
+        // LOCALSTORAGE
         // ============================================
         function loadState() {
             const saved = localStorage.getItem('gymMotivationState');
             if (saved) {
-                state = { ...state, ...JSON.parse(saved) };
+                try {
+                    state = { ...state, ...JSON.parse(saved) };
+                } catch (e) {
+                    console.error('Ошибка загрузки состояния:', e);
+                }
             }
         }
 
@@ -2475,38 +1565,37 @@
         // ============================================
         // НАВИГАЦИЯ
         // ============================================
-        function navigateTo(viewId, direction = 'forward') {
-    // 🛑 ИСПРАВЛЕНИЕ: Очищаем таймер, если уходим с экрана отдыха
-    if (viewId !== 'view-rest' && timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        timerRunning = false;
-    }
+        function navigateTo(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.classList.add('active');
+                state.currentView = viewId;
+                saveState();
+            }
 
-    // Скрываем все экраны
-    document.querySelectorAll('.view').forEach(view => {
-        view.classList.remove('active');
-    });
+            // Telegram Back Button
+            if (tg) {
+                if (viewId === 'view-home' || viewId === 'view-profile') {
+                    tg.BackButton.hide();
+                } else {
+                    tg.BackButton.show();
+                }
+            }
 
-    // Показываем нужный экран
-    const targetView = document.getElementById(viewId);
-    if (targetView) {
-        targetView.classList.add('active');
-        targetView.style.animation = direction === 'back' ? 'slideInLeft 0.3s ease-out' : 'viewEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
-    }
+            // Обновляем Tab Bar
+            updateTabBar(viewId);
 
-    state.currentView = viewId;
-    saveState();
-    updateTabBar(viewId);
-
-    if (tg) {
-        if (viewId === 'view-home' || viewId === 'view-profile') {
-            tg.BackButton.hide();
-        } else {
-            tg.BackButton.show();
+            // Рендеринг при переходе
+            if (viewId === 'view-home') {
+                renderHome();
+            } else if (viewId === 'view-profile') {
+                renderProfile();
+            }
         }
-    }
-}
 
         function updateTabBar(viewId) {
             document.querySelectorAll('.tab-item').forEach(item => {
@@ -2522,16 +1611,12 @@
         // ============================================
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('active');
-            }
+            if (modal) modal.classList.add('active');
         }
 
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('active');
-            }
+            if (modal) modal.classList.remove('active');
         }
 
         // ============================================
@@ -2539,15 +1624,10 @@
         // ============================================
         function hapticFeedback(type = 'light') {
             if (tg?.HapticFeedback) {
-                if (type === 'light') {
-                    tg.HapticFeedback.impactOccurred('light');
-                } else if (type === 'medium') {
-                    tg.HapticFeedback.impactOccurred('medium');
-                } else if (type === 'heavy') {
-                    tg.HapticFeedback.impactOccurred('heavy');
-                } else if (type === 'success') {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (type === 'light') tg.HapticFeedback.impactOccurred('light');
+                else if (type === 'medium') tg.HapticFeedback.impactOccurred('medium');
+                else if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
+                else if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
@@ -2562,12 +1642,12 @@
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
                     </svg>
                 </div>
-                <div class="toast-content">
+                <div>
                     <div class="toast-title">${title}</div>
                     <div class="toast-message">${message}</div>
                 </div>
             `;
-            toast.className = `toast show ${type}-toast`;
+            toast.classList.add('show');
             
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -2575,50 +1655,24 @@
         }
 
         // ============================================
-        // РЕНДЕРИНГ ПРОГРАММ
+        // РЕНДЕРИНГ ГЛАВНОГО ЭКРАНА
         // ============================================
-        function renderPrograms() {
-            const container = document.getElementById('programs-list');
-            if (!container) return;
-
-            const allPrograms = [...defaultPrograms, ...state.customPrograms];
-            
-            container.innerHTML = allPrograms.map(program => `
-                <div class="exercise-card card-interactive" onclick="startWorkout('${program.id}')">
-                    <div class="exercise-card-header">
-                        <div>
-                            <div class="exercise-card-title">${program.name}</div>
-                            <div class="exercise-card-meta">
-                                <div class="exercise-card-meta-item">
-                                    <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66v1.7c0 1-.6 1.64-1.4 1.64H7.4c-.8 0-1.4-.64-1.4-1.64v-1.7"/><path d="M14 14.66v1.7c0 1 .6 1.64 1.4 1.64h1.2c.8 0 1.4-.64 1.4-1.64v-1.7"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                                    ${program.exercises.length} упражнений
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+        function renderHome() {
+            renderActivityRing();
+            renderPrograms();
         }
 
-        // ============================================
-        // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
-        // ============================================
-        
-            // ============================================
-        // РЕНДЕРИНГ КОЛЬЦА АКТИВНОСТИ
-        // ============================================
         function renderActivityRing() {
             const weekWorkouts = getWeekWorkoutsCount();
             const goal = 3;
             const progress = Math.min(weekWorkouts / goal, 1);
             
-            const ring = document.querySelector('.activity-ring-progress');
-            const valueEl = document.getElementById('activity-ring-value');
+            const ring = document.getElementById('activity-ring');
+            const valueEl = document.getElementById('activity-value');
             const messageEl = document.getElementById('activity-message');
             
             if (ring && valueEl && messageEl) {
-                // Длина окружности: 2 * π * 75 ≈ 471
-                const circumference = 471;
+                const circumference = 440; // 2 * π * 70
                 const offset = circumference - (progress * circumference);
                 ring.style.strokeDashoffset = offset;
                 
@@ -2648,6 +1702,35 @@
             }).length;
         }
 
+        function renderPrograms() {
+            const container = document.getElementById('programs-list');
+            if (!container) return;
+
+            const allPrograms = [...defaultPrograms, ...state.customPrograms];
+            
+            container.innerHTML = allPrograms.map(program => {
+                const difficultyClass = `badge-${program.difficulty || 'beginner'}`;
+                const difficultyText = program.difficultyText || 'Для новичков';
+                
+                return `
+                    <div class="program-card card-interactive" onclick="startWorkout('${program.id}')">
+                        <div class="program-info">
+                            <div class="program-name">${program.name}</div>
+                            <div class="program-meta">
+                                <span class="badge ${difficultyClass}">${difficultyText}</span>
+                                <span>• ${program.exercises.length} упражнений</span>
+                            </div>
+                        </div>
+                        <div class="program-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         // ============================================
         // ОНБОРДИНГ
         // ============================================
@@ -2665,8 +1748,6 @@
             saveState();
             hapticFeedback('success');
             navigateTo('view-home');
-            renderPrograms();
-            renderActivityRing();
         }
 
         // ============================================
@@ -2682,7 +1763,7 @@
             state.currentExerciseIndex = 0;
             state.workoutInProgress = true;
             state.workoutData = {
-                startTime: new Date(),
+                startTime: new Date().toISOString(),
                 programName: program.name,
                 exercises: program.exercises.map(exId => {
                     const exercise = exercises.find(e => e.id === exId);
@@ -2722,26 +1803,16 @@
                 const progress = (completedSets / totalSets) * 100;
                 
                 return `
-                    <div class="exercise-card card-interactive" onclick="openExerciseDetail(${index})">
+                    <div class="exercise-card" onclick="openExerciseDetail(${index})">
                         <div class="exercise-card-header">
                             <div>
                                 <div class="exercise-card-title">${exercise.name}</div>
                                 <div class="exercise-card-meta">
-                                    <div class="exercise-card-meta-item">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12 6 12 12 16 14"/>
-                                        </svg>
-                                        ${exercise.sets.length} × ${exercise.reps}
-                                    </div>
-                                    <div class="exercise-card-meta-item">
-                                        ${completedSets}/${totalSets} подходов
-                                    </div>
+                                    <span>${exercise.sets.length} × ${exercise.reps}</span>
+                                    <span>${completedSets}/${totalSets} подходов</span>
                                 </div>
                             </div>
-                            <div class="badge ${completedSets === totalSets ? 'badge-success' : 'badge-accent'}">
-                                ${completedSets === totalSets ? '✓' : Math.round(progress) + '%'}
-                            </div>
+                            <span class="badge badge-accent">${Math.round(progress)}%</span>
                         </div>
                         <div class="exercise-progress-bar">
                             <div class="exercise-progress-fill" style="width: ${progress}%"></div>
@@ -2749,28 +1820,6 @@
                     </div>
                 `;
             }).join('');
-            
-            updateWorkoutProgress();
-        }
-
-        function updateWorkoutProgress() {
-            if (!state.workoutData) return;
-            
-            const totalSets = state.workoutData.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
-            const completedSets = state.workoutData.exercises.reduce(
-                (sum, ex) => sum + ex.sets.filter(s => s.completed).length, 0
-            );
-            
-            const countEl = document.getElementById('workout-progress-count');
-            const fillEl = document.getElementById('workout-progress-fill');
-            
-            if (countEl) countEl.textContent = `${completedSets}/${totalSets}`;
-            if (fillEl) fillEl.style.width = `${(completedSets / totalSets) * 100}%`;
-            
-            // Если все подходы завершены — показываем экран завершения
-            if (completedSets === totalSets && totalSets > 0) {
-                setTimeout(() => completeWorkout(), 500);
-            }
         }
 
         // ============================================
@@ -2802,24 +1851,20 @@
             
             container.innerHTML = exercise.sets.map((set, index) => `
                 <div class="set-item ${set.completed ? 'completed' : ''}" data-set-index="${index}">
-                    <label class="checkbox">
-                        <input type="checkbox" ${set.completed ? 'checked' : ''} 
-                               onchange="toggleSet(${index})">
-                        <span class="checkbox-mark">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
-                        </span>
-                    </label>
+                    <div class="set-checkbox ${set.completed ? 'checked' : ''}" onclick="toggleSet(${index})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
                     <div class="set-number">${set.setNumber}</div>
                     <div class="set-inputs">
-                        <div style="flex: 1;">
+                        <div class="set-input-wrapper">
                             <input type="number" class="set-input" placeholder="0" 
                                    value="${set.weight}" 
                                    onchange="updateSet(${index}, 'weight', this.value)">
                             <div class="set-unit">кг</div>
                         </div>
-                        <div style="flex: 1;">
+                        <div class="set-input-wrapper">
                             <input type="number" class="set-input" placeholder="0" 
                                    value="${set.reps}" 
                                    onchange="updateSet(${index}, 'reps', this.value)">
@@ -2837,40 +1882,34 @@
         }
 
         function toggleSet(setIndex) {
-    const exercise = state.workoutData.exercises[state.currentExerciseIndex];
-    const set = exercise.sets[setIndex];
-
-    const weight = parseFloat(set.weight) || 0;
-    const reps = parseFloat(set.reps) || 0;
-
-    if (!set.completed && weight > 0 && reps > 0) {
-        checkPersonalRecord(exercise.id, weight, reps);
-    }
-
-    set.completed = !set.completed;
-
-    if (set.completed) {
-        set.completedAt = new Date().getTime(); 
-        
-        state.workoutData.completedSets.push({
-            exerciseId: exercise.id,
-            exerciseName: exercise.name,
-            weight: weight,
-            reps: reps,
-            timestamp: new Date()
-        });
-        hapticFeedback('success');
-        startRestTimer();
-    } else {
-        state.workoutData.completedSets = state.workoutData.completedSets.filter(
-            s => !(s.exerciseId === exercise.id && s.timestamp.getTime() === set.completedAt)
-        );
-    }
-    
-    saveState();
-    renderSets();
-    renderExercisesList();
-}
+            const exercise = state.workoutData.exercises[state.currentExerciseIndex];
+            const set = exercise.sets[setIndex];
+            
+            const weight = parseFloat(set.weight) || 0;
+            const reps = parseFloat(set.reps) || 0;
+            
+            if (!set.completed && weight > 0 && reps > 0) {
+                checkPersonalRecord(exercise.id, weight, reps);
+            }
+            
+            set.completed = !set.completed;
+            
+            if (set.completed) {
+                state.workoutData.completedSets.push({
+                    exerciseId: exercise.id,
+                    exerciseName: exercise.name,
+                    weight: weight,
+                    reps: reps,
+                    timestamp: new Date().toISOString()
+                });
+                hapticFeedback('success');
+                startRestTimer();
+            }
+            
+            saveState();
+            renderSets();
+            renderExercisesList();
+        }
 
         // ============================================
         // ПРОВЕРКА ЛИЧНЫХ РЕКОРДОВ (PR)
@@ -2879,7 +1918,6 @@
             const history = state.history || [];
             let maxWeight = 0;
             
-            // Ищем прошлые результаты этого упражнения
             history.forEach(workout => {
                 workout.exercises?.forEach(ex => {
                     if (ex.id === exerciseId) {
@@ -2892,7 +1930,6 @@
                 });
             });
             
-            // Также проверяем текущую тренировку
             state.workoutData.exercises.forEach(ex => {
                 if (ex.id === exerciseId) {
                     ex.sets.forEach(set => {
@@ -2903,16 +1940,10 @@
                 }
             });
             
-            // Если это первое выполнение — просто уведомляем
-if (maxWeight === 0) {
-    showToast('🎯 Первое выполнение!', `${weight} кг`, 'pr');
-    hapticFeedback('medium');
-} 
-// Если вес больше прошлого максимума — новый рекорд!
-else if (weight > maxWeight) {
-    showToast('🏆 Новый рекорд!', `${weight} кг (было ${maxWeight} кг)`, 'pr');
-    hapticFeedback('heavy');
-}
+            if (weight > maxWeight && maxWeight > 0) {
+                showToast('🏆 Новый рекорд!', `${exerciseId}: ${weight} кг`, 'pr');
+                hapticFeedback('heavy');
+            }
         }
 
         // ============================================
@@ -2975,7 +2006,6 @@ else if (weight > maxWeight) {
                     timerRunning = false;
                     hapticFeedback('heavy');
                     
-                    // Звуковой сигнал (если поддерживается)
                     try {
                         const ctx = new (window.AudioContext || window.webkitAudioContext)();
                         const osc = ctx.createOscillator();
@@ -2989,7 +2019,7 @@ else if (weight > maxWeight) {
                     } catch (e) {}
                     
                     setTimeout(() => {
-                        navigateTo('view-exercise-detail', 'back');
+                        navigateTo('view-exercise-detail');
                     }, 1000);
                 }
             }, 1000);
@@ -3009,14 +2039,6 @@ else if (weight > maxWeight) {
                 const circumference = 628; // 2 * π * 100
                 const progress = timerSeconds / state.restTime;
                 progressEl.style.strokeDashoffset = circumference * (1 - progress);
-                
-                // Цветовая индикация
-                progressEl.classList.remove('warning', 'danger');
-                if (timerSeconds <= 10) {
-                    progressEl.classList.add('danger');
-                } else if (timerSeconds <= 20) {
-                    progressEl.classList.add('warning');
-                }
             }
         }
 
@@ -3041,7 +2063,7 @@ else if (weight > maxWeight) {
         function skipRest() {
             if (timerInterval) clearInterval(timerInterval);
             timerRunning = false;
-            navigateTo('view-exercise-detail', 'back');
+            navigateTo('view-exercise-detail');
         }
 
         // ============================================
@@ -3051,9 +2073,9 @@ else if (weight > maxWeight) {
             if (!state.workoutData) return;
             
             const endTime = new Date();
-            const duration = Math.round((endTime - new Date(state.workoutData.startTime)) / 1000 / 60);
+            const startTime = new Date(state.workoutData.startTime);
+            const duration = Math.round((endTime - startTime) / 1000 / 60);
             
-            // Подсчет тоннажа
             let tonnage = 0;
             state.workoutData.exercises.forEach(ex => {
                 ex.sets.forEach(set => {
@@ -3067,28 +2089,24 @@ else if (weight > maxWeight) {
                 ex.sets.every(s => s.completed)
             ).length;
             
-            // Сохраняем в историю
-            // Найди в completeWorkout блок const workoutRecord = { ... } и замени на:
-const workoutRecord = {
-    date: new Date().toISOString(),
-    programName: state.workoutData.programName,
-    duration: duration,
-    weight: state.user.weight, // ✅ ДОБАВЛЕНО: Снимок веса на момент тренировки
-    exercises: state.workoutData.exercises.map(ex => ({
-        id: ex.id,
-        name: ex.name,
-        category: ex.category,
-        sets: ex.sets
-    })),
-    tonnage: tonnage,
-    completedExercises: completedExercises
-};
+            const workoutRecord = {
+                date: new Date().toISOString(),
+                programName: state.workoutData.programName,
+                duration: duration,
+                exercises: state.workoutData.exercises.map(ex => ({
+                    id: ex.id,
+                    name: ex.name,
+                    category: ex.category,
+                    sets: ex.sets
+                })),
+                tonnage: tonnage,
+                completedExercises: completedExercises
+            };
             
             state.history.push(workoutRecord);
             state.workoutInProgress = false;
             state.workoutData = null;
             
-            // Обновляем максимальный тоннаж для достижений
             if (!state.maxTonnage || tonnage > state.maxTonnage) {
                 state.maxTonnage = tonnage;
             }
@@ -3096,7 +2114,6 @@ const workoutRecord = {
             saveState();
             hapticFeedback('success');
             
-            // Показываем экран завершения
             document.getElementById('completion-time').textContent = 
                 `${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}`;
             document.getElementById('completion-exercises').textContent = completedExercises;
@@ -3165,13 +2182,6 @@ const workoutRecord = {
         function renderProfile() {
             if (!state.user.age) return;
             
-            // Аватар
-            const avatar = document.getElementById('profile-avatar');
-            if (avatar) {
-                avatar.textContent = 'У';
-            }
-            
-            // Статистика
             const statsText = document.getElementById('profile-stats-text');
             if (statsText) {
                 statsText.textContent = `Возраст: ${state.user.age} | Рост: ${state.user.height} | Вес: ${state.user.weight}`;
@@ -3180,64 +2190,21 @@ const workoutRecord = {
             document.getElementById('profile-workouts-week').textContent = getWeekWorkoutsCount();
             document.getElementById('profile-workouts-total').textContent = state.history.length;
             
-            renderWeightChart();
             renderMuscleRecovery();
             renderAchievements();
-            renderDailyTip();
         }
-
-        function renderWeightChart() {
-    const svg = document.getElementById('weight-chart');
-    if (!svg) return;
-
-    // ✅ ИСПРАВЛЕНИЕ: Берем вес из истории (снимок), а не текущий
-    const weightData = state.history
-        .filter(w => w.weight) // Фильтруем старые записи, где еще не было поля weight
-        .map(w => ({
-            date: new Date(w.date),
-            weight: w.weight 
-        }));
-
-    if (weightData.length < 2) {
-        svg.innerHTML = '<text x="150" y="60" text-anchor="middle" fill="#71717A" font-size="12">Нужно минимум 2 тренировки</text>';
-        return;
-    }
-
-    const weights = weightData.map(d => d.weight);
-    const minW = Math.min(...weights) - 2;
-    const maxW = Math.max(...weights) + 2;
-    const range = maxW - minW || 1;
-    const width = 300;
-    const height = 120;
-    const padding = 20;
-
-    const points = weightData.map((d, i) => {
-        const x = padding + (i / (weightData.length - 1)) * (width - 2 * padding);
-        const y = height - padding - ((d.weight - minW) / range) * (height - 2 * padding);
-        return `${x},${y}`;
-    }).join(' ');
-
-    svg.innerHTML = `
-        <polyline points="${points}" fill="none" stroke="#C6FF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        ${weightData.map((d, i) => {
-            const x = padding + (i / (weightData.length - 1)) * (width - 2 * padding);
-            const y = height - padding - ((d.weight - minW) / range) * (height - 2 * padding);
-            return `<circle cx="${x}" cy="${y}" r="3" fill="#C6FF00"/>`;
-        }).join('')}
-    `;
-}
 
         function renderMuscleRecovery() {
             const container = document.getElementById('muscle-recovery-grid');
             if (!container) return;
             
             const muscleGroups = [
-                { id: 'legs', name: 'Ноги', icon: 'legs' },
-                { id: 'chest', name: 'Грудь', icon: 'chest' },
-                { id: 'back', name: 'Спина', icon: 'back' },
-                { id: 'shoulders', name: 'Плечи', icon: 'shoulders' },
-                { id: 'arms', name: 'Руки', icon: 'arms' },
-                { id: 'core', name: 'Кор', icon: 'core' }
+                { id: 'legs', name: 'Ноги' },
+                { id: 'chest', name: 'Грудь' },
+                { id: 'back', name: 'Спина' },
+                { id: 'shoulders', name: 'Плечи' },
+                { id: 'arms', name: 'Руки' },
+                { id: 'core', name: 'Кор' }
             ];
             
             container.innerHTML = muscleGroups.map(group => {
@@ -3250,17 +2217,17 @@ const workoutRecord = {
                     statusText = 'Готово';
                 } else if (daysAgo >= 2) {
                     status = 'recovering';
-                    statusText = `${daysAgo} дн назад`;
+                    statusText = `${daysAgo} дн`;
                 } else {
                     status = 'fatigued';
-                    statusText = 'Восстановление';
+                    statusText = 'Восст.';
                 }
                 
                 return `
                     <div class="muscle-recovery-item">
                         <div class="muscle-recovery-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                ${getMuscleIcon(group.icon)}
+                                <circle cx="12" cy="12" r="10"/>
                             </svg>
                             <div class="muscle-recovery-status ${status}"></div>
                         </div>
@@ -3269,18 +2236,6 @@ const workoutRecord = {
                     </div>
                 `;
             }).join('');
-        }
-
-        function getMuscleIcon(type) {
-            const icons = {
-                legs: '<path d="M6 11V8a6 6 0 0 1 12 0v3"/><path d="M6 11l-2 9h4l2-5"/><path d="M18 11l2 9h-4l-2-5"/>',
-                chest: '<path d="M6 7c0-2 2-3 6-3s6 1 6 3v10c0 2-2 3-6 3s-6-1-6-3V7z"/><path d="M12 4v16"/>',
-                back: '<path d="M8 4c-2 0-3 2-3 4v8c0 2 1 4 3 4"/><path d="M16 4c2 0 3 2 3 4v8c0 2-1 4-3 4"/><path d="M8 4h8"/><path d="M8 20h8"/>',
-                shoulders: '<circle cx="12" cy="6" r="3"/><path d="M6 11c-2 0-3 2-3 4v5h18v-5c0-2-1-4-3-4"/>',
-                arms: '<path d="M6 6l6 6 6-6"/><path d="M12 12v8"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/>',
-                core: '<rect x="7" y="4" width="10" height="16" rx="2"/><path d="M7 10h10"/><path d="M7 14h10"/>'
-            };
-            return icons[type] || icons.core;
         }
 
         function getLastTrainingDateForGroup(groupId) {
@@ -3296,14 +2251,6 @@ const workoutRecord = {
                 });
             });
             return lastDate;
-        }
-
-        function renderDailyTip() {
-            const tipEl = document.getElementById('daily-tip-text');
-            if (tipEl) {
-                const todayIndex = new Date().getDate() % tips.length;
-                tipEl.textContent = tips[todayIndex];
-            }
         }
 
         // ============================================
@@ -3334,15 +2281,8 @@ const workoutRecord = {
             container.innerHTML = filtered.map(ex => `
                 <div class="builder-exercise-item ${builderSelected.includes(ex.id) ? 'selected' : ''}" 
                      onclick="toggleBuilderExercise('${ex.id}')">
-                    <div class="builder-exercise-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            ${getMuscleIcon(ex.icon)}
-                        </svg>
-                    </div>
-                    <div class="builder-exercise-info">
-                        <div class="builder-exercise-name">${ex.name}</div>
-                        <div class="builder-exercise-muscle">${ex.muscle}</div>
-                    </div>
+                    <div class="builder-exercise-name">${ex.name}</div>
+                    <div class="builder-exercise-muscle">${ex.muscle}</div>
                 </div>
             `).join('');
             
@@ -3375,7 +2315,9 @@ const workoutRecord = {
             const newProgram = {
                 id: 'custom_' + Date.now(),
                 name: name,
-                description: `Пользовательская программа`,
+                description: 'Пользовательская программа',
+                difficulty: 'intermediate',
+                difficultyText: 'Средний уровень',
                 exercises: [...builderSelected]
             };
             
@@ -3387,11 +2329,10 @@ const workoutRecord = {
             document.getElementById('builder-program-name').value = '';
             
             navigateTo('view-home');
-            renderPrograms();
         }
 
         // ============================================
-        // ЭКСПОРТ / ИМПОРТ / СБРОС
+        // ЭКСПОРТ / СБРОС
         // ============================================
         function exportData() {
             const data = JSON.stringify(state, null, 2);
@@ -3406,23 +2347,6 @@ const workoutRecord = {
             showToast('Экспортировано', 'Файл сохранен', 'default');
         }
 
-        function importData(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    state = { ...state, ...imported };
-                    saveState();
-                    hapticFeedback('success');
-                    showToast('Импортировано', 'Данные восстановлены', 'default');
-                                      init();
-                } catch (err) {
-                    showToast('Ошибка', 'Неверный формат файла', 'default');
-                }
-            };
-            reader.readAsText(file);
-        }
-
         function resetProgress() {
             localStorage.removeItem('gymMotivationState');
             state = {
@@ -3435,7 +2359,8 @@ const workoutRecord = {
                 history: [],
                 customPrograms: [],
                 restTime: 60,
-                achievements: []
+                achievements: [],
+                maxTonnage: 0
             };
             hapticFeedback('heavy');
             closeModal('modal-confirm-reset');
@@ -3447,59 +2372,30 @@ const workoutRecord = {
         // ============================================
         function setupEventListeners() {
             // Онбординг
-            document.getElementById('onboarding-save')?.addEventListener('click', handleOnboardingSave);
+            document.getElementById('onboarding-save').addEventListener('click', handleOnboardingSave);
             
             // Создание программы
-            document.getElementById('create-program-btn')?.addEventListener('click', () => {
+            document.getElementById('create-program-btn').addEventListener('click', () => {
                 navigateTo('view-builder');
                 renderBuilder();
             });
             
             // Навигация по упражнениям
-            document.getElementById('next-exercise-btn')?.addEventListener('click', nextExercise);
-            document.getElementById('prev-exercise-btn')?.addEventListener('click', prevExercise);
+            document.getElementById('next-exercise-btn').addEventListener('click', nextExercise);
+            document.getElementById('prev-exercise-btn').addEventListener('click', prevExercise);
             
             // Таймер
-            document.getElementById('timer-toggle')?.addEventListener('click', toggleTimer);
-            document.getElementById('timer-minus-10')?.addEventListener('click', () => adjustTimer(-10));
-            document.getElementById('timer-plus-10')?.addEventListener('click', () => adjustTimer(10));
-            document.getElementById('timer-skip')?.addEventListener('click', skipRest);
+            document.getElementById('timer-toggle').addEventListener('click', toggleTimer);
+            document.getElementById('timer-minus-10').addEventListener('click', () => adjustTimer(-10));
+            document.getElementById('timer-plus-10').addEventListener('click', () => adjustTimer(10));
+            document.getElementById('timer-skip').addEventListener('click', skipRest);
             
             // Профиль
-            document.getElementById('edit-profile-btn')?.addEventListener('click', () => {
-                document.getElementById('edit-age').value = state.user.age;
-                document.getElementById('edit-height').value = state.user.height;
-                document.getElementById('edit-weight').value = state.user.weight;
-                openModal('modal-edit-profile');
-            });
-            
-            document.getElementById('save-profile-btn')?.addEventListener('click', () => {
-                state.user.age = parseInt(document.getElementById('edit-age').value);
-                state.user.height = parseInt(document.getElementById('edit-height').value);
-                state.user.weight = parseInt(document.getElementById('edit-weight').value);
-                saveState();
-                closeModal('modal-edit-profile');
-                renderProfile();
-                hapticFeedback('success');
-            });
-            
-            document.getElementById('export-data-btn')?.addEventListener('click', exportData);
-            
-            document.getElementById('import-data-btn')?.addEventListener('click', () => {
-                document.getElementById('import-file-input').click();
-            });
-            
-            document.getElementById('import-file-input')?.addEventListener('change', (e) => {
-                if (e.target.files[0]) {
-                    importData(e.target.files[0]);
-                }
-            });
-            
-            document.getElementById('reset-progress-btn')?.addEventListener('click', () => {
+            document.getElementById('export-data-btn').addEventListener('click', exportData);
+            document.getElementById('reset-progress-btn').addEventListener('click', () => {
                 openModal('modal-confirm-reset');
             });
-            
-            document.getElementById('confirm-reset-btn')?.addEventListener('click', resetProgress);
+            document.getElementById('confirm-reset-btn').addEventListener('click', resetProgress);
             
             // Конструктор
             document.querySelectorAll('.builder-category').forEach(cat => {
@@ -3510,18 +2406,12 @@ const workoutRecord = {
                 });
             });
             
-            document.getElementById('builder-save-btn')?.addEventListener('click', saveBuilderProgram);
+            document.getElementById('builder-save-btn').addEventListener('click', saveBuilderProgram);
             
             // Tab Bar
             document.querySelectorAll('.tab-item').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    const viewId = tab.dataset.view;
-                    if (viewId === 'view-profile') renderProfile();
-                    if (viewId === 'view-home') {
-                        renderPrograms();
-                        renderActivityRing();
-                    }
-                    navigateTo(viewId);
+                    navigateTo(tab.dataset.view);
                 });
             });
             
@@ -3530,61 +2420,42 @@ const workoutRecord = {
                 tg.BackButton.onClick(() => {
                     const current = state.currentView;
                     if (current === 'view-exercise-detail') {
-                        navigateTo('view-exercises', 'back');
+                        navigateTo('view-exercises');
                     } else if (current === 'view-exercises' || current === 'view-rest') {
-                        navigateTo('view-home', 'back');
+                        navigateTo('view-home');
                     } else if (current === 'view-builder') {
-                        navigateTo('view-home', 'back');
+                        navigateTo('view-home');
                     } else if (current === 'view-completion') {
-                        navigateTo('view-home', 'back');
+                        navigateTo('view-home');
                     } else {
-                        navigateTo('view-home', 'back');
+                        navigateTo('view-home');
                     }
                 });
             }
             
-            // Настройки отдыха (ползунок)
-            const slider = document.getElementById('rest-time-slider');
-            if (slider) {
-                slider.addEventListener('input', (e) => {
-                    document.getElementById('rest-time-display').textContent = e.target.value;
-                });
-            }
-            
-            document.getElementById('save-rest-settings-btn')?.addEventListener('click', () => {
-                state.restTime = parseInt(document.getElementById('rest-time-slider').value);
-                saveState();
-                closeModal('modal-rest-settings');
-                hapticFeedback('success');
-            });
-            
             // Поделиться
-            document.getElementById('share-workout-btn')?.addEventListener('click', () => {
-                const text = `🔥 Я только что завершил тренировку в gym***! Присоединяйся!`;
+            document.getElementById('share-workout-btn').addEventListener('click', () => {
+                const text = `🔥 Я только что завершил тренировку в Gym Motivation! Присоединяйся!`;
                 if (tg) {
                     tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(location.href)}&text=${encodeURIComponent(text)}`);
                 }
             });
         }
 
-                // ============================================
-        // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
         // ============================================
         function init() {
             loadState();
             setupEventListeners();
             
-            // Проверяем, прошел ли пользователь онбординг
             if (state.user.age && state.user.height && state.user.weight) {
                 navigateTo('view-home');
-                renderPrograms();
-                renderActivityRing();
             } else {
                 navigateTo('view-onboarding');
             }
         }
-
-        // Запуск приложения
+                            // Запуск
         init();
     </script>
 </body>
