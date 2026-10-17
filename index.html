@@ -5,141 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>gym***</title>
     
-    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Tailwind CSS (Play CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Конфигурация премиальной темы "Тихая роскошь"
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        bg: {
-                            primary: '#09090B',
-                            secondary: '#111114',
-                            tertiary: '#18181B',
-                        },
-                        text: {
-                            primary: '#F4F4F5',
-                            secondary: '#A1A1AA',
-                            muted: '#52525B',
-                        },
-                        accent: {
-                            DEFAULT: '#C5A059', // Бронзовое золото
-                            hover: '#D4AF37',
-                            soft: 'rgba(197, 160, 89, 0.1)',
-                        },
-                        border: {
-                            DEFAULT: 'rgba(255, 255, 255, 0.05)',
-                            strong: 'rgba(255, 255, 255, 0.1)',
-                        }
-                    },
-                    boxShadow: {
-                        'premium': '0 4px 24px rgba(0, 0, 0, 0.4)',
-                        'glow': '0 0 20px rgba(197, 160, 89, 0.15)',
+                        bg: { primary: '#09090B', secondary: '#111114', tertiary: '#18181B' },
+                        text: { primary: '#F4F4F5', secondary: '#A1A1AA', muted: '#52525B' },
+                        accent: { DEFAULT: '#C5A059', hover: '#D4AF37', soft: 'rgba(197, 160, 89, 0.1)' },
+                        border: { DEFAULT: 'rgba(255, 255, 255, 0.05)', strong: 'rgba(255, 255, 255, 0.1)' }
                     }
                 }
             }
         }
     </script>
 
-    <!-- Подключаем премиальный шрифт -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Базовые премиальные стили */
-        :root {
-            color-scheme: dark;
-        }
+        :root { color-scheme: dark; }
         body {
-            margin: 0;
-            background-color: #09090B;
-            color: #F4F4F5;
+            margin: 0; background-color: #09090B; color: #F4F4F5;
             font-family: 'Inter', system-ui, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-            scrollbar-width: none; /* Скрываем скроллбар */
+            -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden; scrollbar-width: none;
         }
         body::-webkit-scrollbar { display: none; }
 
-        /* Анимации для плавных переходов (замена Framer Motion) */
+        /* Экраны и переходы */
         .screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            transform: translateY(20px);
-            filter: blur(8px);
-            pointer-events: none;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Плавная кривая Безье */
+            position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh;
+            padding: 1.5rem; padding-bottom: 6rem; /* Отступ для нижней навигации */
+            display: flex; flex-direction: column;
+            opacity: 0; transform: translateY(20px); filter: blur(8px);
+            pointer-events: none; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .screen.active {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-            pointer-events: auto;
-            position: relative;
+            opacity: 1; transform: translateY(0); filter: blur(0);
+            pointer-events: auto; position: relative;
         }
-        .screen.exit {
-            opacity: 0;
-            transform: translateY(-20px);
-            filter: blur(8px);
-        }
+        .screen.exit { opacity: 0; transform: translateY(-20px); filter: blur(8px); }
 
-        /* Кастомные классы для карточек и кнопок */
+        /* Компоненты */
         .glass-card {
-            background: #111114;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            backdrop-filter: blur(4px);
+            background: #111114; border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem; backdrop-filter: blur(4px);
         }
         .btn-primary {
-            background: #C5A059;
-            color: #09090B;
-            font-weight: 600;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            width: 100%;
-            text-align: center;
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
+            background: #C5A059; color: #09090B; font-weight: 600;
+            padding: 1rem 1.5rem; border-radius: 0.75rem; width: 100%;
+            text-align: center; transition: all 0.2s; border: none; cursor: pointer;
         }
         .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
         .input-premium {
-            width: 100%;
-            background: #18181B;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 0.75rem;
-            padding: 0.875rem 1rem;
-            color: #F4F4F5;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
+            width: 100%; background: #18181B; border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem; padding: 0.875rem 1rem; color: #F4F4F5;
+            font-size: 1rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;
         }
         .input-premium:focus { border-color: rgba(197, 160, 89, 0.5); }
         .input-premium::placeholder { color: #52525B; }
 
-        /* Анимация появления элементов списка */
-        .stagger-item {
-            opacity: 0;
-            transform: translateX(-15px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Каскадная анимация */
+        .stagger-item { opacity: 0; transform: translateX(-15px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .stagger-item.visible { opacity: 1; transform: translateX(0); }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(17, 17, 20, 0.85); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
         }
-        .stagger-item.visible {
-            opacity: 1;
-            transform: translateX(0);
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+            color: #52525B; transition: all 0.3s; padding: 0.5rem; flex: 1;
+        }
+        .nav-item.active { color: #C5A059; }
+        .nav-item svg { transition: transform 0.3s; }
+        .nav-item.active svg { transform: scale(1.1); }
+
+        /* Анимация колец */
+        .ring-progress {
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
@@ -147,162 +101,206 @@
 
     <main id="app" class="w-full min-h-screen relative">
         
-        <!-- ЭКРАН 1: Приветствие и Имя -->
+        <!-- ========================================== -->
+        <!-- ЭКРАН 0: РЕГИСТРАЦИЯ (ИМЯ)                 -->
+        <!-- ========================================== -->
         <section id="screen-0" class="screen active">
             <div class="flex flex-col flex-1 justify-center">
                 <div class="mb-10">
-                    <h1 class="text-4xl font-bold tracking-tight mb-2">
-                        gym<span class="text-accent">***</span>
-                    </h1>
-                    <p class="text-text-secondary text-lg leading-relaxed">
-                        Пространство для тех, кто ценит<br>дисциплину и результат.
-                    </p>
+                    <h1 class="text-4xl font-bold tracking-tight mb-2">gym<span class="text-accent">***</span></h1>
+                    <p class="text-text-secondary text-lg leading-relaxed">Пространство для тех, кто ценит<br>дисциплину и результат.</p>
                 </div>
-
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-text-muted text-xs font-medium mb-2 uppercase tracking-widest">
-                            Как к вам обращаться?
-                        </label>
-                        <input 
-                            type="text" 
-                            id="input-name" 
-                            placeholder="Ваше имя" 
-                            class="input-premium"
-                            autocomplete="off"
-                        >
+                        <label class="block text-text-muted text-xs font-medium mb-2 uppercase tracking-widest">Как к вам обращаться?</label>
+                        <input type="text" id="input-name" placeholder="Ваше имя" class="input-premium" autocomplete="off">
                     </div>
-                    
-                    <button id="btn-next-0" class="btn-primary" disabled>
-                        Продолжить
-                    </button>
+                    <button id="btn-next-0" class="btn-primary" disabled>Продолжить</button>
                 </div>
             </div>
-            
-            <!-- Индикатор прогресса -->
             <div class="flex justify-center gap-2 mt-8 pb-4">
-                <div class="h-1 w-8 rounded-full bg-accent transition-all duration-500" id="dot-0"></div>
-                <div class="h-1 w-2 rounded-full bg-text-muted/30 transition-all duration-500" id="dot-1"></div>
+                <div class="h-1 w-8 rounded-full bg-accent"></div>
+                <div class="h-1 w-2 rounded-full bg-text-muted/30"></div>
             </div>
         </section>
 
-        <!-- ЭКРАН 2: Выбор уровня -->
+        <!-- ========================================== -->
+        <!-- ЭКРАН 1: РЕГИСТРАЦИЯ (УРОВЕНЬ)             -->
+        <!-- ========================================== -->
         <section id="screen-1" class="screen">
             <div class="flex flex-col flex-1">
                 <div class="mb-6 mt-2">
                     <h2 class="text-2xl font-bold mb-1">Ваш уровень</h2>
-                    <p class="text-text-secondary text-sm">
-                        Подберем идеальную программу и интенсивность.
-                    </p>
+                    <p class="text-text-secondary text-sm">Подберем идеальную программу и интенсивность.</p>
                 </div>
+                <div class="space-y-3 flex-1" id="levels-container"></div>
+                <button id="btn-finish" class="btn-primary mt-6" disabled>Начать путь</button>
+            </div>
+            <div class="flex justify-center gap-2 mt-8 pb-4">
+                <div class="h-1 w-2 rounded-full bg-text-muted/30"></div>
+                <div class="h-1 w-8 rounded-full bg-accent"></div>
+            </div>
+        </section>
 
-                <div class="space-y-3 flex-1" id="levels-container">
-                    <!-- Карточки уровней генерируются в JS -->
+        <!-- ========================================== -->
+        <!-- ЭКРАН 2: ГЛАВНЫЙ (HOME)                    -->
+        <!-- ========================================== -->
+        <section id="screen-2" class="screen">
+            <!-- Хедер -->
+            <header class="mb-6 pt-2">
+                <p class="text-text-muted text-sm font-medium uppercase tracking-wider">Ваш прогресс</p>
+                <h1 class="text-3xl font-bold text-text-primary mt-1" id="user-greeting">Здравствуйте</h1>
+            </header>
+
+            <!-- Кольца активности -->
+            <div class="glass-card p-6 mb-6 flex items-center gap-6 stagger-item">
+                <div class="relative w-36 h-36 flex-shrink-0">
+                    <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                        <defs>
+                            <linearGradient id="gradBronze" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#E5C07B" />
+                                <stop offset="100%" stop-color="#C5A059" />
+                            </linearGradient>
+                            <linearGradient id="gradCopper" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#C5A059" />
+                                <stop offset="100%" stop-color="#8B5A3C" />
+                            </linearGradient>
+                            <linearGradient id="gradSilver" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#A1A1AA" />
+                                <stop offset="100%" stop-color="#52525B" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Фоновые кольца -->
+                        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                        <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                        <circle cx="60" cy="60" r="28" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                        <!-- Активные кольца (значения stroke-dashoffset меняются через JS) -->
+                        <circle cx="60" cy="60" r="52" fill="none" stroke="url(#gradBronze)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" class="ring-progress" id="ring-1"/>
+                        <circle cx="60" cy="60" r="40" fill="none" stroke="url(#gradCopper)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3" class="ring-progress" id="ring-2"/>
+                        <circle cx="60" cy="60" r="28" fill="none" stroke="url(#gradSilver)" stroke-width="8" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9" class="ring-progress" id="ring-3"/>
+                    </svg>
                 </div>
-
-                <button id="btn-finish" class="btn-primary mt-6" disabled>
-                    Начать путь
-                </button>
+                <div class="flex-1 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-[#E5C07B]"></div>
+                        <span class="text-sm text-text-secondary">Активность <span class="text-text-primary font-semibold">75%</span></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-[#C5A059]"></div>
+                        <span class="text-sm text-text-secondary">Тренировки <span class="text-text-primary font-semibold">40%</span></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-[#A1A1AA]"></div>
+                        <span class="text-sm text-text-secondary">Восстановление <span class="text-text-primary font-semibold">90%</span></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex justify-center gap-2 mt-8 pb-4">
-                <div class="h-1 w-2 rounded-full bg-text-muted/30 transition-all duration-500"></div>
-                <div class="h-1 w-8 rounded-full bg-accent transition-all duration-500"></div>
+            <!-- Программы тренировок -->
+            <div class="mb-4 flex items-center justify-between stagger-item">
+                <h2 class="text-xl font-bold text-text-primary">Программы</h2>
+                <button class="text-sm text-accent font-medium">Все</button>
+            </div>
+
+            <div class="space-y-3 mb-6" id="programs-container">
+                <!-- Генерируется в JS -->
             </div>
         </section>
 
     </main>
 
+    <!-- Нижняя навигация (появляется после регистрации) -->
+    <nav id="bottom-nav" class="bottom-nav hidden">
+        <div class="flex justify-around items-center max-w-md mx-auto">
+            <button class="nav-item active" data-screen="home">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span class="text-[10px] font-medium">Главная</span>
+            </button>
+            <button class="nav-item" data-screen="workouts">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path></svg>
+                <span class="text-[10px] font-medium">Тренировки</span>
+            </button>
+            <button class="nav-item" data-screen="profile">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="text-[10px] font-medium">Профиль</span>
+            </button>
+        </div>
+    </nav>
+
     <script>
         // ==========================================
-        // 1. ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP
+        // 1. TELEGRAM & STATE
         // ==========================================
         const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.setHeaderColor('#09090B');
-        tg.setBackgroundColor('#09090B');
-        tg.MainButton.hide();
-        tg.BackButton.hide();
+        tg.ready(); tg.expand();
+        tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
+        tg.MainButton.hide(); tg.BackButton.hide();
+
+        const state = { currentStep: 0, name: '', level: null };
 
         // ==========================================
-        // 2. СОСТОЯНИЕ ПРИЛОЖЕНИЯ (Vanilla JS Store)
+        // 2. SVG ICONS (Замена эмодзи)
         // ==========================================
-        const state = {
-            currentStep: 0,
-            name: '',
-            level: null,
+        const icons = {
+            beginner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"></path><path d="M12 10V2"></path><path d="M8 6l4-4 4 4"></path></svg>`, // Sprout/Seedling
+            enthusiast: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`, // Flame
+            pro: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`, // Lightning
+            
+            // Иконки для программ
+            dumbbell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path>`, // Cross/Target
+            timer: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`
         };
 
+        // ==========================================
+        // 3. ONBOARDING LOGIC
+        // ==========================================
         const levelsData = [
-            { id: 'beginner', title: 'Новичок', desc: 'Только начинаете свой путь', icon: '🌱' },
-            { id: 'enthusiast', title: 'Любитель', desc: 'Тренируетесь регулярно', icon: '🔥' },
-            { id: 'pro', title: 'Профи', desc: 'Целенаправленный и жесткий тренинг', icon: '⚡️' }
+            { id: 'beginner', title: 'Новичок', desc: 'Только начинаете свой путь', icon: icons.beginner },
+            { id: 'enthusiast', title: 'Энтузиаст', desc: 'Тренируетесь регулярно', icon: icons.enthusiast },
+            { id: 'pro', title: 'Профи', desc: 'Целенаправленный и жесткий тренинг', icon: icons.pro }
         ];
 
-        // ==========================================
-        // 3. ЛОГИКА ПЕРЕХОДОВ И АНИМАЦИЙ
-        // ==========================================
         function goToStep(stepIndex) {
-            const currentScreen = document.getElementById(`screen-${state.currentStep}`);
-            const nextScreen = document.getElementById(`screen-${stepIndex}`);
-
-            // Анимация ухода текущего экрана
-            currentScreen.classList.remove('active');
-            currentScreen.classList.add('exit');
-
-            // Через полсекунды показываем новый экран
+            const curr = document.getElementById(`screen-${state.currentStep}`);
+            const next = document.getElementById(`screen-${stepIndex}`);
+            curr.classList.remove('active'); curr.classList.add('exit');
+            
             setTimeout(() => {
-                currentScreen.classList.remove('exit');
-                nextScreen.classList.add('active');
+                curr.classList.remove('exit');
+                next.classList.add('active');
                 state.currentStep = stepIndex;
-
-                // Если перешли на шаг 2, анимируем появление карточек
-                if (stepIndex === 1) {
-                    animateLevelCards();
-                }
+                if (stepIndex === 1) animateItems();
+                if (stepIndex === 2) initHomeScreen();
             }, 300);
         }
 
-        // ==========================================
-        // 4. РЕНДЕРИНГ И ОБРАБОТКА СОБЫТИЙ
-        // ==========================================
-        
-        // --- Шаг 0: Имя ---
+        // Шаг 0
         const inputName = document.getElementById('input-name');
         const btnNext0 = document.getElementById('btn-next-0');
-
         inputName.addEventListener('input', (e) => {
             state.name = e.target.value.trim();
             btnNext0.disabled = state.name.length === 0;
         });
+        btnNext0.addEventListener('click', () => { if (state.name) goToStep(1); });
 
-        btnNext0.addEventListener('click', () => {
-            if (state.name) goToStep(1);
-        });
-
-        // --- Шаг 1: Уровни ---
+        // Шаг 1
         const levelsContainer = document.getElementById('levels-container');
         const btnFinish = document.getElementById('btn-finish');
 
-        // Генерируем карточки
-        levelsData.forEach((lvl, index) => {
+        levelsData.forEach((lvl) => {
             const card = document.createElement('button');
             card.className = 'stagger-item w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 glass-card';
             card.dataset.level = lvl.id;
             card.innerHTML = `
-                <span class="text-3xl">${lvl.icon}</span>
+                <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">${lvl.icon}</div>
                 <div class="flex-1">
                     <h3 class="font-semibold text-lg text-text-primary level-title">${lvl.title}</h3>
                     <p class="text-text-secondary text-sm mt-0.5">${lvl.desc}</p>
                 </div>
                 <div class="check-icon w-6 h-6 rounded-full bg-accent flex items-center justify-center opacity-0 scale-0 transition-all duration-300">
-                    <svg class="w-4 h-4 text-bg-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                    </svg>
+                    <svg class="w-4 h-4 text-bg-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                 </div>
             `;
-            
             card.addEventListener('click', () => selectLevel(lvl.id));
             levelsContainer.appendChild(card);
         });
@@ -310,51 +308,106 @@
         function selectLevel(levelId) {
             state.level = levelId;
             btnFinish.disabled = false;
-
-            // Обновляем UI карточек
             document.querySelectorAll('#levels-container button').forEach(card => {
                 const isSelected = card.dataset.level === levelId;
                 const title = card.querySelector('.level-title');
                 const check = card.querySelector('.check-icon');
-
                 if (isSelected) {
-                    card.classList.add('border-accent/40', 'shadow-glow');
-                    card.style.background = 'rgba(197, 160, 89, 0.05)';
-                    title.classList.add('text-accent');
-                    title.classList.remove('text-text-primary');
-                    check.style.opacity = '1';
-                    check.style.transform = 'scale(1)';
+                    card.classList.add('border-accent/40'); card.style.background = 'rgba(197, 160, 89, 0.05)';
+                    title.classList.add('text-accent'); title.classList.remove('text-text-primary');
+                    check.style.opacity = '1'; check.style.transform = 'scale(1)';
                 } else {
-                    card.classList.remove('border-accent/40', 'shadow-glow');
-                    card.style.background = '';
-                    title.classList.remove('text-accent');
-                    title.classList.add('text-text-primary');
-                    check.style.opacity = '0';
-                    check.style.transform = 'scale(0)';
+                    card.classList.remove('border-accent/40'); card.style.background = '';
+                    title.classList.remove('text-accent'); title.classList.add('text-text-primary');
+                    check.style.opacity = '0'; check.style.transform = 'scale(0)';
                 }
-            });
-        }
-
-        function animateLevelCards() {
-            const items = document.querySelectorAll('.stagger-item');
-            items.forEach((item, index) => {
-                setTimeout(() => {
-                    item.classList.add('visible');
-                }, index * 100 + 200); // Задержка для эффекта "каскада"
             });
         }
 
         btnFinish.addEventListener('click', () => {
             if (state.level) {
-                // Здесь будет переход на Главный экран (Home)
-                // Пока просто выведем данные в консоль и покажем алерт
-                console.log('User registered:', state);
-                alert(`Добро пожаловать, ${state.name}! Уровень: ${state.level}.\n\nДалее будет Главный экран с кольцами активности.`);
-                
-                // Сброс для демо
-                // goToStep(0); 
+                document.getElementById('bottom-nav').classList.remove('hidden');
+                goToStep(2);
             }
         });
+
+        function animateItems() {
+            document.querySelectorAll('.stagger-item').forEach((item, i) => {
+                setTimeout(() => item.classList.add('visible'), i * 100 + 200);
+            });
+        }
+
+        // ==========================================
+        // 4. HOME SCREEN LOGIC
+        // ==========================================
+        function initHomeScreen() {
+            // Приветствие
+            document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
+
+            // Анимация колец
+            setTimeout(() => {
+                animateRing('ring-1', 326.7, 0.75); // 75%
+                animateRing('ring-2', 251.3, 0.40); // 40%
+                animateRing('ring-3', 175.9, 0.90); // 90%
+            }, 400);
+
+            // Рендер программ
+            renderPrograms();
+            
+            // Анимация появления элементов Home
+            setTimeout(() => {
+                document.querySelectorAll('#screen-2 .stagger-item').forEach((item, i) => {
+                    setTimeout(() => item.classList.add('visible'), i * 150);
+                });
+            }, 100);
+        }
+
+        function animateRing(id, circumference, percent) {
+            const ring = document.getElementById(id);
+            const offset = circumference - (percent * circumference);
+            ring.style.strokeDashoffset = offset;
+        }
+
+        function renderPrograms() {
+            const container = document.getElementById('programs-container');
+            const programs = [
+                { title: 'Базовая сила', time: '45 мин', level: 'Новичок', icon: icons.dumbbell },
+                { title: 'Гипертрофия', time: '60 мин', level: 'Энтузиаст', icon: icons.dumbbell },
+                { title: 'Функциональный рельеф', time: '30 мин', level: 'Энтузиаст', icon: icons.dumbbell },
+                { title: 'Жесткий цикл', time: '90 мин', level: 'Профи', icon: icons.dumbbell }
+            ];
+
+            // Определяем цвет тега в зависимости от уровня
+            const getTagColor = (lvl) => {
+                if (lvl === 'Новичок') return 'bg-emerald-500/10 text-emerald-400'; // Приглушенный изумрудный
+                if (lvl === 'Энтузиаст') return 'bg-accent/10 text-accent'; // Бронзовый
+                return 'bg-rose-500/10 text-rose-400'; // Приглушенный рубиновый
+            };
+
+            programs.forEach((prog, index) => {
+                const card = document.createElement('div');
+                card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform';
+                card.innerHTML = `
+                    <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">
+                        ${prog.icon}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
+                        <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">
+                            ${icons.timer}
+                            <span>${prog.time}</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${getTagColor(prog.level)} whitespace-nowrap">
+                        ${prog.level}
+                    </span>
+                `;
+                container.appendChild(card);
+                
+                // Каскадное появление
+                setTimeout(() => card.classList.add('visible'), index * 100 + 400);
+            });
+        }
 
     </script>
 </body>
