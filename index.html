@@ -1312,8 +1312,15 @@
         let state = JSON.parse(localStorage.getItem('gymApp_state')) || JSON.parse(JSON.stringify(defaultState));
 
         function saveState() {
-            localStorage.setItem('gymApp_state', JSON.stringify(state));
+    try {
+        localStorage.setItem('gymApp_state', JSON.stringify(state));
+    } catch (e) {
+        console.error('LocalStorage full:', e);
+        if (tg) {
+            tg.showAlert('⚠️ Хранилище заполнено. Экспортируй данные и очисти историю.');
         }
+    }
+}
 
         // Проверка и сброс недельной статистики (если новая неделя)
         function checkWeeklyReset() {
@@ -1376,52 +1383,6 @@
             document.getElementById('bottom-nav').classList.remove('hidden');
             navigateTo('view-home', 'forward');
             updateHomeScreen();
-        }
-
-        // =========================================
-        // 5. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ИНТЕРФЕЙСА
-        // =========================================
-
-        function navigateTo(viewId, direction = 'forward') {
-            const currentView = document.querySelector('.view.active');
-            const nextView = document.getElementById(viewId);
-            
-            if (!nextView) return;
-
-            if (currentView) {
-                currentView.classList.remove('active');
-                if (direction === 'back') {
-                    currentView.classList.add('slide-out');
-                    setTimeout(() => currentView.classList.remove('slide-out'), 400);
-                }
-            }
-
-            nextView.classList.add('active');
-            nextView.scrollTop = 0;
-            
-            // Обновляем кнопку "Назад" в Telegram
-            if (viewId === 'view-home' || viewId === 'view-profile') {
-                tg.BackButton.hide();
-            } else {
-                tg.BackButton.show();
-                tg.BackButton.onClick(() => {
-                    navigateTo('view-home', 'back'); // Упрощенно для примера
-                });
-            }
-
-            // Обновляем нижнюю навигацию
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            if (viewId === 'view-home') document.querySelectorAll('.nav-item')[0].classList.add('active');
-            if (viewId === 'view-builder') document.querySelectorAll('.nav-item')[1].classList.add('active');
-            if (viewId === 'view-profile') document.querySelectorAll('.nav-item')[2].classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
         }
 
         // =========================================
@@ -1625,6 +1586,12 @@
 
         function navigateTo(viewId, direction = 'forward') {
             const currentViewId = viewHistory[viewHistory.length - 1];
+                //  Очищаем таймер при уходе с экрана отдыха
+    if (timerInterval && viewId !== 'view-rest') {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isTimerRunning = false;
+    }
             if (currentViewId === viewId) return;
 
             const currentView = document.getElementById(currentViewId);
@@ -1856,7 +1823,8 @@
             const set = state.currentWorkout.exercises[exIndex].sets[setIndex];
             set.completed = !set.completed;
             
-            if (set.completed) {
+            if (set.completed) { 
+                set.completedAt = Date.now();
                 tg.HapticFeedback.notificationOccurred('success');
                 
                 // Проверка на PR
@@ -1893,11 +1861,18 @@
             });
 
             // Если текущий объем больше исторического максимума (или это первый рекорд > 0)
-            if (volume > maxVolume) {
-                state.stats.totalPRs++;
-                showPRToast();
-            }
+                // Если текущий объем больше исторического максимума
+    if (volume > maxVolume) {
+        if (maxVolume === 0) {
+            // Первый рекорд
+            showToast('🎯 Первое выполнение!', `${weight} кг × ${reps} повт`, 'pr');
+        } else {
+            // Новый рекорд
+            showToast('🏆 Новый рекорд!', `${volume} кг·повт (было ${maxVolume})`, 'pr');
         }
+        state.stats.totalPRs++;
+        showPRToast();
+    }
 
         function showPRToast() {
             const toast = document.getElementById('prToast');
@@ -2692,6 +2667,22 @@
                 style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
                 document.head.appendChild(style);
             }
+                // Проверка подключения к интернету
+    if (!navigator.onLine) {
+        const fallbackResponse = generateSmartFallback(userMessage);
+        document.getElementById(loadingId).remove();
+        container.innerHTML += `
+            <div class="card" style="align-self: flex-start; max-width: 85%; background: var(--bg-card); border-color: var(--warning);">
+                <div class="text-secondary" style="font-size: 12px; margin-bottom: 4px; color: var(--warning);">AI-Тренер (офлайн)</div>
+                <div style="font-size: 15px; line-height: 1.5;">${fallbackResponse}</div>
+            </div>
+        `;
+        container.scrollTop = container.scrollHeight;
+        return;
+    }
+    try {
+        // Попытка отправить реальный запрос к AI
+        const response = await fetch(AI_CONFIG.endpoint, {
 
             try {
                 // Попытка отправить реальный запрос к AI
