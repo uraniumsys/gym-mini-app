@@ -1214,9 +1214,11 @@
         // =========================================
         // 1. ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP
         // =========================================
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        const tg = window.Telegram?.WebApp;
+if (tg) {
+    tg.expand();
+    tg.ready();
+}
         
         // Настройка цветов под тему Telegram (с fallback на наши)
         document.documentElement.style.setProperty('--bg-primary', tg.themeParams.bg_color || '#000000');
