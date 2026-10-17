@@ -1052,6 +1052,14 @@
             </div>
 
             <!-- Настройки и данные -->
+            <!-- Аналитика и История -->
+<div class="header-subtitle font-bold" style="color: var(--text-primary); margin-bottom: 12px; font-size: 20px;">Аналитика</div>
+<div id="volume-chart-container" class="chart-container card" style="margin-bottom: 24px; height: 150px;"></div>
+
+<div class="header-subtitle font-bold" style="color: var(--text-primary); margin-bottom: 12px; font-size: 20px;">История тренировок</div>
+<div id="history-list" style="margin-bottom: 24px;">
+    <!-- Заполняется JS -->
+</div>
             <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 24px;">
                 <button class="w-full flex items-center justify-between" style="padding: 16px; border-bottom: 1px solid var(--border); background: none; border-left: none; border-right: none; border-top: none; color: var(--text-primary); font-size: 16px; cursor: pointer;" onclick="exportData()">
                     <span class="flex items-center gap-sm">
@@ -1359,6 +1367,16 @@ let viewHistory = ['view-onboarding'];
                 updateProfileScreen();
             }
 
+            function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('active');
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('active');
+}
+            
             // Предупреждение при закрытии во время тренировки
             window.addEventListener('beforeunload', (e) => {
                 if (state.currentWorkout) {
@@ -1449,9 +1467,8 @@ let viewHistory = ['view-onboarding'];
             });
 
             // Добавляем пользовательские
-            const customPrograms = state.stats.workoutHistory.filter(h => h.isCustom).map((h, i) => ({
-                id: `custom_${i}`, name: h.customName || 'Моя программа', isCustom: true, exercises: h.exercises.map(e => e.id)
-            }));
+            // Добавляем пользовательские (теперь берем из state.customPrograms)
+const customPrograms = state.customPrograms || [];
             
             customPrograms.forEach(prog => {
                 programsList.innerHTML += `
@@ -1648,8 +1665,14 @@ let viewHistory = ['view-onboarding'];
                 // Очищаем предыдущие обработчики, чтобы не дублировались
                 tg.BackButton.offClick(); 
                 tg.BackButton.onClick(() => {
-                    navigateTo('view-home', 'back');
-                });
+    if (viewHistory.length > 1) {
+        viewHistory.pop(); // Убираем текущий экран из истории
+        const prevView = viewHistory[viewHistory.length - 1];
+        navigateTo(prevView, 'back');
+    } else {
+        navigateTo('view-home', 'back');
+    }
+});
             }
 
             // Обновление нижней панели
@@ -1788,10 +1811,10 @@ let viewHistory = ['view-onboarding'];
                         <div class="text-secondary" style="width: 24px; font-weight: 600; font-size: 14px;">${setIndex + 1}</div>
                         <input type="number" class="input-field" style="width: 70px; padding: 10px; text-align: center;" 
                             placeholder="кг" value="${set.weight}" inputmode="decimal"
-                            onchange="updateSetData(${exIndex}, ${setIndex}, 'weight', this.value)">
+                            oninput="updateSetData(${exIndex}, ${setIndex}, 'weight', this.value)">
                         <input type="number" class="input-field" style="width: 70px; padding: 10px; text-align: center;" 
                             placeholder="повт" value="${set.reps}" inputmode="numeric"
-                            onchange="updateSetData(${exIndex}, ${setIndex}, 'reps', this.value)">
+                            oninput="updateSetData(${exIndex}, ${setIndex}, 'reps', this.value)">
                         <div class="set-checkbox ${set.completed ? 'completed' : ''}" onclick="toggleSetComplete(${exIndex}, ${setIndex})">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
@@ -1853,9 +1876,10 @@ let viewHistory = ['view-onboarding'];
                     if (ex.id === exerciseId) {
                         ex.sets.forEach(set => {
                             if (set.completed && set.weight && set.reps) {
-                                const v = parseFloat(set.weight) * parseInt(set.reps);
-                                if (v > maxVolume) maxVolume = v;
-                            }
+    const w = parseFloat(set.weight) || 0;
+    const r = parseInt(set.reps) || 0;
+    sessionTonnage += (w * r);
+}
                         });
                     }
                 });
@@ -1865,15 +1889,15 @@ let viewHistory = ['view-onboarding'];
                 // Если текущий объем больше исторического максимума
     if (volume > maxVolume) {
         if (maxVolume === 0) {
-            // Первый рекорд
-            showToast('🎯 Первое выполнение!', `${weight} кг × ${reps} повт`, 'pr');
-        } else {
-            // Новый рекорд
-            showToast('🏆 Новый рекорд!', `${volume} кг·повт (было ${maxVolume})`, 'pr');
-        }
-        state.stats.totalPRs++;
-        showPRToast();
-    }
+    // Первый рекорд
+    showToast('🎯 Первое выполнение!', `${weight} кг × ${reps} повт`, 'pr'); // <-- Исправлена кавычка
+} else {
+    // Новый рекорд
+    showToast('🏆 Новый рекорд!', `${volume} кг·повт (было ${maxVolume})`, 'pr');
+}
+state.stats.totalPRs++;
+showPRToast();
+} // <-- Добавлена закрывающая скобка для if (volume > maxVolume)
 
         function showPRToast() {
             const toast = document.getElementById('prToast');
@@ -2107,6 +2131,7 @@ let viewHistory = ['view-onboarding'];
         // 10. КОНСТРУКТОР ПРОГРАММ
         // =========================================
         let tempBuilderSelection = [];
+            let currentBuilderFilter = 'all';
 
         function renderBuilderExercises(filter = 'all') {
             const container = document.getElementById('builder-exercises-list');
@@ -2157,12 +2182,13 @@ let viewHistory = ['view-onboarding'];
                 tg.HapticFeedback.impactOccurred('medium');
             }
             // Перерисовываем с текущим фильтром (упрощенно: сбрасываем на all или сохраняем состояние фильтра)
-            renderBuilderExercises('all'); 
+            renderBuilderExercises(currentBuilderFilter); // Используем сохраненный фильтр 
         }
 
         function filterExercises(category) {
-            renderBuilderExercises(category);
-        }
+    currentBuilderFilter = category; // Сохраняем фильтр
+    renderBuilderExercises(category);
+}
 
         function saveCustomProgram() {
             const name = document.getElementById('builder-program-name').value.trim();
@@ -2681,10 +2707,6 @@ let viewHistory = ['view-onboarding'];
         container.scrollTop = container.scrollHeight;
         return;
     }
-    try {
-        // Попытка отправить реальный запрос к AI
-        const response = await fetch(AI_CONFIG.endpoint, {
-
             try {
                 // Попытка отправить реальный запрос к AI
                 const response = await fetch(AI_CONFIG.endpoint, {
@@ -2746,8 +2768,8 @@ let viewHistory = ['view-onboarding'];
 
         // Форматирование ответа AI (замена переносов на <br>, обработка списков)
         function formatAIResponse(text) {
-            return text
-                .replace(/\n/g, '<br>')
+    return text
+    .replace(/\n/g, '<br>') //
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>');
         }
