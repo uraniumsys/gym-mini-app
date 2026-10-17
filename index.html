@@ -1890,14 +1890,15 @@ const customPrograms = state.customPrograms || [];
     if (volume > maxVolume) {
         if (maxVolume === 0) {
     // Первый рекорд
-    showToast('🎯 Первое выполнение!', `${weight} кг × ${reps} повт`, 'pr'); // <-- Исправлена кавычка
+    showToast('🎯 Первое выполнение!', `${weight} кг × ${reps} повт`, 'pr'); // <-- ИСПРАВЛЕНА КАВЫЧКА
 } else {
     // Новый рекорд
     showToast('🏆 Новый рекорд!', `${volume} кг·повт (было ${maxVolume})`, 'pr');
 }
 state.stats.totalPRs++;
 showPRToast();
-} // <-- Добавлена закрывающая скобка для if (volume > maxVolume)
+} // <-- Закрыли if (volume > maxVolume)
+} // <--- ДОБАВЛЕНА ЗАКРЫВАЮЩАЯ СКОБКА ДЛЯ ФУНКЦИИ checkPR
 
         function showPRToast() {
             const toast = document.getElementById('prToast');
