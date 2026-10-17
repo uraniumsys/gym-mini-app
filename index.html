@@ -1312,7 +1312,7 @@ if (tg) {
         };
 
         let state = JSON.parse(localStorage.getItem('gymApp_state')) || JSON.parse(JSON.stringify(defaultState));
-
+let viewHistory = ['view-onboarding'];
         function saveState() {
     try {
         localStorage.setItem('gymApp_state', JSON.stringify(state));
@@ -1584,8 +1584,7 @@ if (tg) {
         // =========================================
         // 7. ПРОДВИНУТАЯ НАВИГАЦИЯ
         // =========================================
-        let viewHistory = ['view-onboarding'];
-
+        
         function navigateTo(viewId, direction = 'forward') {
             const currentViewId = viewHistory[viewHistory.length - 1];
                 //  Очищаем таймер при уходе с экрана отдыха
