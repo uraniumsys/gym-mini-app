@@ -36,17 +36,17 @@
             overflow-x: hidden; scrollbar-width: none;
         }
         body::-webkit-scrollbar { display: none; }
-
-        /* Скрываем стрелки у number input */
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
+        /* ИСПРАВЛЕНИЕ БАГА С КНОПКАМИ: Используем 100dvh и overflow-y */
         .screen {
-            position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh;
-            padding: 1.5rem; padding-bottom: 6rem; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
+            padding: 1.5rem; padding-bottom: 5.5rem; 
             display: flex; flex-direction: column;
             opacity: 0; transform: translateY(20px); filter: blur(8px);
             pointer-events: none; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto; /* Позволяет скроллить, если контент не влезает */
         }
         .screen.active { opacity: 1; transform: translateY(0); filter: blur(0); pointer-events: auto; position: relative; }
         .screen.exit { opacity: 0; transform: translateY(-20px); filter: blur(8px); }
@@ -64,7 +64,7 @@
         .stagger-item { opacity: 0; transform: translateX(-15px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .stagger-item.visible { opacity: 1; transform: translateX(0); }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 17, 20, 0.85); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 17, 20, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: #52525B; transition: all 0.3s; padding: 0.5rem; flex: 1; background: none; border: none; cursor: pointer; }
         .nav-item.active { color: #C5A059; }
 
@@ -76,11 +76,21 @@
 
         .stepper-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F4F4F5; font-size: 1.25rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; }
         .stepper-btn:active { transform: scale(0.9); background: rgba(197, 160, 89, 0.2); border-color: #C5A059; }
+
+        /* Модальное окно выбора упражнений */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: #111114; width: 100%; max-height: 85vh; border-radius: 1.5rem 1.5rem 0 0; padding: 1.5rem; overflow-y: auto; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        
+        .ex-category-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #C5A059; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .ex-item { padding: 0.75rem 1rem; background: #18181B; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .ex-item:active { background: #27272A; border-color: rgba(197, 160, 89, 0.3); }
     </style>
 </head>
 <body>
 
-    <main id="app" class="w-full min-h-screen relative">
+    <main id="app" class="w-full relative">
         
         <!-- ЭКРАН 0: ИМЯ -->
         <section id="screen-0" class="screen active">
@@ -97,10 +107,6 @@
                     <button id="btn-next-0" class="btn-primary" disabled>Продолжить</button>
                 </div>
             </div>
-            <div class="flex justify-center gap-2 mt-8 pb-4">
-                <div class="h-1 w-8 rounded-full bg-accent"></div>
-                <div class="h-1 w-2 rounded-full bg-text-muted/30"></div>
-            </div>
         </section>
 
         <!-- ЭКРАН 1: УРОВЕНЬ -->
@@ -113,16 +119,12 @@
                 <div class="space-y-3 flex-1" id="levels-container"></div>
                 <button id="btn-finish" class="btn-primary mt-6" disabled>Начать путь</button>
             </div>
-            <div class="flex justify-center gap-2 mt-8 pb-4">
-                <div class="h-1 w-2 rounded-full bg-text-muted/30"></div>
-                <div class="h-1 w-8 rounded-full bg-accent"></div>
-            </div>
         </section>
 
         <!-- ЭКРАН 2: ГЛАВНЫЙ (HOME) -->
         <section id="screen-2" class="screen">
             <header class="mb-6 pt-2">
-                <p class="text-text-muted text-sm font-medium uppercase tracking-wider">Ваш прогресс</p>
+                <p class="text-text-muted text-sm font-medium uppercase tracking-wider">Ваш прогресс за неделю</p>
                 <h1 class="text-3xl font-bold text-text-primary mt-1" id="user-greeting">Здравствуйте</h1>
             </header>
 
@@ -143,9 +145,9 @@
                     </svg>
                 </div>
                 <div class="flex-1 space-y-3">
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#E5C07B]"></div><span class="text-sm text-text-secondary">Активность <span class="text-text-primary font-semibold" id="stat-activity">0%</span></span></div>
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#C5A059]"></div><span class="text-sm text-text-secondary">Тренировки <span class="text-text-primary font-semibold" id="stat-workouts">0%</span></span></div>
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#A1A1AA]"></div><span class="text-sm text-text-secondary">Восстановление <span class="text-text-primary font-semibold">90%</span></span></div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#E5C07B]"></div><span class="text-sm text-text-secondary">Тренировки <span class="text-text-primary font-semibold" id="stat-activity">0/3</span></span></div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#C5A059]"></div><span class="text-sm text-text-secondary">Объем <span class="text-text-primary font-semibold" id="stat-volume">0 кг</span></span></div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#A1A1AA]"></div><span class="text-sm text-text-secondary">Время <span class="text-text-primary font-semibold" id="stat-time">0 мин</span></span></div>
                 </div>
             </div>
 
@@ -155,7 +157,7 @@
             <div class="space-y-3 mb-6" id="quick-start-container"></div>
         </section>
 
-        <!-- ЭКРАН 3: ТРЕНИРОВКА (WORKOUT) -->
+        <!-- ЭКРАН 3: ТРЕНИРОВКА -->
         <section id="screen-3" class="screen">
             <header class="flex items-center justify-between mb-6 pt-2">
                 <button id="btn-close-workout" class="w-10 h-10 rounded-full bg-bg-tertiary flex items-center justify-center text-text-secondary">
@@ -171,7 +173,7 @@
             <div id="exercise-view" class="flex-1 flex flex-col">
                 <div class="glass-card p-6 mb-6 text-center">
                     <h3 class="text-2xl font-bold text-text-primary mb-1" id="ex-name">Жим лежа</h3>
-                    <p class="text-text-secondary text-sm mb-6" id="ex-muscle">Грудь, Трицепс</p>
+                    <p class="text-text-secondary text-sm mb-6" id="ex-muscle">Грудь</p>
                     <div class="flex justify-center gap-8 mb-6">
                         <div class="text-center">
                             <p class="text-xs text-text-muted uppercase mb-2">Вес (кг)</p>
@@ -196,7 +198,8 @@
             </div>
 
             <div id="rest-view" class="flex-1 flex flex-col items-center justify-center hidden">
-                <p class="text-text-muted uppercase tracking-widest text-sm mb-8">Отдых</p>
+                <p class="text-text-muted uppercase tracking-widest text-sm mb-2">Отдых</p>
+                <p class="text-text-secondary text-xs mb-8">Перед следующим подходом</p>
                 <div class="relative w-64 h-64 mb-8">
                     <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
                         <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
@@ -204,12 +207,11 @@
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
                         <span class="text-6xl font-bold text-text-primary tracking-tight" id="timer-text">01:30</span>
-                        <span class="text-text-muted text-sm mt-2">до следующего подхода</span>
                     </div>
                 </div>
                 <div class="flex gap-4 w-full max-w-xs">
                     <button class="btn-secondary flex-1" id="btn-less-time">- 15с</button>
-                    <button class="btn-primary flex-1" id="btn-skip-rest">Пропустить</button>
+                    <button class="btn-primary flex-1" id="btn-skip-rest">Далее</button>
                     <button class="btn-secondary flex-1" id="btn-more-time">+ 15с</button>
                 </div>
             </div>
@@ -224,9 +226,9 @@
                 <h1 class="text-3xl font-bold text-text-primary mb-2">Отличная работа!</h1>
                 <p class="text-text-secondary text-lg mb-10">Тренировка завершена</p>
                 <div class="grid grid-cols-3 gap-4 w-full max-w-sm mb-10">
-                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-time">0</p><p class="text-xs text-text-muted mt-1">Минут</p></div>
-                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-volume">0</p><p class="text-xs text-text-muted mt-1">Объем</p></div>
-                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-sets">0</p><p class="text-xs text-text-muted mt-1">Подходов</p></div>
+                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-time-final">0</p><p class="text-[10px] text-text-muted mt-1">Минут</p></div>
+                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-volume-final">0</p><p class="text-[10px] text-text-muted mt-1">Объем</p></div>
+                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-sets-final">0</p><p class="text-[10px] text-text-muted mt-1">Подходов</p></div>
                 </div>
                 <button id="btn-finish-workout" class="btn-primary text-lg">Готово</button>
             </div>
@@ -270,23 +272,7 @@
                             Добавить
                         </button>
                     </div>
-                    
                     <div id="new-prog-exercises" class="space-y-2 mb-4"></div>
-
-                    <!-- Форма добавления упражнения -->
-                    <div id="ex-form" class="glass-card p-4 space-y-3 hidden">
-                        <input type="text" id="ex-input-name" placeholder="Название (напр. Присед)" class="input-premium text-sm">
-                        <input type="text" id="ex-input-muscle" placeholder="Группа мышц" class="input-premium text-sm">
-                        <div class="grid grid-cols-3 gap-2">
-                            <input type="number" id="ex-input-sets" placeholder="Подходы" class="input-premium text-sm text-center">
-                            <input type="number" id="ex-input-reps" placeholder="Повторы" class="input-premium text-sm text-center">
-                            <input type="number" id="ex-input-weight" placeholder="Вес" class="input-premium text-sm text-center">
-                        </div>
-                        <div class="flex gap-2">
-                            <button id="btn-cancel-ex" class="btn-secondary flex-1 py-2 text-sm">Отмена</button>
-                            <button id="btn-save-ex" class="btn-primary flex-1 py-2 text-sm">Добавить</button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -299,7 +285,7 @@
                 <h1 class="text-3xl font-bold text-text-primary">Профиль</h1>
             </header>
 
-            <div class="glass-card p-6 mb-6 flex items-center gap-4 stagger-item">
+            <div class="glass-card p-6 mb-4 flex items-center gap-4 stagger-item">
                 <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl font-bold text-accent" id="profile-avatar">U</div>
                 <div>
                     <h2 class="text-xl font-bold text-text-primary" id="profile-name">Пользователь</h2>
@@ -313,11 +299,34 @@
                 <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-time">0ч</p><p class="text-[10px] text-text-muted mt-1 uppercase">Время</p></div>
             </div>
 
+            <!-- Блок с советом -->
+            <div class="glass-card p-5 mb-6 stagger-item">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <h3 class="text-sm font-bold text-accent uppercase tracking-wider">Совет дня</h3>
+                </div>
+                <p id="tip-text" class="text-text-secondary text-sm leading-relaxed mb-4">Нажмите кнопку, чтобы получить совет.</p>
+                <button id="btn-new-tip" class="w-full py-2 rounded-lg bg-bg-tertiary text-text-primary text-sm font-medium border border-border active:scale-95 transition-transform">Новый совет</button>
+            </div>
+
             <h3 class="text-lg font-bold text-text-primary mb-3 stagger-item">История</h3>
             <div class="space-y-2" id="history-list"></div>
         </section>
 
     </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА УПРАЖНЕНИЙ -->
+    <div id="exercise-picker-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-text-primary">Выберите упражнение</h2>
+                <button id="close-picker" class="w-8 h-8 rounded-full bg-bg-tertiary flex items-center justify-center text-text-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div id="exercise-list-container"></div>
+        </div>
+    </div>
 
     <nav id="bottom-nav" class="bottom-nav hidden">
         <div class="flex justify-around items-center max-w-md mx-auto">
@@ -326,7 +335,7 @@
                 <span class="text-[10px] font-medium">Главная</span>
             </button>
             <button class="nav-item" data-screen="5">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                 <span class="text-[10px] font-medium">Программы</span>
             </button>
             <button class="nav-item" data-screen="7">
@@ -345,24 +354,50 @@
         tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
         tg.MainButton.hide(); tg.BackButton.hide();
 
+        // БАЗА УПРАЖНЕНИЙ
+        const exerciseDB = [
+            { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Разводка гантелей', 'Сведения в кроссовере', 'Отжимания на брусьях', 'Жим в Хаммере'] },
+            { category: 'Спина', items: ['Становая тяга', 'Тяга штанги в наклоне', 'Подтягивания', 'Тяга верхнего блока', 'Тяга горизонтального блока', 'Гиперэкстензия', 'Пуловер в блоке'] },
+            { category: 'Ноги', items: ['Приседания со штангой', 'Жим ногами в тренажере', 'Выпады с гантелями', 'Румынская тяга', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки'] },
+            { category: 'Плечи', items: ['Армейский жим', 'Жим гантелей сидя', 'Махи гантелями в стороны', 'Махи в наклоне', 'Тяга к подбородку', 'Жим в Хаммере на плечи'] },
+            { category: 'Руки', items: ['Подъем штанги на бицепс', 'Молотки с гантелями', 'Французский жим', 'Разгибания на блоке на трицепс', 'Концентрированный подъем', 'Отжимания узким хватом'] },
+            { category: 'Пресс', items: ['Скручивания', 'Подъем ног в висе', 'Планка', 'Русский твист', 'Молитва в блоке'] }
+        ];
+
+        // СОВЕТЫ
+        const sportsTips = [
+            "Сон — главный анаболик. Старайтесь спать 7-9 часов для оптимального синтеза белка.",
+            "Не пропускайте разминку. 5-10 минут кардио и суставная гимнастика снизят риск травм.",
+            "Прогрессия нагрузок — ключ к росту. Если вы не увеличиваете вес или повторения, мышцы не растут.",
+            "Пейте воду во время тренировки. Обезвоживание всего на 2% снижает силовые показатели на 10%.",
+            "Техника важнее веса. Эго-лифтинг — главная причина травм в зале.",
+            "Углеводы — не враг. Ешьте сложные углеводы за 2 часа до тренировки для максимальной энергии.",
+            "Растяжка после тренировки ускоряет восстановление и улучшает мобильность суставов.",
+            "Если чувствуете сильную боль в суставе — немедленно прекратите упражнение. Боль в мышцах — ок, боль в суставе — нет.",
+            "Креатин — одна из самых изученных и безопасных добавок для увеличения силовых показателей.",
+            "Не тренируйте одну группу мышц чаще 2 раз в неделю, если вы натурал. Мышцы растут во время отдыха.",
+            "Базовые многосуставные упражнения (присед, тяга, жим) дают максимальный гормональный отклик.",
+            "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать.",
+            "Белок нужно распределять равномерно в течение дня. Оптимально: 4-5 приемов пищи по 20-30г белка."
+        ];
+
         const defaultPrograms = [
             { id: 'def-1', title: 'Базовая сила', time: '45 мин', level: 'Новичок', isDefault: true, exercises: [
                 { name: 'Жим штанги лежа', muscle: 'Грудь', sets: 4, reps: 10, weight: 60 },
-                { name: 'Приседания', muscle: 'Ноги', sets: 4, reps: 8, weight: 80 }
+                { name: 'Приседания со штангой', muscle: 'Ноги', sets: 4, reps: 8, weight: 80 }
             ]},
             { id: 'def-2', title: 'Гипертрофия', time: '60 мин', level: 'Энтузиаст', isDefault: true, exercises: [
-                { name: 'Тяга штанги в наклоне', muscle: 'Спина', sets: 4, reps: 12, weight: 50 }
+                { name: 'Тяга штанги в наклоне', muscle: 'Спина', sets: 4, reps: 12, weight: 50 },
+                { name: 'Жим гантелей сидя', muscle: 'Плечи', sets: 3, reps: 12, weight: 20 }
             ]}
         ];
 
         const state = { 
             currentStep: 0, name: '', level: null,
             customPrograms: [], history: [],
-            // Workout state
             currentWorkout: null, currentExIndex: 0, currentSet: 1, isResting: false,
             timerInterval: null, timerSeconds: 90, initialTimerSeconds: 90,
             totalSetsCompleted: 0, totalVolume: 0, workoutStartTime: null,
-            // Create program state
             newProgram: { title: '', exercises: [] }
         };
 
@@ -382,10 +417,7 @@
                 state.level = data.user?.level || null;
                 state.customPrograms = data.customPrograms || [];
                 state.history = data.history || [];
-                
-                if (state.name && state.level) {
-                    state.currentStep = 2; // Skip onboarding
-                }
+                if (state.name && state.level) state.currentStep = 2;
             }
         }
 
@@ -414,7 +446,6 @@
                 if(next) next.classList.add('active');
                 state.currentStep = stepIndex;
                 
-                // Init screens
                 if (stepIndex === 1) animateItems('#levels-container .stagger-item');
                 if (stepIndex === 2) initHomeScreen();
                 if (stepIndex === 3) initWorkoutScreen();
@@ -512,23 +543,41 @@
         }
 
         // ==========================================
-        // 5. HOME SCREEN
+        // 5. HOME SCREEN & RINGS LOGIC
         // ==========================================
+        function getWeekStart() {
+            const now = new Date();
+            const day = now.getDay();
+            const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Понедельник
+            return new Date(now.setDate(diff)).setHours(0,0,0,0);
+        }
+
         function initHomeScreen() {
             document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
             
-            // Calculate real stats for rings
-            const totalWorkouts = state.history.length;
-            const activityPct = Math.min(100, totalWorkouts * 10); // 10% per workout
-            const workoutsPct = Math.min(100, totalWorkouts * 20); // 20% per workout
+            const weekStart = getWeekStart();
+            const thisWeekWorkouts = state.history.filter(w => new Date(w.date).getTime() >= weekStart);
             
-            document.getElementById('stat-activity').textContent = activityPct + '%';
-            document.getElementById('stat-workouts').textContent = workoutsPct + '%';
+            // 1. Тренировки (Цель: 3 в неделю)
+            const workoutCount = thisWeekWorkouts.length;
+            const workoutPct = Math.min(100, (workoutCount / 3) * 100);
+            document.getElementById('stat-activity').textContent = `${workoutCount}/3`;
+
+            // 2. Объем (Цель зависит от уровня)
+            const weekVolume = thisWeekWorkouts.reduce((sum, w) => sum + w.volume, 0);
+            const volumeTarget = state.level === 'pro' ? 15000 : state.level === 'enthusiast' ? 8000 : 4000;
+            const volumePct = Math.min(100, (weekVolume / volumeTarget) * 100);
+            document.getElementById('stat-volume').textContent = `${weekVolume} кг`;
+
+            // 3. Время (Цель: 150 мин в неделю)
+            const weekMinutes = thisWeekWorkouts.reduce((sum, w) => sum + w.duration, 0);
+            const minutesPct = Math.min(100, (weekMinutes / 150) * 100);
+            document.getElementById('stat-time').textContent = `${weekMinutes} мин`;
 
             setTimeout(() => {
-                animateRing('ring-1', 326.7, activityPct / 100);
-                animateRing('ring-2', 251.3, workoutsPct / 100);
-                animateRing('ring-3', 175.9, 0.90);
+                animateRing('ring-1', 326.7, workoutPct / 100);
+                animateRing('ring-2', 251.3, volumePct / 100);
+                animateRing('ring-3', 175.9, minutesPct / 100);
             }, 400);
 
             renderQuickStart();
@@ -543,7 +592,7 @@
         function renderQuickStart() {
             const container = document.getElementById('quick-start-container');
             container.innerHTML = '';
-            const allPrograms = [...defaultPrograms, ...state.customPrograms].slice(0, 3); // Show top 3
+            const allPrograms = [...defaultPrograms, ...state.customPrograms].slice(0, 3);
 
             allPrograms.forEach((prog, index) => {
                 const card = document.createElement('div');
@@ -566,17 +615,12 @@
         }
 
         // ==========================================
-        // 6. PROGRAMS LIST (SCREEN 5)
+        // 6. PROGRAMS LIST & CREATE
         // ==========================================
         function renderAllPrograms() {
             const container = document.getElementById('all-programs-list');
             container.innerHTML = '';
             const allPrograms = [...defaultPrograms, ...state.customPrograms];
-
-            if (allPrograms.length === 0) {
-                container.innerHTML = `<p class="text-center text-text-muted mt-10">Нет доступных программ</p>`;
-                return;
-            }
 
             allPrograms.forEach((prog, index) => {
                 const card = document.createElement('div');
@@ -599,10 +643,8 @@
                     <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${tagText}</span>
                 `;
                 
-                // Start workout on click
                 card.querySelector('[data-start]').addEventListener('click', () => startWorkout(prog));
                 
-                // Delete custom program
                 const delBtn = card.querySelector('.delete-prog-btn');
                 if (delBtn) {
                     delBtn.addEventListener('click', (e) => {
@@ -619,9 +661,7 @@
             });
         }
 
-        // ==========================================
-        // 7. CREATE PROGRAM (SCREEN 6)
-        // ==========================================
+        // --- Создание программы ---
         document.getElementById('btn-open-create').addEventListener('click', () => {
             state.newProgram = { title: '', exercises: [] };
             document.getElementById('new-prog-title').value = '';
@@ -632,53 +672,92 @@
 
         document.getElementById('btn-back-from-create').addEventListener('click', () => goToStep(5));
 
-        const exForm = document.getElementById('ex-form');
+        // Модальное окно выбора упражнений
+        const modal = document.getElementById('exercise-picker-modal');
+        const modalList = document.getElementById('exercise-list-container');
+
         document.getElementById('btn-add-ex').addEventListener('click', () => {
-            exForm.classList.remove('hidden');
-            document.getElementById('ex-input-name').focus();
+            renderExercisePicker();
+            modal.classList.add('active');
         });
-        document.getElementById('btn-cancel-ex').addEventListener('click', () => exForm.classList.add('hidden'));
 
-        document.getElementById('btn-save-ex').addEventListener('click', () => {
-            const name = document.getElementById('ex-input-name').value.trim();
-            const muscle = document.getElementById('ex-input-muscle').value.trim();
-            const sets = parseInt(document.getElementById('ex-input-sets').value) || 3;
-            const reps = parseInt(document.getElementById('ex-input-reps').value) || 10;
-            const weight = parseInt(document.getElementById('ex-input-weight').value) || 20;
-
-            if (!name) return;
-
-            state.newProgram.exercises.push({ name, muscle, sets, reps, weight });
-            renderNewProgramExercises();
-            
-            // Clear form
-            ['ex-input-name', 'ex-input-muscle', 'ex-input-sets', 'ex-input-reps', 'ex-input-weight'].forEach(id => document.getElementById(id).value = '');
-            exForm.classList.add('hidden');
-            tg.HapticFeedback.impactOccurred('light');
+        document.getElementById('close-picker').addEventListener('click', () => {
+            modal.classList.remove('active');
         });
+
+        function renderExercisePicker() {
+            modalList.innerHTML = '';
+            exerciseDB.forEach(cat => {
+                const title = document.createElement('div');
+                title.className = 'ex-category-title';
+                title.textContent = cat.category;
+                modalList.appendChild(title);
+
+                cat.items.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'ex-item';
+                    el.innerHTML = `
+                        <span class="text-text-primary font-medium">${item}</span>
+                        <span class="text-text-muted text-xs">${cat.category}</span>
+                    `;
+                    el.addEventListener('click', () => {
+                        state.newProgram.exercises.push({ name: item, muscle: cat.category, sets: 3, reps: 10, weight: 20 });
+                        renderNewProgramExercises();
+                        modal.classList.remove('active');
+                        tg.HapticFeedback.impactOccurred('light');
+                    });
+                    modalList.appendChild(el);
+                });
+            });
+        }
 
         function renderNewProgramExercises() {
             const container = document.getElementById('new-prog-exercises');
             container.innerHTML = '';
             state.newProgram.exercises.forEach((ex, index) => {
                 const item = document.createElement('div');
-                item.className = 'glass-card p-3 flex items-center justify-between';
+                item.className = 'glass-card p-3 space-y-2';
                 item.innerHTML = `
-                    <div>
-                        <p class="font-semibold text-text-primary text-sm">${ex.name}</p>
-                        <p class="text-text-muted text-xs">${ex.sets}x${ex.reps} ${ex.weight}кг</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-semibold text-text-primary text-sm">${ex.name}</p>
+                            <p class="text-text-muted text-xs">${ex.muscle}</p>
+                        </div>
+                        <button class="remove-ex-btn text-text-muted p-1" data-index="${index}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
                     </div>
-                    <button class="remove-ex-btn text-text-muted" data-index="${index}">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <div class="text-center">
+                            <label class="text-[10px] text-text-muted uppercase">Подходы</label>
+                            <input type="number" value="${ex.sets}" class="input-premium text-center py-1 text-sm ex-sets" data-index="${index}">
+                        </div>
+                        <div class="text-center">
+                            <label class="text-[10px] text-text-muted uppercase">Повторы</label>
+                            <input type="number" value="${ex.reps}" class="input-premium text-center py-1 text-sm ex-reps" data-index="${index}">
+                        </div>
+                        <div class="text-center">
+                            <label class="text-[10px] text-text-muted uppercase">Вес</label>
+                            <input type="number" value="${ex.weight}" class="input-premium text-center py-1 text-sm ex-weight" data-index="${index}">
+                        </div>
+                    </div>
                 `;
+                
                 item.querySelector('.remove-ex-btn').addEventListener('click', () => {
                     state.newProgram.exercises.splice(index, 1);
                     renderNewProgramExercises();
                 });
+
+                item.querySelectorAll('input').forEach(inp => {
+                    inp.addEventListener('change', (e) => {
+                        const idx = parseInt(e.target.dataset.index);
+                        const type = e.target.classList.contains('ex-sets') ? 'sets' : e.target.classList.contains('ex-reps') ? 'reps' : 'weight';
+                        state.newProgram.exercises[idx][type] = parseFloat(e.target.value) || 0;
+                    });
+                });
+
                 container.appendChild(item);
             });
-            
             validateNewProgram();
         }
 
@@ -704,7 +783,7 @@
         });
 
         // ==========================================
-        // 8. WORKOUT LOGIC
+        // 7. WORKOUT LOGIC (ИСПРАВЛЕН ТАЙМЕР)
         // ==========================================
         function startWorkout(prog) {
             state.currentWorkout = {
@@ -727,7 +806,7 @@
         function renderCurrentExercise() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
             document.getElementById('workout-title').textContent = state.currentWorkout.title;
-            document.getElementById('workout-progress-text').textContent = `Упражнение ${state.currentExIndex + 1}/${state.currentWorkout.exercises.length} | Подход ${state.currentSet}`;
+            document.getElementById('workout-progress-text').textContent = `Упражнение ${state.currentExIndex + 1}/${state.currentWorkout.exercises.length} | Подход ${state.currentSet}/${ex.sets}`;
             document.getElementById('ex-name').textContent = ex.name;
             document.getElementById('ex-muscle').textContent = ex.muscle;
             document.getElementById('ex-weight').textContent = ex.weight;
@@ -786,13 +865,25 @@
         document.getElementById('btn-more-time').addEventListener('click', () => { state.timerSeconds += 15; if (state.timerSeconds > state.initialTimerSeconds) state.initialTimerSeconds = state.timerSeconds; updateTimerUI(); tg.HapticFeedback.impactOccurred('light'); });
         document.getElementById('btn-skip-rest').addEventListener('click', () => { clearInterval(state.timerInterval); finishRest(); });
 
+        // ИСПРАВЛЕННАЯ ЛОГИКА: Таймер не переключает упражнение, а готовит к следующему подходу
         function finishRest() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
-            if (state.currentSet < ex.sets) state.currentSet++;
-            else { state.currentSet = 1; state.currentExIndex++; }
-
-            if (state.currentExIndex >= state.currentWorkout.exercises.length) goToStep(4);
-            else renderCurrentExercise();
+            
+            if (state.currentSet < ex.sets) {
+                // Если это не последний подход, просто увеличиваем номер подхода и остаемся на упражнении
+                state.currentSet++;
+                renderCurrentExercise();
+            } else {
+                // Если подходы закончились, переходим к следующему упражнению
+                state.currentSet = 1;
+                state.currentExIndex++;
+                
+                if (state.currentExIndex >= state.currentWorkout.exercises.length) {
+                    goToStep(4); // Тренировка завершена
+                } else {
+                    renderCurrentExercise(); // Переход к следующему упражнению
+                }
+            }
         }
 
         document.getElementById('btn-close-workout').addEventListener('click', () => {
@@ -804,16 +895,15 @@
         });
 
         // ==========================================
-        // 9. COMPLETE & PROFILE
+        // 8. COMPLETE & PROFILE
         // ==========================================
         function initCompleteScreen() {
             const elapsedMins = Math.round((Date.now() - state.workoutStartTime) / 60000);
-            document.getElementById('stat-time').textContent = elapsedMins;
-            document.getElementById('stat-sets').textContent = state.totalSetsCompleted;
+            document.getElementById('stat-time-final').textContent = elapsedMins;
+            document.getElementById('stat-sets-final').textContent = state.totalSetsCompleted;
             let volText = state.totalVolume >= 1000 ? (state.totalVolume / 1000).toFixed(1) + 'т' : state.totalVolume + 'кг';
-            document.getElementById('stat-volume').textContent = volText;
+            document.getElementById('stat-volume-final').textContent = volText;
 
-            // Save to history
             state.history.unshift({
                 date: new Date().toISOString(),
                 title: state.currentWorkout.title,
@@ -844,37 +934,46 @@
             document.getElementById('total-volume').textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'т' : totalVolume + 'кг';
             document.getElementById('total-time').textContent = Math.round(totalTime / 60) + 'ч';
 
+            // История
             const histList = document.getElementById('history-list');
             histList.innerHTML = '';
             if (state.history.length === 0) {
                 histList.innerHTML = `<p class="text-center text-text-muted mt-6">Пока нет завершенных тренировок</p>`;
-                return;
+            } else {
+                state.history.forEach((w, i) => {
+                    const date = new Date(w.date);
+                    const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+                    const volStr = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + 'т' : w.volume + 'кг';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'stagger-item glass-card p-4 flex items-center justify-between';
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-text-primary">${w.title}</p>
+                            <p class="text-text-muted text-xs mt-1">${dateStr} • ${w.sets} подходов</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-accent">${volStr}</p>
+                            <p class="text-text-muted text-xs mt-1">${w.duration} мин</p>
+                        </div>
+                    `;
+                    histList.appendChild(item);
+                    setTimeout(() => item.classList.add('visible'), i * 80);
+                });
             }
-
-            state.history.forEach((w, i) => {
-                const date = new Date(w.date);
-                const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-                const volStr = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + 'т' : w.volume + 'кг';
-                
-                const item = document.createElement('div');
-                item.className = 'stagger-item glass-card p-4 flex items-center justify-between';
-                item.innerHTML = `
-                    <div>
-                        <p class="font-semibold text-text-primary">${w.title}</p>
-                        <p class="text-text-muted text-xs mt-1">${dateStr} • ${w.sets} подходов</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-bold text-accent">${volStr}</p>
-                        <p class="text-text-muted text-xs mt-1">${w.duration} мин</p>
-                    </div>
-                `;
-                histList.appendChild(item);
-                setTimeout(() => item.classList.add('visible'), i * 80);
-            });
         }
 
+        // Логика советов
+        document.getElementById('btn-new-tip').addEventListener('click', () => {
+            const randomTip = sportsTips[Math.floor(Math.random() * sportsTips.length)];
+            document.getElementById('tip-text').textContent = randomTip;
+            tg.HapticFeedback.impactOccurred('light');
+        });
+        // Показать первый совет при входе
+        document.getElementById('tip-text').textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)];
+
         // ==========================================
-        // 10. INIT APP
+        // 9. INIT APP
         // ==========================================
         loadState();
         if (state.currentStep === 2) {
