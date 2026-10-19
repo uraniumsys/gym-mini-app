@@ -37,73 +37,52 @@
         }
         body::-webkit-scrollbar { display: none; }
 
-        /* Экраны и переходы */
+        /* Скрываем стрелки у number input */
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh;
-            padding: 1.5rem; padding-bottom: 6rem; /* Отступ для нижней навигации */
+            padding: 1.5rem; padding-bottom: 6rem; 
             display: flex; flex-direction: column;
             opacity: 0; transform: translateY(20px); filter: blur(8px);
             pointer-events: none; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .screen.active {
-            opacity: 1; transform: translateY(0); filter: blur(0);
-            pointer-events: auto; position: relative;
-        }
+        .screen.active { opacity: 1; transform: translateY(0); filter: blur(0); pointer-events: auto; position: relative; }
         .screen.exit { opacity: 0; transform: translateY(-20px); filter: blur(8px); }
 
-        /* Компоненты */
-        .glass-card {
-            background: #111114; border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem; backdrop-filter: blur(4px);
-        }
-        .btn-primary {
-            background: #C5A059; color: #09090B; font-weight: 600;
-            padding: 1rem 1.5rem; border-radius: 0.75rem; width: 100%;
-            text-align: center; transition: all 0.2s; border: none; cursor: pointer;
-        }
+        .glass-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(4px); }
+        .btn-primary { background: #C5A059; color: #09090B; font-weight: 600; padding: 1rem 1.5rem; border-radius: 0.75rem; width: 100%; text-align: center; transition: all 0.2s; border: none; cursor: pointer; }
         .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-        .input-premium {
-            width: 100%; background: #18181B; border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 0.75rem; padding: 0.875rem 1rem; color: #F4F4F5;
-            font-size: 1rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;
-        }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: #F4F4F5; font-weight: 500; padding: 0.75rem 1.5rem; border-radius: 0.75rem; text-align: center; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .btn-secondary:active { transform: scale(0.98); background: rgba(255,255,255,0.1); }
+        
+        .input-premium { width: 100%; background: #18181B; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0.75rem; padding: 0.875rem 1rem; color: #F4F4F5; font-size: 1rem; outline: none; transition: border-color 0.3s; box-sizing: border-box; }
         .input-premium:focus { border-color: rgba(197, 160, 89, 0.5); }
-        .input-premium::placeholder { color: #52525B; }
 
-        /* Каскадная анимация */
         .stagger-item { opacity: 0; transform: translateX(-15px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .stagger-item.visible { opacity: 1; transform: translateX(0); }
 
-        /* Нижняя навигация */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-            background: rgba(17, 17, 20, 0.85); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
-            color: #52525B; transition: all 0.3s; padding: 0.5rem; flex: 1;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 17, 20, 0.85); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: #52525B; transition: all 0.3s; padding: 0.5rem; flex: 1; background: none; border: none; cursor: pointer; }
         .nav-item.active { color: #C5A059; }
-        .nav-item svg { transition: transform 0.3s; }
-        .nav-item.active svg { transform: scale(1.1); }
 
-        /* Анимация колец */
-        .ring-progress {
-            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .ring-progress { transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .timer-ring-progress { transition: stroke-dashoffset 1s linear; }
+
+        @keyframes pulseGlow { 0%, 100% { filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.3)); } 50% { filter: drop-shadow(0 0 30px rgba(197, 160, 89, 0.6)); } }
+        .glow-effect { animation: pulseGlow 3s infinite ease-in-out; }
+
+        .stepper-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F4F4F5; font-size: 1.25rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; }
+        .stepper-btn:active { transform: scale(0.9); background: rgba(197, 160, 89, 0.2); border-color: #C5A059; }
     </style>
 </head>
 <body>
 
     <main id="app" class="w-full min-h-screen relative">
         
-        <!-- ========================================== -->
-        <!-- ЭКРАН 0: РЕГИСТРАЦИЯ (ИМЯ)                 -->
-        <!-- ========================================== -->
+        <!-- ЭКРАН 0: ИМЯ -->
         <section id="screen-0" class="screen active">
             <div class="flex flex-col flex-1 justify-center">
                 <div class="mb-10">
@@ -124,9 +103,7 @@
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- ЭКРАН 1: РЕГИСТРАЦИЯ (УРОВЕНЬ)             -->
-        <!-- ========================================== -->
+        <!-- ЭКРАН 1: УРОВЕНЬ -->
         <section id="screen-1" class="screen">
             <div class="flex flex-col flex-1">
                 <div class="mb-6 mt-2">
@@ -142,85 +119,217 @@
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- ЭКРАН 2: ГЛАВНЫЙ (HOME)                    -->
-        <!-- ========================================== -->
+        <!-- ЭКРАН 2: ГЛАВНЫЙ (HOME) -->
         <section id="screen-2" class="screen">
-            <!-- Хедер -->
             <header class="mb-6 pt-2">
                 <p class="text-text-muted text-sm font-medium uppercase tracking-wider">Ваш прогресс</p>
                 <h1 class="text-3xl font-bold text-text-primary mt-1" id="user-greeting">Здравствуйте</h1>
             </header>
 
-            <!-- Кольца активности -->
             <div class="glass-card p-6 mb-6 flex items-center gap-6 stagger-item">
                 <div class="relative w-36 h-36 flex-shrink-0">
                     <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
                         <defs>
-                            <linearGradient id="gradBronze" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#E5C07B" />
-                                <stop offset="100%" stop-color="#C5A059" />
-                            </linearGradient>
-                            <linearGradient id="gradCopper" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#C5A059" />
-                                <stop offset="100%" stop-color="#8B5A3C" />
-                            </linearGradient>
-                            <linearGradient id="gradSilver" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#A1A1AA" />
-                                <stop offset="100%" stop-color="#52525B" />
-                            </linearGradient>
+                            <linearGradient id="gradBronze" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E5C07B" /><stop offset="100%" stop-color="#C5A059" /></linearGradient>
+                            <linearGradient id="gradCopper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#C5A059" /><stop offset="100%" stop-color="#8B5A3C" /></linearGradient>
+                            <linearGradient id="gradSilver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A1A1AA" /><stop offset="100%" stop-color="#52525B" /></linearGradient>
                         </defs>
-                        <!-- Фоновые кольца -->
                         <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
                         <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
                         <circle cx="60" cy="60" r="28" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
-                        <!-- Активные кольца (значения stroke-dashoffset меняются через JS) -->
                         <circle cx="60" cy="60" r="52" fill="none" stroke="url(#gradBronze)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" class="ring-progress" id="ring-1"/>
                         <circle cx="60" cy="60" r="40" fill="none" stroke="url(#gradCopper)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3" class="ring-progress" id="ring-2"/>
                         <circle cx="60" cy="60" r="28" fill="none" stroke="url(#gradSilver)" stroke-width="8" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9" class="ring-progress" id="ring-3"/>
                     </svg>
                 </div>
                 <div class="flex-1 space-y-3">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-[#E5C07B]"></div>
-                        <span class="text-sm text-text-secondary">Активность <span class="text-text-primary font-semibold">75%</span></span>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#E5C07B]"></div><span class="text-sm text-text-secondary">Активность <span class="text-text-primary font-semibold" id="stat-activity">0%</span></span></div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#C5A059]"></div><span class="text-sm text-text-secondary">Тренировки <span class="text-text-primary font-semibold" id="stat-workouts">0%</span></span></div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#A1A1AA]"></div><span class="text-sm text-text-secondary">Восстановление <span class="text-text-primary font-semibold">90%</span></span></div>
+                </div>
+            </div>
+
+            <div class="mb-4 flex items-center justify-between stagger-item">
+                <h2 class="text-xl font-bold text-text-primary">Быстрый старт</h2>
+            </div>
+            <div class="space-y-3 mb-6" id="quick-start-container"></div>
+        </section>
+
+        <!-- ЭКРАН 3: ТРЕНИРОВКА (WORKOUT) -->
+        <section id="screen-3" class="screen">
+            <header class="flex items-center justify-between mb-6 pt-2">
+                <button id="btn-close-workout" class="w-10 h-10 rounded-full bg-bg-tertiary flex items-center justify-center text-text-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div class="text-center">
+                    <p class="text-xs text-text-muted uppercase tracking-wider" id="workout-progress-text">Подход 1</p>
+                    <h2 class="text-lg font-bold text-text-primary" id="workout-title">Название</h2>
+                </div>
+                <div class="w-10 h-10"></div>
+            </header>
+
+            <div id="exercise-view" class="flex-1 flex flex-col">
+                <div class="glass-card p-6 mb-6 text-center">
+                    <h3 class="text-2xl font-bold text-text-primary mb-1" id="ex-name">Жим лежа</h3>
+                    <p class="text-text-secondary text-sm mb-6" id="ex-muscle">Грудь, Трицепс</p>
+                    <div class="flex justify-center gap-8 mb-6">
+                        <div class="text-center">
+                            <p class="text-xs text-text-muted uppercase mb-2">Вес (кг)</p>
+                            <div class="flex items-center gap-3">
+                                <button class="stepper-btn" data-target="weight" data-action="minus">-</button>
+                                <span class="text-3xl font-bold text-text-primary w-12 text-center" id="ex-weight">60</span>
+                                <button class="stepper-btn" data-target="weight" data-action="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="w-px bg-border"></div>
+                        <div class="text-center">
+                            <p class="text-xs text-text-muted uppercase mb-2">Повторы</p>
+                            <div class="flex items-center gap-3">
+                                <button class="stepper-btn" data-target="reps" data-action="minus">-</button>
+                                <span class="text-3xl font-bold text-text-primary w-12 text-center" id="ex-reps">10</span>
+                                <button class="stepper-btn" data-target="reps" data-action="plus">+</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-[#C5A059]"></div>
-                        <span class="text-sm text-text-secondary">Тренировки <span class="text-text-primary font-semibold">40%</span></span>
+                </div>
+                <button id="btn-complete-set" class="btn-primary mt-auto mb-4 text-lg py-4">Завершить подход</button>
+            </div>
+
+            <div id="rest-view" class="flex-1 flex flex-col items-center justify-center hidden">
+                <p class="text-text-muted uppercase tracking-widest text-sm mb-8">Отдых</p>
+                <div class="relative w-64 h-64 mb-8">
+                    <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="url(#gradBronze)" stroke-width="6" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0" class="timer-ring-progress" id="timer-ring"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="text-6xl font-bold text-text-primary tracking-tight" id="timer-text">01:30</span>
+                        <span class="text-text-muted text-sm mt-2">до следующего подхода</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-[#A1A1AA]"></div>
-                        <span class="text-sm text-text-secondary">Восстановление <span class="text-text-primary font-semibold">90%</span></span>
+                </div>
+                <div class="flex gap-4 w-full max-w-xs">
+                    <button class="btn-secondary flex-1" id="btn-less-time">- 15с</button>
+                    <button class="btn-primary flex-1" id="btn-skip-rest">Пропустить</button>
+                    <button class="btn-secondary flex-1" id="btn-more-time">+ 15с</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЭКРАН 4: ЗАВЕРШЕНИЕ -->
+        <section id="screen-4" class="screen">
+            <div class="flex-1 flex flex-col items-center justify-center text-center px-4">
+                <div class="w-32 h-32 rounded-full bg-accent/10 flex items-center justify-center mb-8 glow-effect">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h1 class="text-3xl font-bold text-text-primary mb-2">Отличная работа!</h1>
+                <p class="text-text-secondary text-lg mb-10">Тренировка завершена</p>
+                <div class="grid grid-cols-3 gap-4 w-full max-w-sm mb-10">
+                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-time">0</p><p class="text-xs text-text-muted mt-1">Минут</p></div>
+                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-volume">0</p><p class="text-xs text-text-muted mt-1">Объем</p></div>
+                    <div class="glass-card p-4 text-center"><p class="text-2xl font-bold text-accent" id="stat-sets">0</p><p class="text-xs text-text-muted mt-1">Подходов</p></div>
+                </div>
+                <button id="btn-finish-workout" class="btn-primary text-lg">Готово</button>
+            </div>
+        </section>
+
+        <!-- ЭКРАН 5: СПИСОК ПРОГРАММ -->
+        <section id="screen-5" class="screen">
+            <header class="mb-6 pt-2 flex items-center justify-between">
+                <div>
+                    <p class="text-text-muted text-sm font-medium uppercase tracking-wider">Библиотека</p>
+                    <h1 class="text-3xl font-bold text-text-primary mt-1">Программы</h1>
+                </div>
+                <button id="btn-open-create" class="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-bg-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="space-y-3" id="all-programs-list"></div>
+        </section>
+
+        <!-- ЭКРАН 6: СОЗДАНИЕ ПРОГРАММЫ -->
+        <section id="screen-6" class="screen">
+            <header class="mb-6 pt-2">
+                <button id="btn-back-from-create" class="text-text-secondary mb-4 flex items-center gap-2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    Назад
+                </button>
+                <h1 class="text-2xl font-bold text-text-primary">Новая программа</h1>
+            </header>
+
+            <div class="space-y-4 flex-1">
+                <div>
+                    <label class="block text-text-muted text-xs font-medium mb-2 uppercase tracking-widest">Название</label>
+                    <input type="text" id="new-prog-title" placeholder="Например: День ног" class="input-premium">
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-text-muted text-xs font-medium uppercase tracking-widest">Упражнения</label>
+                        <button id="btn-add-ex" class="text-accent text-sm font-semibold flex items-center gap-1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Добавить
+                        </button>
+                    </div>
+                    
+                    <div id="new-prog-exercises" class="space-y-2 mb-4"></div>
+
+                    <!-- Форма добавления упражнения -->
+                    <div id="ex-form" class="glass-card p-4 space-y-3 hidden">
+                        <input type="text" id="ex-input-name" placeholder="Название (напр. Присед)" class="input-premium text-sm">
+                        <input type="text" id="ex-input-muscle" placeholder="Группа мышц" class="input-premium text-sm">
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="number" id="ex-input-sets" placeholder="Подходы" class="input-premium text-sm text-center">
+                            <input type="number" id="ex-input-reps" placeholder="Повторы" class="input-premium text-sm text-center">
+                            <input type="number" id="ex-input-weight" placeholder="Вес" class="input-premium text-sm text-center">
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="btn-cancel-ex" class="btn-secondary flex-1 py-2 text-sm">Отмена</button>
+                            <button id="btn-save-ex" class="btn-primary flex-1 py-2 text-sm">Добавить</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Программы тренировок -->
-            <div class="mb-4 flex items-center justify-between stagger-item">
-                <h2 class="text-xl font-bold text-text-primary">Программы</h2>
-                <button class="text-sm text-accent font-medium">Все</button>
+            <button id="btn-save-program" class="btn-primary mt-6" disabled>Сохранить программу</button>
+        </section>
+
+        <!-- ЭКРАН 7: ПРОФИЛЬ -->
+        <section id="screen-7" class="screen">
+            <header class="mb-6 pt-2">
+                <h1 class="text-3xl font-bold text-text-primary">Профиль</h1>
+            </header>
+
+            <div class="glass-card p-6 mb-6 flex items-center gap-4 stagger-item">
+                <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl font-bold text-accent" id="profile-avatar">U</div>
+                <div>
+                    <h2 class="text-xl font-bold text-text-primary" id="profile-name">Пользователь</h2>
+                    <p class="text-text-secondary text-sm" id="profile-level">Уровень не указан</p>
+                </div>
             </div>
 
-            <div class="space-y-3 mb-6" id="programs-container">
-                <!-- Генерируется в JS -->
+            <div class="grid grid-cols-3 gap-3 mb-6 stagger-item">
+                <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-workouts">0</p><p class="text-[10px] text-text-muted mt-1 uppercase">Тренировок</p></div>
+                <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-volume">0т</p><p class="text-[10px] text-text-muted mt-1 uppercase">Объем</p></div>
+                <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-time">0ч</p><p class="text-[10px] text-text-muted mt-1 uppercase">Время</p></div>
             </div>
+
+            <h3 class="text-lg font-bold text-text-primary mb-3 stagger-item">История</h3>
+            <div class="space-y-2" id="history-list"></div>
         </section>
 
     </main>
 
-    <!-- Нижняя навигация (появляется после регистрации) -->
     <nav id="bottom-nav" class="bottom-nav hidden">
         <div class="flex justify-around items-center max-w-md mx-auto">
-            <button class="nav-item active" data-screen="home">
+            <button class="nav-item active" data-screen="2">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <span class="text-[10px] font-medium">Главная</span>
             </button>
-            <button class="nav-item" data-screen="workouts">
+            <button class="nav-item" data-screen="5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path></svg>
-                <span class="text-[10px] font-medium">Тренировки</span>
+                <span class="text-[10px] font-medium">Программы</span>
             </button>
-            <button class="nav-item" data-screen="profile">
+            <button class="nav-item" data-screen="7">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span class="text-[10px] font-medium">Профиль</span>
             </button>
@@ -229,52 +338,112 @@
 
     <script>
         // ==========================================
-        // 1. TELEGRAM & STATE
+        // 1. TELEGRAM & STATE & STORAGE
         // ==========================================
         const tg = window.Telegram.WebApp;
         tg.ready(); tg.expand();
         tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
         tg.MainButton.hide(); tg.BackButton.hide();
 
-        const state = { currentStep: 0, name: '', level: null };
+        const defaultPrograms = [
+            { id: 'def-1', title: 'Базовая сила', time: '45 мин', level: 'Новичок', isDefault: true, exercises: [
+                { name: 'Жим штанги лежа', muscle: 'Грудь', sets: 4, reps: 10, weight: 60 },
+                { name: 'Приседания', muscle: 'Ноги', sets: 4, reps: 8, weight: 80 }
+            ]},
+            { id: 'def-2', title: 'Гипертрофия', time: '60 мин', level: 'Энтузиаст', isDefault: true, exercises: [
+                { name: 'Тяга штанги в наклоне', muscle: 'Спина', sets: 4, reps: 12, weight: 50 }
+            ]}
+        ];
+
+        const state = { 
+            currentStep: 0, name: '', level: null,
+            customPrograms: [], history: [],
+            // Workout state
+            currentWorkout: null, currentExIndex: 0, currentSet: 1, isResting: false,
+            timerInterval: null, timerSeconds: 90, initialTimerSeconds: 90,
+            totalSetsCompleted: 0, totalVolume: 0, workoutStartTime: null,
+            // Create program state
+            newProgram: { title: '', exercises: [] }
+        };
+
+        function saveState() {
+            localStorage.setItem('gym_pro_state', JSON.stringify({
+                user: { name: state.name, level: state.level },
+                customPrograms: state.customPrograms,
+                history: state.history
+            }));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('gym_pro_state');
+            if (saved) {
+                const data = JSON.parse(saved);
+                state.name = data.user?.name || '';
+                state.level = data.user?.level || null;
+                state.customPrograms = data.customPrograms || [];
+                state.history = data.history || [];
+                
+                if (state.name && state.level) {
+                    state.currentStep = 2; // Skip onboarding
+                }
+            }
+        }
 
         // ==========================================
-        // 2. SVG ICONS (Замена эмодзи)
+        // 2. SVG ICONS
         // ==========================================
         const icons = {
-            beginner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"></path><path d="M12 10V2"></path><path d="M8 6l4-4 4 4"></path></svg>`, // Sprout/Seedling
-            enthusiast: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`, // Flame
-            pro: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`, // Lightning
-            
-            // Иконки для программ
-            dumbbell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path>`, // Cross/Target
-            timer: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`
+            beginner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"></path><path d="M12 10V2"></path><path d="M8 6l4-4 4 4"></path></svg>`,
+            enthusiast: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`,
+            pro: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+            dumbbell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path></svg>`,
+            timer: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
+            trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
         };
 
         // ==========================================
-        // 3. ONBOARDING LOGIC
+        // 3. NAVIGATION
         // ==========================================
-        const levelsData = [
-            { id: 'beginner', title: 'Новичок', desc: 'Только начинаете свой путь', icon: icons.beginner },
-            { id: 'enthusiast', title: 'Энтузиаст', desc: 'Тренируетесь регулярно', icon: icons.enthusiast },
-            { id: 'pro', title: 'Профи', desc: 'Целенаправленный и жесткий тренинг', icon: icons.pro }
-        ];
-
         function goToStep(stepIndex) {
             const curr = document.getElementById(`screen-${state.currentStep}`);
             const next = document.getElementById(`screen-${stepIndex}`);
-            curr.classList.remove('active'); curr.classList.add('exit');
+            if(curr) { curr.classList.remove('active'); curr.classList.add('exit'); }
             
             setTimeout(() => {
-                curr.classList.remove('exit');
-                next.classList.add('active');
+                if(curr) curr.classList.remove('exit');
+                if(next) next.classList.add('active');
                 state.currentStep = stepIndex;
-                if (stepIndex === 1) animateItems();
+                
+                // Init screens
+                if (stepIndex === 1) animateItems('#levels-container .stagger-item');
                 if (stepIndex === 2) initHomeScreen();
+                if (stepIndex === 3) initWorkoutScreen();
+                if (stepIndex === 4) initCompleteScreen();
+                if (stepIndex === 5) renderAllPrograms();
+                if (stepIndex === 7) initProfileScreen();
+
+                updateBottomNav(stepIndex);
             }, 300);
         }
 
-        // Шаг 0
+        function updateBottomNav(step) {
+            const navScreens = [2, 5, 7];
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const target = parseInt(item.dataset.screen);
+                item.classList.toggle('active', target === step);
+            });
+        }
+
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = parseInt(btn.dataset.screen);
+                if (target !== state.currentStep) goToStep(target);
+            });
+        });
+
+        // ==========================================
+        // 4. ONBOARDING
+        // ==========================================
         const inputName = document.getElementById('input-name');
         const btnNext0 = document.getElementById('btn-next-0');
         inputName.addEventListener('input', (e) => {
@@ -283,9 +452,13 @@
         });
         btnNext0.addEventListener('click', () => { if (state.name) goToStep(1); });
 
-        // Шаг 1
         const levelsContainer = document.getElementById('levels-container');
         const btnFinish = document.getElementById('btn-finish');
+        const levelsData = [
+            { id: 'beginner', title: 'Новичок', desc: 'Только начинаете свой путь', icon: icons.beginner },
+            { id: 'enthusiast', title: 'Энтузиаст', desc: 'Тренируетесь регулярно', icon: icons.enthusiast },
+            { id: 'pro', title: 'Профи', desc: 'Целенаправленный и жесткий тренинг', icon: icons.pro }
+        ];
 
         levelsData.forEach((lvl) => {
             const card = document.createElement('button');
@@ -326,87 +499,392 @@
 
         btnFinish.addEventListener('click', () => {
             if (state.level) {
+                saveState();
                 document.getElementById('bottom-nav').classList.remove('hidden');
                 goToStep(2);
             }
         });
 
-        function animateItems() {
-            document.querySelectorAll('.stagger-item').forEach((item, i) => {
+        function animateItems(selector) {
+            document.querySelectorAll(selector).forEach((item, i) => {
                 setTimeout(() => item.classList.add('visible'), i * 100 + 200);
             });
         }
 
         // ==========================================
-        // 4. HOME SCREEN LOGIC
+        // 5. HOME SCREEN
         // ==========================================
         function initHomeScreen() {
-            // Приветствие
             document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
+            
+            // Calculate real stats for rings
+            const totalWorkouts = state.history.length;
+            const activityPct = Math.min(100, totalWorkouts * 10); // 10% per workout
+            const workoutsPct = Math.min(100, totalWorkouts * 20); // 20% per workout
+            
+            document.getElementById('stat-activity').textContent = activityPct + '%';
+            document.getElementById('stat-workouts').textContent = workoutsPct + '%';
 
-            // Анимация колец
             setTimeout(() => {
-                animateRing('ring-1', 326.7, 0.75); // 75%
-                animateRing('ring-2', 251.3, 0.40); // 40%
-                animateRing('ring-3', 175.9, 0.90); // 90%
+                animateRing('ring-1', 326.7, activityPct / 100);
+                animateRing('ring-2', 251.3, workoutsPct / 100);
+                animateRing('ring-3', 175.9, 0.90);
             }, 400);
 
-            // Рендер программ
-            renderPrograms();
-            
-            // Анимация появления элементов Home
-            setTimeout(() => {
-                document.querySelectorAll('#screen-2 .stagger-item').forEach((item, i) => {
-                    setTimeout(() => item.classList.add('visible'), i * 150);
-                });
-            }, 100);
+            renderQuickStart();
+            animateItems('#screen-2 .stagger-item');
         }
 
         function animateRing(id, circumference, percent) {
             const ring = document.getElementById(id);
-            const offset = circumference - (percent * circumference);
-            ring.style.strokeDashoffset = offset;
+            ring.style.strokeDashoffset = circumference - (percent * circumference);
         }
 
-        function renderPrograms() {
-            const container = document.getElementById('programs-container');
-            const programs = [
-                { title: 'Базовая сила', time: '45 мин', level: 'Новичок', icon: icons.dumbbell },
-                { title: 'Гипертрофия', time: '60 мин', level: 'Энтузиаст', icon: icons.dumbbell },
-                { title: 'Функциональный рельеф', time: '30 мин', level: 'Энтузиаст', icon: icons.dumbbell },
-                { title: 'Жесткий цикл', time: '90 мин', level: 'Профи', icon: icons.dumbbell }
-            ];
+        function renderQuickStart() {
+            const container = document.getElementById('quick-start-container');
+            container.innerHTML = '';
+            const allPrograms = [...defaultPrograms, ...state.customPrograms].slice(0, 3); // Show top 3
 
-            // Определяем цвет тега в зависимости от уровня
-            const getTagColor = (lvl) => {
-                if (lvl === 'Новичок') return 'bg-emerald-500/10 text-emerald-400'; // Приглушенный изумрудный
-                if (lvl === 'Энтузиаст') return 'bg-accent/10 text-accent'; // Бронзовый
-                return 'bg-rose-500/10 text-rose-400'; // Приглушенный рубиновый
-            };
-
-            programs.forEach((prog, index) => {
+            allPrograms.forEach((prog, index) => {
                 const card = document.createElement('div');
                 card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform';
+                const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
+                const tagText = prog.isDefault ? prog.level : 'Моя';
+                
                 card.innerHTML = `
-                    <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">
-                        ${prog.icon}
-                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">${icons.dumbbell}</div>
                     <div class="flex-1 min-w-0">
                         <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
-                        <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">
-                            ${icons.timer}
-                            <span>${prog.time}</span>
-                        </div>
+                        <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">${icons.timer}<span>${prog.exercises.length} упр.</span></div>
                     </div>
-                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${getTagColor(prog.level)} whitespace-nowrap">
-                        ${prog.level}
-                    </span>
+                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${tagText}</span>
                 `;
+                card.addEventListener('click', () => startWorkout(prog));
                 container.appendChild(card);
-                
-                // Каскадное появление
                 setTimeout(() => card.classList.add('visible'), index * 100 + 400);
             });
+        }
+
+        // ==========================================
+        // 6. PROGRAMS LIST (SCREEN 5)
+        // ==========================================
+        function renderAllPrograms() {
+            const container = document.getElementById('all-programs-list');
+            container.innerHTML = '';
+            const allPrograms = [...defaultPrograms, ...state.customPrograms];
+
+            if (allPrograms.length === 0) {
+                container.innerHTML = `<p class="text-center text-text-muted mt-10">Нет доступных программ</p>`;
+                return;
+            }
+
+            allPrograms.forEach((prog, index) => {
+                const card = document.createElement('div');
+                card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform';
+                const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
+                const tagText = prog.isDefault ? prog.level : 'Моя';
+                
+                let deleteBtn = '';
+                if (!prog.isDefault) {
+                    deleteBtn = `<button class="delete-prog-btn w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400" data-id="${prog.id}">${icons.trash}</button>`;
+                }
+
+                card.innerHTML = `
+                    <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">${icons.dumbbell}</div>
+                    <div class="flex-1 min-w-0" data-start="${prog.id}">
+                        <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
+                        <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">${icons.timer}<span>${prog.exercises.length} упр.</span></div>
+                    </div>
+                    ${deleteBtn}
+                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${tagText}</span>
+                `;
+                
+                // Start workout on click
+                card.querySelector('[data-start]').addEventListener('click', () => startWorkout(prog));
+                
+                // Delete custom program
+                const delBtn = card.querySelector('.delete-prog-btn');
+                if (delBtn) {
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        state.customPrograms = state.customPrograms.filter(p => p.id !== prog.id);
+                        saveState();
+                        renderAllPrograms();
+                        tg.HapticFeedback.impactOccurred('light');
+                    });
+                }
+
+                container.appendChild(card);
+                setTimeout(() => card.classList.add('visible'), index * 80);
+            });
+        }
+
+        // ==========================================
+        // 7. CREATE PROGRAM (SCREEN 6)
+        // ==========================================
+        document.getElementById('btn-open-create').addEventListener('click', () => {
+            state.newProgram = { title: '', exercises: [] };
+            document.getElementById('new-prog-title').value = '';
+            document.getElementById('new-prog-exercises').innerHTML = '';
+            document.getElementById('btn-save-program').disabled = true;
+            goToStep(6);
+        });
+
+        document.getElementById('btn-back-from-create').addEventListener('click', () => goToStep(5));
+
+        const exForm = document.getElementById('ex-form');
+        document.getElementById('btn-add-ex').addEventListener('click', () => {
+            exForm.classList.remove('hidden');
+            document.getElementById('ex-input-name').focus();
+        });
+        document.getElementById('btn-cancel-ex').addEventListener('click', () => exForm.classList.add('hidden'));
+
+        document.getElementById('btn-save-ex').addEventListener('click', () => {
+            const name = document.getElementById('ex-input-name').value.trim();
+            const muscle = document.getElementById('ex-input-muscle').value.trim();
+            const sets = parseInt(document.getElementById('ex-input-sets').value) || 3;
+            const reps = parseInt(document.getElementById('ex-input-reps').value) || 10;
+            const weight = parseInt(document.getElementById('ex-input-weight').value) || 20;
+
+            if (!name) return;
+
+            state.newProgram.exercises.push({ name, muscle, sets, reps, weight });
+            renderNewProgramExercises();
+            
+            // Clear form
+            ['ex-input-name', 'ex-input-muscle', 'ex-input-sets', 'ex-input-reps', 'ex-input-weight'].forEach(id => document.getElementById(id).value = '');
+            exForm.classList.add('hidden');
+            tg.HapticFeedback.impactOccurred('light');
+        });
+
+        function renderNewProgramExercises() {
+            const container = document.getElementById('new-prog-exercises');
+            container.innerHTML = '';
+            state.newProgram.exercises.forEach((ex, index) => {
+                const item = document.createElement('div');
+                item.className = 'glass-card p-3 flex items-center justify-between';
+                item.innerHTML = `
+                    <div>
+                        <p class="font-semibold text-text-primary text-sm">${ex.name}</p>
+                        <p class="text-text-muted text-xs">${ex.sets}x${ex.reps} ${ex.weight}кг</p>
+                    </div>
+                    <button class="remove-ex-btn text-text-muted" data-index="${index}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                `;
+                item.querySelector('.remove-ex-btn').addEventListener('click', () => {
+                    state.newProgram.exercises.splice(index, 1);
+                    renderNewProgramExercises();
+                });
+                container.appendChild(item);
+            });
+            
+            validateNewProgram();
+        }
+
+        document.getElementById('new-prog-title').addEventListener('input', validateNewProgram);
+
+        function validateNewProgram() {
+            const title = document.getElementById('new-prog-title').value.trim();
+            state.newProgram.title = title;
+            document.getElementById('btn-save-program').disabled = !(title && state.newProgram.exercises.length > 0);
+        }
+
+        document.getElementById('btn-save-program').addEventListener('click', () => {
+            const newProg = {
+                id: 'custom-' + Date.now(),
+                title: state.newProgram.title,
+                isDefault: false,
+                exercises: state.newProgram.exercises
+            };
+            state.customPrograms.push(newProg);
+            saveState();
+            tg.HapticFeedback.notificationOccurred('success');
+            goToStep(5);
+        });
+
+        // ==========================================
+        // 8. WORKOUT LOGIC
+        // ==========================================
+        function startWorkout(prog) {
+            state.currentWorkout = {
+                title: prog.title,
+                exercises: prog.exercises.map(ex => ({...ex}))
+            };
+            state.currentExIndex = 0;
+            state.currentSet = 1;
+            state.isResting = false;
+            state.totalSetsCompleted = 0;
+            state.totalVolume = 0;
+            state.workoutStartTime = Date.now();
+            
+            document.getElementById('bottom-nav').classList.add('hidden');
+            goToStep(3);
+        }
+
+        function initWorkoutScreen() { renderCurrentExercise(); }
+
+        function renderCurrentExercise() {
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            document.getElementById('workout-title').textContent = state.currentWorkout.title;
+            document.getElementById('workout-progress-text').textContent = `Упражнение ${state.currentExIndex + 1}/${state.currentWorkout.exercises.length} | Подход ${state.currentSet}`;
+            document.getElementById('ex-name').textContent = ex.name;
+            document.getElementById('ex-muscle').textContent = ex.muscle;
+            document.getElementById('ex-weight').textContent = ex.weight;
+            document.getElementById('ex-reps').textContent = ex.reps;
+            document.getElementById('exercise-view').classList.remove('hidden');
+            document.getElementById('rest-view').classList.add('hidden');
+            state.isResting = false;
+        }
+
+        document.querySelectorAll('.stepper-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.target;
+                const action = btn.dataset.action;
+                const el = document.getElementById(`ex-${target}`);
+                let val = parseFloat(el.textContent);
+                if (action === 'plus') val += (target === 'weight' ? 2.5 : 1);
+                if (action === 'minus' && val > 0) val -= (target === 'weight' ? 2.5 : 1);
+                el.textContent = val;
+                tg.HapticFeedback.selectionChanged();
+            });
+        });
+
+        document.getElementById('btn-complete-set').addEventListener('click', () => {
+            const weight = parseFloat(document.getElementById('ex-weight').textContent);
+            const reps = parseInt(document.getElementById('ex-reps').textContent);
+            state.totalVolume += (weight * reps);
+            state.totalSetsCompleted++;
+            tg.HapticFeedback.notificationOccurred('success');
+            startRestTimer();
+        });
+
+        function startRestTimer() {
+            state.isResting = true;
+            state.timerSeconds = 90;
+            state.initialTimerSeconds = 90;
+            document.getElementById('exercise-view').classList.add('hidden');
+            document.getElementById('rest-view').classList.remove('hidden');
+            updateTimerUI();
+            state.timerInterval = setInterval(() => {
+                state.timerSeconds--;
+                updateTimerUI();
+                if (state.timerSeconds <= 0) { clearInterval(state.timerInterval); finishRest(); }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const mins = Math.floor(state.timerSeconds / 60);
+            const secs = state.timerSeconds % 60;
+            document.getElementById('timer-text').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            const circumference = 339.3;
+            const progress = state.timerSeconds / state.initialTimerSeconds;
+            document.getElementById('timer-ring').style.strokeDashoffset = circumference - (progress * circumference);
+        }
+
+        document.getElementById('btn-less-time').addEventListener('click', () => { state.timerSeconds = Math.max(0, state.timerSeconds - 15); updateTimerUI(); tg.HapticFeedback.impactOccurred('light'); });
+        document.getElementById('btn-more-time').addEventListener('click', () => { state.timerSeconds += 15; if (state.timerSeconds > state.initialTimerSeconds) state.initialTimerSeconds = state.timerSeconds; updateTimerUI(); tg.HapticFeedback.impactOccurred('light'); });
+        document.getElementById('btn-skip-rest').addEventListener('click', () => { clearInterval(state.timerInterval); finishRest(); });
+
+        function finishRest() {
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            if (state.currentSet < ex.sets) state.currentSet++;
+            else { state.currentSet = 1; state.currentExIndex++; }
+
+            if (state.currentExIndex >= state.currentWorkout.exercises.length) goToStep(4);
+            else renderCurrentExercise();
+        }
+
+        document.getElementById('btn-close-workout').addEventListener('click', () => {
+            if(confirm('Прервать тренировку?')) {
+                clearInterval(state.timerInterval);
+                document.getElementById('bottom-nav').classList.remove('hidden');
+                goToStep(2);
+            }
+        });
+
+        // ==========================================
+        // 9. COMPLETE & PROFILE
+        // ==========================================
+        function initCompleteScreen() {
+            const elapsedMins = Math.round((Date.now() - state.workoutStartTime) / 60000);
+            document.getElementById('stat-time').textContent = elapsedMins;
+            document.getElementById('stat-sets').textContent = state.totalSetsCompleted;
+            let volText = state.totalVolume >= 1000 ? (state.totalVolume / 1000).toFixed(1) + 'т' : state.totalVolume + 'кг';
+            document.getElementById('stat-volume').textContent = volText;
+
+            // Save to history
+            state.history.unshift({
+                date: new Date().toISOString(),
+                title: state.currentWorkout.title,
+                duration: elapsedMins,
+                volume: state.totalVolume,
+                sets: state.totalSetsCompleted
+            });
+            saveState();
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        document.getElementById('btn-finish-workout').addEventListener('click', () => {
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            goToStep(2);
+        });
+
+        function initProfileScreen() {
+            document.getElementById('profile-name').textContent = state.name;
+            document.getElementById('profile-avatar').textContent = state.name.charAt(0).toUpperCase();
+            const lvlMap = { beginner: 'Новичок', enthusiast: 'Энтузиаст', pro: 'Профи' };
+            document.getElementById('profile-level').textContent = lvlMap[state.level] || 'Уровень не указан';
+
+            const totalWorkouts = state.history.length;
+            const totalVolume = state.history.reduce((sum, w) => sum + w.volume, 0);
+            const totalTime = state.history.reduce((sum, w) => sum + w.duration, 0);
+
+            document.getElementById('total-workouts').textContent = totalWorkouts;
+            document.getElementById('total-volume').textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'т' : totalVolume + 'кг';
+            document.getElementById('total-time').textContent = Math.round(totalTime / 60) + 'ч';
+
+            const histList = document.getElementById('history-list');
+            histList.innerHTML = '';
+            if (state.history.length === 0) {
+                histList.innerHTML = `<p class="text-center text-text-muted mt-6">Пока нет завершенных тренировок</p>`;
+                return;
+            }
+
+            state.history.forEach((w, i) => {
+                const date = new Date(w.date);
+                const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+                const volStr = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + 'т' : w.volume + 'кг';
+                
+                const item = document.createElement('div');
+                item.className = 'stagger-item glass-card p-4 flex items-center justify-between';
+                item.innerHTML = `
+                    <div>
+                        <p class="font-semibold text-text-primary">${w.title}</p>
+                        <p class="text-text-muted text-xs mt-1">${dateStr} • ${w.sets} подходов</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-accent">${volStr}</p>
+                        <p class="text-text-muted text-xs mt-1">${w.duration} мин</p>
+                    </div>
+                `;
+                histList.appendChild(item);
+                setTimeout(() => item.classList.add('visible'), i * 80);
+            });
+        }
+
+        // ==========================================
+        // 10. INIT APP
+        // ==========================================
+        loadState();
+        if (state.currentStep === 2) {
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            document.getElementById('screen-0').classList.remove('active');
+            document.getElementById('screen-2').classList.add('active');
+            initHomeScreen();
+        } else {
+            inputName.value = state.name;
+            btnNext0.disabled = !state.name;
         }
 
     </script>
