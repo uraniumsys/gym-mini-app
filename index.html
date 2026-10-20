@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
+        <style>
         :root { color-scheme: dark; }
         body {
             margin: 0; background-color: #09090B; color: #F4F4F5;
@@ -39,22 +39,24 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-        /* ИСПРАВЛЕНИЕ БАГА С КНОПКАМИ: Используем 100dvh и overflow-y */
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
             padding: 1.5rem; padding-bottom: 5.5rem; 
             display: flex; flex-direction: column;
             opacity: 0; transform: translateY(20px); filter: blur(8px);
             pointer-events: none; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow-y: auto; /* Позволяет скроллить, если контент не влезает */
+            overflow-y: auto;
         }
-        .screen.active { opacity: 1; transform: translateY(0); filter: blur(0); pointer-events: auto; z-index: 10; }
+        .screen.active { opacity: 1; transform: translateY(0); filter: blur(0); pointer-events: auto; position: relative; }
         .screen.exit { opacity: 0; transform: translateY(-20px); filter: blur(8px); }
 
-        .glass-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(4px); }
+        .glass-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(4px); transition: transform 0.2s; }
+        .glass-card:active { transform: scale(0.98); }
+        
         .btn-primary { background: #C5A059; color: #09090B; font-weight: 600; padding: 1rem 1.5rem; border-radius: 0.75rem; width: 100%; text-align: center; transition: all 0.2s; border: none; cursor: pointer; }
-        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:active { transform: scale(0.98); background: #D4AF37; }
         .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        
         .btn-secondary { background: rgba(255,255,255,0.05); color: #F4F4F5; font-weight: 500; padding: 0.75rem 1.5rem; border-radius: 0.75rem; text-align: center; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
         .btn-secondary:active { transform: scale(0.98); background: rgba(255,255,255,0.1); }
         
@@ -67,6 +69,7 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 17, 20, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: #52525B; transition: all 0.3s; padding: 0.5rem; flex: 1; background: none; border: none; cursor: pointer; }
         .nav-item.active { color: #C5A059; }
+        .nav-item.active svg { transform: scale(1.1); }
 
         .ring-progress { transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .timer-ring-progress { transition: stroke-dashoffset 1s linear; }
@@ -74,18 +77,30 @@
         @keyframes pulseGlow { 0%, 100% { filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.3)); } 50% { filter: drop-shadow(0 0 30px rgba(197, 160, 89, 0.6)); } }
         .glow-effect { animation: pulseGlow 3s infinite ease-in-out; }
 
-        .stepper-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F4F4F5; font-size: 1.25rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; }
+        /* ИСПРАВЛЕННЫЕ СТЕППЕРЫ (не выходят за края) */
+        .stepper-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F4F4F5; font-size: 1.2rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; flex-shrink: 0; }
         .stepper-btn:active { transform: scale(0.9); background: rgba(197, 160, 89, 0.2); border-color: #C5A059; }
 
-        /* Модальное окно выбора упражнений */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
-        .modal-overlay.active { display: flex; }
+        /* Анимация переключения упражнений */
+        .exercise-fade { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .exercise-fade.fading { opacity: 0; transform: translateY(10px); }
+
+        /* Модальное окно */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: #111114; width: 100%; max-height: 85vh; border-radius: 1.5rem 1.5rem 0 0; padding: 1.5rem; overflow-y: auto; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         
         .ex-category-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #C5A059; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         .ex-item { padding: 0.75rem 1rem; background: #18181B; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
-        .ex-item:active { background: #27272A; border-color: rgba(197, 160, 89, 0.3); }
+        .ex-item:active { background: #27272A; border-color: rgba(197, 160, 89, 0.3); transform: scale(0.98); }
+        
+        /* Точки прогресса подходов */
+        .set-dot { width: 12px; height: 12px; border-radius: 50%; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .set-dot.completed { background: #C5A059; }
+        .set-dot.current { background: rgba(197, 160, 89, 0.4); box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2); animation: pulseDot 1.5s infinite; }
+        .set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,0.1); }
+        @keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2); } 50% { box-shadow: 0 0 0 6px rgba(197, 160, 89, 0.1); } }
     </style>
 </head>
 <body>
@@ -157,38 +172,41 @@
             <div class="space-y-3 mb-6" id="quick-start-container"></div>
         </section>
 
-        <!-- ЭКРАН 3: ТРЕНИРОВКА -->
+                <!-- ЭКРАН 3: ТРЕНИРОВКА -->
         <section id="screen-3" class="screen">
-            <header class="flex items-center justify-between mb-6 pt-2">
+            <header class="flex items-center justify-between mb-4 pt-2">
                 <button id="btn-close-workout" class="w-10 h-10 rounded-full bg-bg-tertiary flex items-center justify-center text-text-secondary">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
                 <div class="text-center">
-                    <p class="text-xs text-text-muted uppercase tracking-wider" id="workout-progress-text">Подход 1</p>
                     <h2 class="text-lg font-bold text-text-primary" id="workout-title">Название</h2>
                 </div>
                 <div class="w-10 h-10"></div>
             </header>
 
-            <div id="exercise-view" class="flex-1 flex flex-col">
-                <div class="glass-card p-6 mb-6 text-center">
-                    <h3 class="text-2xl font-bold text-text-primary mb-1" id="ex-name">Жим лежа</h3>
-                    <p class="text-text-secondary text-sm mb-6" id="ex-muscle">Грудь</p>
-                    <div class="flex justify-center gap-8 mb-6">
-                        <div class="text-center">
-                            <p class="text-xs text-text-muted uppercase mb-2">Вес (кг)</p>
-                            <div class="flex items-center gap-3">
+            <div id="exercise-view" class="flex-1 flex flex-col exercise-fade">
+                <!-- Визуальные точки подходов -->
+                <div class="flex gap-2 justify-center mb-4" id="set-dots"></div>
+                
+                <div class="glass-card p-5 mb-4 text-center">
+                    <h3 class="text-xl font-bold text-text-primary mb-1" id="ex-name">Жим лежа</h3>
+                    <p class="text-text-secondary text-sm mb-5" id="ex-muscle">Грудь</p>
+                    
+                    <div class="flex justify-around items-center gap-2">
+                        <div class="text-center flex-1">
+                            <p class="text-[10px] text-text-muted uppercase mb-2 tracking-wider">Вес (кг)</p>
+                            <div class="flex items-center justify-center gap-2">
                                 <button class="stepper-btn" data-target="weight" data-action="minus">-</button>
-                                <span class="text-3xl font-bold text-text-primary w-12 text-center" id="ex-weight">60</span>
+                                <span class="text-2xl font-bold text-text-primary w-10 text-center" id="ex-weight">60</span>
                                 <button class="stepper-btn" data-target="weight" data-action="plus">+</button>
                             </div>
                         </div>
-                        <div class="w-px bg-border"></div>
-                        <div class="text-center">
-                            <p class="text-xs text-text-muted uppercase mb-2">Повторы</p>
-                            <div class="flex items-center gap-3">
+                        <div class="w-px h-12 bg-border"></div>
+                        <div class="text-center flex-1">
+                            <p class="text-[10px] text-text-muted uppercase mb-2 tracking-wider">Повторы</p>
+                            <div class="flex items-center justify-center gap-2">
                                 <button class="stepper-btn" data-target="reps" data-action="minus">-</button>
-                                <span class="text-3xl font-bold text-text-primary w-12 text-center" id="ex-reps">10</span>
+                                <span class="text-2xl font-bold text-text-primary w-10 text-center" id="ex-reps">10</span>
                                 <button class="stepper-btn" data-target="reps" data-action="plus">+</button>
                             </div>
                         </div>
@@ -197,22 +215,22 @@
                 <button id="btn-complete-set" class="btn-primary mt-auto mb-4 text-lg py-4">Завершить подход</button>
             </div>
 
-            <div id="rest-view" class="flex-1 flex flex-col items-center justify-center hidden">
+            <div id="rest-view" class="flex-1 flex flex-col items-center justify-center hidden exercise-fade">
                 <p class="text-text-muted uppercase tracking-widest text-sm mb-2">Отдых</p>
-                <p class="text-text-secondary text-xs mb-8">Перед следующим подходом</p>
-                <div class="relative w-64 h-64 mb-8">
+                <p class="text-text-secondary text-xs mb-6">Перед следующим подходом</p>
+                <div class="relative w-56 h-56 mb-6">
                     <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
                         <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
                         <circle cx="60" cy="60" r="54" fill="none" stroke="url(#gradBronze)" stroke-width="6" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0" class="timer-ring-progress" id="timer-ring"/>
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-6xl font-bold text-text-primary tracking-tight" id="timer-text">01:30</span>
+                        <span class="text-5xl font-bold text-text-primary tracking-tight" id="timer-text">01:30</span>
                     </div>
                 </div>
-                <div class="flex gap-4 w-full max-w-xs">
-                    <button class="btn-secondary flex-1" id="btn-less-time">- 15с</button>
-                    <button class="btn-primary flex-1" id="btn-skip-rest">Далее</button>
-                    <button class="btn-secondary flex-1" id="btn-more-time">+ 15с</button>
+                <div class="flex gap-3 w-full max-w-xs">
+                    <button class="btn-secondary flex-1 py-3" id="btn-less-time">- 15с</button>
+                    <button class="btn-primary flex-1 py-3" id="btn-skip-rest">Далее</button>
+                    <button class="btn-secondary flex-1 py-3" id="btn-more-time">+ 15с</button>
                 </div>
             </div>
         </section>
@@ -279,38 +297,39 @@
             <button id="btn-save-program" class="btn-primary mt-6" disabled>Сохранить программу</button>
         </section>
 
-        <!-- ЭКРАН 7: ПРОФИЛЬ -->
+                <!-- ЭКРАН 7: ПРОФИЛЬ -->
         <section id="screen-7" class="screen">
-            <header class="mb-6 pt-2">
+            <header class="mb-5 pt-2">
                 <h1 class="text-3xl font-bold text-text-primary">Профиль</h1>
             </header>
 
-            <div class="glass-card p-6 mb-4 flex items-center gap-4 stagger-item">
-                <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl font-bold text-accent" id="profile-avatar">U</div>
+            <div class="glass-card p-5 mb-4 flex items-center gap-4 stagger-item">
+                <div class="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center text-xl font-bold text-accent" id="profile-avatar">U</div>
                 <div>
-                    <h2 class="text-xl font-bold text-text-primary" id="profile-name">Пользователь</h2>
+                    <h2 class="text-lg font-bold text-text-primary" id="profile-name">Пользователь</h2>
                     <p class="text-text-secondary text-sm" id="profile-level">Уровень не указан</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-3 mb-6 stagger-item">
-                <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-workouts">0</p><p class="text-[10px] text-text-muted mt-1 uppercase">Тренировок</p></div>
-                <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-volume">0т</p><p class="text-[10px] text-text-muted mt-1 uppercase">Объем</p></div>
-                <div class="glass-card p-4 text-center"><p class="text-xl font-bold text-accent" id="total-time">0ч</p><p class="text-[10px] text-text-muted mt-1 uppercase">Время</p></div>
+            <div class="grid grid-cols-3 gap-2 mb-5 stagger-item">
+                <div class="glass-card p-3 text-center"><p class="text-lg font-bold text-accent" id="total-workouts">0</p><p class="text-[10px] text-text-muted mt-1 uppercase">Тренировок</p></div>
+                <div class="glass-card p-3 text-center"><p class="text-lg font-bold text-accent" id="total-volume">0т</p><p class="text-[10px] text-text-muted mt-1 uppercase">Объем</p></div>
+                <div class="glass-card p-3 text-center"><p class="text-lg font-bold text-accent" id="total-time">0ч</p><p class="text-[10px] text-text-muted mt-1 uppercase">Время</p></div>
             </div>
 
-            <!-- Блок с советом -->
-            <div class="glass-card p-5 mb-6 stagger-item">
-                <div class="flex items-center gap-2 mb-3">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                    <h3 class="text-sm font-bold text-accent uppercase tracking-wider">Совет дня</h3>
+            <!-- Блок с советом дня -->
+            <div class="glass-card p-4 mb-5 stagger-item">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <h3 class="text-xs font-bold text-accent uppercase tracking-wider">Совет дня</h3>
                 </div>
-                <p id="tip-text" class="text-text-secondary text-sm leading-relaxed mb-4">Нажмите кнопку, чтобы получить совет.</p>
-                <button id="btn-new-tip" class="w-full py-2 rounded-lg bg-bg-tertiary text-text-primary text-sm font-medium border border-border active:scale-95 transition-transform">Новый совет</button>
+                <p id="tip-text" class="text-text-secondary text-sm leading-relaxed mb-3">Нажмите кнопку, чтобы получить совет.</p>
+                <button id="btn-new-tip" class="w-full py-2 rounded-lg bg-bg-tertiary text-text-primary text-xs font-medium border border-border active:scale-95 transition-transform">Новый совет</button>
             </div>
 
-            <h3 class="text-lg font-bold text-text-primary mb-3 stagger-item">История</h3>
-            <div class="space-y-2" id="history-list"></div>
+            <!-- ИСТОРИЯ (Теперь выше и с советами) -->
+            <h3 class="text-lg font-bold text-text-primary mb-3 stagger-item">История тренировок</h3>
+            <div class="space-y-3 mb-6" id="history-list"></div>
         </section>
 
     </main>
@@ -345,7 +364,7 @@
         </div>
     </nav>
 
-    <script>
+        <script>
         // ==========================================
         // 1. TELEGRAM & STATE & STORAGE
         // ==========================================
@@ -353,25 +372,30 @@
         tg.ready(); tg.expand();
         tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
         tg.MainButton.hide(); tg.BackButton.hide();
-        // Безопасная обертка для вибрации (работает и в Telegram, и в обычном браузере)
-function triggerHaptic(style = 'light') {
-    if (window.Telegram?.WebApp?.HapticFeedback) {
-        if (style === 'success') window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        else window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
-    }
-}
 
-        // БАЗА УПРАЖНЕНИЙ
+        // РАСШИРЕННАЯ БАЗА УПРАЖНЕНИЙ
         const exerciseDB = [
-            { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Разводка гантелей', 'Сведения в кроссовере', 'Отжимания на брусьях', 'Жим в Хаммере'] },
-            { category: 'Спина', items: ['Становая тяга', 'Тяга штанги в наклоне', 'Подтягивания', 'Тяга верхнего блока', 'Тяга горизонтального блока', 'Гиперэкстензия', 'Пуловер в блоке'] },
-            { category: 'Ноги', items: ['Приседания со штангой', 'Жим ногами в тренажере', 'Выпады с гантелями', 'Румынская тяга', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки'] },
-            { category: 'Плечи', items: ['Армейский жим', 'Жим гантелей сидя', 'Махи гантелями в стороны', 'Махи в наклоне', 'Тяга к подбородку', 'Жим в Хаммере на плечи'] },
-            { category: 'Руки', items: ['Подъем штанги на бицепс', 'Молотки с гантелями', 'Французский жим', 'Разгибания на блоке на трицепс', 'Концентрированный подъем', 'Отжимания узким хватом'] },
-            { category: 'Пресс', items: ['Скручивания', 'Подъем ног в висе', 'Планка', 'Русский твист', 'Молитва в блоке'] }
+            { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Жим в Хаммере', 'Разводка гантелей лежа', 'Сведения в кроссовере', 'Отжимания на брусьях', 'Отжимания от пола', 'Пуловер с гантелью'] },
+            { category: 'Спина', items: ['Становая тяга', 'Тяга штанги в наклоне', 'Тяга Т-грифа', 'Подтягивания широким хватом', 'Подтягивания узким хватом', 'Тяга верхнего блока к груди', 'Тяга горизонтального блока', 'Тяга гантели одной рукой', 'Гиперэкстензия', 'Пуловер в блоке', 'Шраги с гантелями'] },
+            { category: 'Ноги', items: ['Приседания со штангой на плечах', 'Фронтальные приседания', 'Жим ногами в тренажере', 'Выпады с гантелями', 'Болгарские выпады', 'Румынская тяга', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки стоя', 'Подъем на носки сидя', 'Зашагивания на тумбу'] },
+            { category: 'Плечи', items: ['Армейский жим стоя', 'Жим гантелей сидя', 'Жим в Хаммере на плечи', 'Махи гантелями в стороны', 'Махи гантелями в наклоне', 'Тяга к подбородку', 'Обратные разведения в Pec-Dec'] },
+            { category: 'Руки', items: ['Подъем штанги на бицепс стоя', 'Подъем гантелей на бицепс с супинацией', 'Молотки с гантелями', 'Подъем штанги обратным хватом', 'Французский жим лежа', 'Разгибания на блоке на трицепс', 'Отжимания узким хватом', 'Разгибания рук с гантелью из-за головы'] },
+            { category: 'Пресс и Кор', items: ['Скручивания на полу', 'Подъем ног в висе', 'Планка классическая', 'Планка боковая', 'Русский твист', 'Молитва в блоке', 'Складка', 'Велосипед'] },
+            { category: 'Кардио и Функционал', items: ['Бег на дорожке', 'Эллипсоид', 'Велотренажер', 'Гребной тренажер', 'Скакалка', 'Берпи', 'Бой с тенью', 'Упражнение "Мельница"'] }
         ];
 
-        // СОВЕТЫ
+        // СОВЕТЫ ДЛЯ ИСТОРИИ (По группам мышц)
+        const muscleTips = {
+            'Грудь': 'Контролируйте негативную фазу (опускание) 2-3 секунды для лучшего растяжения.',
+            'Спина': 'Тяните вес локтями, а не кистями, чтобы максимально задействовать широчайшие.',
+            'Ноги': 'Держите спину прямой и не отрывайте пятки от пола при приседаниях.',
+            'Плечи': 'Не поднимайте плечи к ушам при махах, работайте только дельтами.',
+            'Руки': 'Фиксируйте локти при работе на бицепс, чтобы исключить читинг.',
+            'Пресс и Кор': 'Дышите правильно: выдох на усилии, скручивайтесь за счет мышц, а не инерции.',
+            'Кардио и Функционал': 'Следите за пульсом. Для жиросжигания оптимально 120-140 ударов в минуту.'
+        };
+
+        // ОБЩИЕ СОВЕТЫ
         const sportsTips = [
             "Сон — главный анаболик. Старайтесь спать 7-9 часов для оптимального синтеза белка.",
             "Не пропускайте разминку. 5-10 минут кардио и суставная гимнастика снизят риск травм.",
@@ -380,12 +404,9 @@ function triggerHaptic(style = 'light') {
             "Техника важнее веса. Эго-лифтинг — главная причина травм в зале.",
             "Углеводы — не враг. Ешьте сложные углеводы за 2 часа до тренировки для максимальной энергии.",
             "Растяжка после тренировки ускоряет восстановление и улучшает мобильность суставов.",
-            "Если чувствуете сильную боль в суставе — немедленно прекратите упражнение. Боль в мышцах — ок, боль в суставе — нет.",
+            "Если чувствуете сильную боль в суставе — немедленно прекратите упражнение.",
             "Креатин — одна из самых изученных и безопасных добавок для увеличения силовых показателей.",
-            "Не тренируйте одну группу мышц чаще 2 раз в неделю, если вы натурал. Мышцы растут во время отдыха.",
-            "Базовые многосуставные упражнения (присед, тяга, жим) дают максимальный гормональный отклик.",
-            "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать.",
-            "Белок нужно распределять равномерно в течение дня. Оптимально: 4-5 приемов пищи по 20-30г белка."
+            "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать."
         ];
 
         const defaultPrograms = [
@@ -417,22 +438,16 @@ function triggerHaptic(style = 'light') {
         }
 
         function loadState() {
-    const saved = localStorage.getItem('gym_pro_state');
-    if (saved) {
-        const data = JSON.parse(saved);
-        state.name = data.user?.name || '';
-        state.level = data.user?.level || null;
-        state.customPrograms = data.customPrograms || [];
-        state.history = data.history || [];
-        
-        // ИСПРАВЛЕНИЕ: Если имя есть, но уровень не выбран, идем на экран 1
-        if (state.name && state.level) {
-            state.currentStep = 2;
-        } else if (state.name && !state.level) {
-            state.currentStep = 1;
+            const saved = localStorage.getItem('gym_pro_state');
+            if (saved) {
+                const data = JSON.parse(saved);
+                state.name = data.user?.name || '';
+                state.level = data.user?.level || null;
+                state.customPrograms = data.customPrograms || [];
+                state.history = data.history || [];
+                if (state.name && state.level) state.currentStep = 2;
+            }
         }
-    }
-}
 
         // ==========================================
         // 2. SVG ICONS
@@ -450,7 +465,6 @@ function triggerHaptic(style = 'light') {
         // 3. NAVIGATION
         // ==========================================
         function goToStep(stepIndex) {
-            if (stepIndex === state.currentStep) return;
             const curr = document.getElementById(`screen-${state.currentStep}`);
             const next = document.getElementById(`screen-${stepIndex}`);
             if(curr) { curr.classList.remove('active'); curr.classList.add('exit'); }
@@ -557,16 +571,14 @@ function triggerHaptic(style = 'light') {
         }
 
         // ==========================================
-        // 5. HOME SCREEN & RINGS LOGIC
+        // 5. HOME SCREEN & RINGS
         // ==========================================
         function getWeekStart() {
-    const now = new Date();
-    const day = now.getDay();
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Понедельник
-    const monday = new Date(now.getFullYear(), now.getMonth(), diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday.getTime(); // Возвращаем чистый timestamp
-}
+            const now = new Date();
+            const day = now.getDay();
+            const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(now.setDate(diff)).setHours(0,0,0,0);
+        }
 
         function initHomeScreen() {
             document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
@@ -574,18 +586,15 @@ function triggerHaptic(style = 'light') {
             const weekStart = getWeekStart();
             const thisWeekWorkouts = state.history.filter(w => new Date(w.date).getTime() >= weekStart);
             
-            // 1. Тренировки (Цель: 3 в неделю)
             const workoutCount = thisWeekWorkouts.length;
             const workoutPct = Math.min(100, (workoutCount / 3) * 100);
             document.getElementById('stat-activity').textContent = `${workoutCount}/3`;
 
-            // 2. Объем (Цель зависит от уровня)
             const weekVolume = thisWeekWorkouts.reduce((sum, w) => sum + w.volume, 0);
             const volumeTarget = state.level === 'pro' ? 15000 : state.level === 'enthusiast' ? 8000 : 4000;
             const volumePct = Math.min(100, (weekVolume / volumeTarget) * 100);
             document.getElementById('stat-volume').textContent = `${weekVolume} кг`;
 
-            // 3. Время (Цель: 150 мин в неделю)
             const weekMinutes = thisWeekWorkouts.reduce((sum, w) => sum + w.duration, 0);
             const minutesPct = Math.min(100, (weekMinutes / 150) * 100);
             document.getElementById('stat-time').textContent = `${weekMinutes} мин`;
@@ -640,7 +649,7 @@ function triggerHaptic(style = 'light') {
 
             allPrograms.forEach((prog, index) => {
                 const card = document.createElement('div');
-                card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform';
+                card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer transition-transform';
                 const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
                 const tagText = prog.isDefault ? prog.level : 'Моя';
                 
@@ -677,7 +686,6 @@ function triggerHaptic(style = 'light') {
             });
         }
 
-        // --- Создание программы ---
         document.getElementById('btn-open-create').addEventListener('click', () => {
             state.newProgram = { title: '', exercises: [] };
             document.getElementById('new-prog-title').value = '';
@@ -688,7 +696,6 @@ function triggerHaptic(style = 'light') {
 
         document.getElementById('btn-back-from-create').addEventListener('click', () => goToStep(5));
 
-        // Модальное окно выбора упражнений
         const modal = document.getElementById('exercise-picker-modal');
         const modalList = document.getElementById('exercise-list-container');
 
@@ -713,8 +720,8 @@ function triggerHaptic(style = 'light') {
                     const el = document.createElement('div');
                     el.className = 'ex-item';
                     el.innerHTML = `
-                        <span class="text-text-primary font-medium">${item}</span>
-                        <span class="text-text-muted text-xs">${cat.category}</span>
+                        <span class="text-text-primary font-medium text-sm">${item}</span>
+                        <span class="text-text-muted text-[10px]">${cat.category}</span>
                     `;
                     el.addEventListener('click', () => {
                         state.newProgram.exercises.push({ name: item, muscle: cat.category, sets: 3, reps: 10, weight: 20 });
@@ -799,7 +806,7 @@ function triggerHaptic(style = 'light') {
         });
 
         // ==========================================
-        // 7. WORKOUT LOGIC (ИСПРАВЛЕН ТАЙМЕР)
+        // 7. WORKOUT LOGIC (С АНИМАЦИЯМИ И ТОЧКАМИ)
         // ==========================================
         function startWorkout(prog) {
             state.currentWorkout = {
@@ -817,19 +824,51 @@ function triggerHaptic(style = 'light') {
             goToStep(3);
         }
 
-        function initWorkoutScreen() { renderCurrentExercise(); }
+        function initWorkoutScreen() { 
+            // Анимация появления
+            document.getElementById('exercise-view').classList.remove('fading');
+            renderCurrentExercise(); 
+        }
 
         function renderCurrentExercise() {
+            const view = document.getElementById('exercise-view');
+            
+            // Плавное затухание при смене упражнения
+            view.classList.add('fading');
+            
+            setTimeout(() => {
+                const ex = state.currentWorkout.exercises[state.currentExIndex];
+                document.getElementById('workout-title').textContent = state.currentWorkout.title;
+                document.getElementById('ex-name').textContent = ex.name;
+                document.getElementById('ex-muscle').textContent = ex.muscle;
+                document.getElementById('ex-weight').textContent = ex.weight;
+                document.getElementById('ex-reps').textContent = ex.reps;
+                
+                renderSetDots(); // Рендер точек
+                
+                view.classList.remove('hidden');
+                document.getElementById('rest-view').classList.add('hidden');
+                state.isResting = false;
+                
+                // Плавное появление
+                setTimeout(() => view.classList.remove('fading'), 50);
+            }, 300);
+        }
+
+        // РЕНДЕР ТОЧЕК ПОДХОДОВ
+        function renderSetDots() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
-            document.getElementById('workout-title').textContent = state.currentWorkout.title;
-            document.getElementById('workout-progress-text').textContent = `Упражнение ${state.currentExIndex + 1}/${state.currentWorkout.exercises.length} | Подход ${state.currentSet}/${ex.sets}`;
-            document.getElementById('ex-name').textContent = ex.name;
-            document.getElementById('ex-muscle').textContent = ex.muscle;
-            document.getElementById('ex-weight').textContent = ex.weight;
-            document.getElementById('ex-reps').textContent = ex.reps;
-            document.getElementById('exercise-view').classList.remove('hidden');
-            document.getElementById('rest-view').classList.add('hidden');
-            state.isResting = false;
+            const container = document.getElementById('set-dots');
+            container.innerHTML = '';
+            for (let i = 1; i <= ex.sets; i++) {
+                const dot = document.createElement('div');
+                let classes = 'set-dot ';
+                if (i < state.currentSet) classes += 'completed';
+                else if (i === state.currentSet) classes += 'current';
+                else classes += 'future';
+                dot.className = classes;
+                container.appendChild(dot);
+            }
         }
 
         document.querySelectorAll('.stepper-btn').forEach(btn => {
@@ -858,9 +897,17 @@ function triggerHaptic(style = 'light') {
             state.isResting = true;
             state.timerSeconds = 90;
             state.initialTimerSeconds = 90;
-            document.getElementById('exercise-view').classList.add('hidden');
-            document.getElementById('rest-view').classList.remove('hidden');
-            updateTimerUI();
+            
+            const restView = document.getElementById('rest-view');
+            restView.classList.add('fading');
+            
+            setTimeout(() => {
+                document.getElementById('exercise-view').classList.add('hidden');
+                restView.classList.remove('hidden');
+                setTimeout(() => restView.classList.remove('fading'), 50);
+                updateTimerUI();
+            }, 300);
+
             state.timerInterval = setInterval(() => {
                 state.timerSeconds--;
                 updateTimerUI();
@@ -881,23 +928,20 @@ function triggerHaptic(style = 'light') {
         document.getElementById('btn-more-time').addEventListener('click', () => { state.timerSeconds += 15; if (state.timerSeconds > state.initialTimerSeconds) state.initialTimerSeconds = state.timerSeconds; updateTimerUI(); tg.HapticFeedback.impactOccurred('light'); });
         document.getElementById('btn-skip-rest').addEventListener('click', () => { clearInterval(state.timerInterval); finishRest(); });
 
-        // ИСПРАВЛЕННАЯ ЛОГИКА: Таймер не переключает упражнение, а готовит к следующему подходу
         function finishRest() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
             
             if (state.currentSet < ex.sets) {
-                // Если это не последний подход, просто увеличиваем номер подхода и остаемся на упражнении
                 state.currentSet++;
                 renderCurrentExercise();
             } else {
-                // Если подходы закончились, переходим к следующему упражнению
                 state.currentSet = 1;
                 state.currentExIndex++;
                 
                 if (state.currentExIndex >= state.currentWorkout.exercises.length) {
-                    goToStep(4); // Тренировка завершена
+                    goToStep(4);
                 } else {
-                    renderCurrentExercise(); // Переход к следующему упражнению
+                    renderCurrentExercise();
                 }
             }
         }
@@ -914,18 +958,23 @@ function triggerHaptic(style = 'light') {
         // 8. COMPLETE & PROFILE
         // ==========================================
         function initCompleteScreen() {
+            // ИСПРАВЛЕНИЕ БАГА С 0 МИНУТ: Math.max(1, ...)
             const elapsedMins = Math.max(1, Math.round((Date.now() - state.workoutStartTime) / 60000));
             document.getElementById('stat-time-final').textContent = elapsedMins;
             document.getElementById('stat-sets-final').textContent = state.totalSetsCompleted;
             let volText = state.totalVolume >= 1000 ? (state.totalVolume / 1000).toFixed(1) + 'т' : state.totalVolume + 'кг';
             document.getElementById('stat-volume-final').textContent = volText;
 
+            // Определяем основную группу мышц для совета
+            const mainMuscle = state.currentWorkout.exercises[0]?.muscle || 'Пресс и Кор';
+
             state.history.unshift({
                 date: new Date().toISOString(),
                 title: state.currentWorkout.title,
                 duration: elapsedMins,
                 volume: state.totalVolume,
-                sets: state.totalSetsCompleted
+                sets: state.totalSetsCompleted,
+                mainMuscle: mainMuscle // Сохраняем для совета
             });
             saveState();
             tg.HapticFeedback.notificationOccurred('success');
@@ -950,7 +999,7 @@ function triggerHaptic(style = 'light') {
             document.getElementById('total-volume').textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'т' : totalVolume + 'кг';
             document.getElementById('total-time').textContent = Math.round(totalTime / 60) + 'ч';
 
-            // История
+            // История с советами
             const histList = document.getElementById('history-list');
             histList.innerHTML = '';
             if (state.history.length === 0) {
@@ -961,16 +1010,23 @@ function triggerHaptic(style = 'light') {
                     const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
                     const volStr = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + 'т' : w.volume + 'кг';
                     
+                    // Берем совет для группы мышц или дефолтный
+                    const tip = muscleTips[w.mainMuscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
+                    
                     const item = document.createElement('div');
-                    item.className = 'stagger-item glass-card p-4 flex items-center justify-between';
+                    item.className = 'stagger-item glass-card p-4';
                     item.innerHTML = `
-                        <div>
-                            <p class="font-semibold text-text-primary">${w.title}</p>
-                            <p class="text-text-muted text-xs mt-1">${dateStr} • ${w.sets} подходов</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <div>
+                                <p class="font-semibold text-text-primary">${w.title}</p>
+                                <p class="text-text-muted text-xs mt-0.5">${dateStr} • ${w.sets} подходов • ${volStr}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-accent">${w.duration} мин</p>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-bold text-accent">${volStr}</p>
-                            <p class="text-text-muted text-xs mt-1">${w.duration} мин</p>
+                        <div class="bg-bg-tertiary rounded-lg p-2.5 border-l-2 border-accent/50">
+                            <p class="text-[11px] text-text-secondary leading-relaxed italic">💡 ${tip}</p>
                         </div>
                     `;
                     histList.appendChild(item);
@@ -982,31 +1038,30 @@ function triggerHaptic(style = 'light') {
         // Логика советов
         document.getElementById('btn-new-tip').addEventListener('click', () => {
             const randomTip = sportsTips[Math.floor(Math.random() * sportsTips.length)];
-            document.getElementById('tip-text').textContent = randomTip;
+            const tipEl = document.getElementById('tip-text');
+            tipEl.style.opacity = '0';
+            setTimeout(() => {
+                tipEl.textContent = randomTip;
+                tipEl.style.opacity = '1';
+            }, 200);
             tg.HapticFeedback.impactOccurred('light');
         });
-        // Показать первый совет при входе
         document.getElementById('tip-text').textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)];
+        document.getElementById('tip-text').style.transition = 'opacity 0.3s';
 
         // ==========================================
-// 9. INIT APP
-// ==========================================
-loadState();
-
-// Восстанавливаем имя в поле ввода, если оно там было
-if (state.name) {
-    inputName.value = state.name;
-    btnNext0.disabled = false;
-}
-
-// Используем единую функцию навигации для корректного запуска любого экрана
-if (state.currentStep > 0) {
-    if (state.currentStep >= 2) {
-        document.getElementById('bottom-nav').classList.remove('hidden');
-    }
-    goToStep(state.currentStep);
-}
-
+        // 9. INIT APP
+        // ==========================================
+        loadState();
+        if (state.currentStep === 2) {
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            document.getElementById('screen-0').classList.remove('active');
+            document.getElementById('screen-2').classList.add('active');
+            initHomeScreen();
+        } else {
+            inputName.value = state.name;
+            btnNext0.disabled = !state.name;
+        }
     </script>
 </body>
 </html>
