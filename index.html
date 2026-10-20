@@ -353,6 +353,13 @@
         tg.ready(); tg.expand();
         tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
         tg.MainButton.hide(); tg.BackButton.hide();
+        // Безопасная обертка для вибрации (работает и в Telegram, и в обычном браузере)
+function triggerHaptic(style = 'light') {
+    if (window.Telegram?.WebApp?.HapticFeedback) {
+        if (style === 'success') window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        else window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
+    }
+}
 
         // БАЗА УПРАЖНЕНИЙ
         const exerciseDB = [
@@ -410,16 +417,22 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('gym_pro_state');
-            if (saved) {
-                const data = JSON.parse(saved);
-                state.name = data.user?.name || '';
-                state.level = data.user?.level || null;
-                state.customPrograms = data.customPrograms || [];
-                state.history = data.history || [];
-                if (state.name && state.level) state.currentStep = 2;
-            }
+    const saved = localStorage.getItem('gym_pro_state');
+    if (saved) {
+        const data = JSON.parse(saved);
+        state.name = data.user?.name || '';
+        state.level = data.user?.level || null;
+        state.customPrograms = data.customPrograms || [];
+        state.history = data.history || [];
+        
+        // ИСПРАВЛЕНИЕ: Если имя есть, но уровень не выбран, идем на экран 1
+        if (state.name && state.level) {
+            state.currentStep = 2;
+        } else if (state.name && !state.level) {
+            state.currentStep = 1;
         }
+    }
+}
 
         // ==========================================
         // 2. SVG ICONS
@@ -437,6 +450,7 @@
         // 3. NAVIGATION
         // ==========================================
         function goToStep(stepIndex) {
+            if (stepIndex === state.currentStep) return;
             const curr = document.getElementById(`screen-${state.currentStep}`);
             const next = document.getElementById(`screen-${stepIndex}`);
             if(curr) { curr.classList.remove('active'); curr.classList.add('exit'); }
@@ -546,11 +560,13 @@
         // 5. HOME SCREEN & RINGS LOGIC
         // ==========================================
         function getWeekStart() {
-            const now = new Date();
-            const day = now.getDay();
-            const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Понедельник
-            return new Date(now.setDate(diff)).setHours(0,0,0,0);
-        }
+    const now = new Date();
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Понедельник
+    const monday = new Date(now.getFullYear(), now.getMonth(), diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday.getTime(); // Возвращаем чистый timestamp
+}
 
         function initHomeScreen() {
             document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
@@ -898,7 +914,7 @@
         // 8. COMPLETE & PROFILE
         // ==========================================
         function initCompleteScreen() {
-            const elapsedMins = Math.round((Date.now() - state.workoutStartTime) / 60000);
+            const elapsedMins = Math.max(1, Math.round((Date.now() - state.workoutStartTime) / 60000));
             document.getElementById('stat-time-final').textContent = elapsedMins;
             document.getElementById('stat-sets-final').textContent = state.totalSetsCompleted;
             let volText = state.totalVolume >= 1000 ? (state.totalVolume / 1000).toFixed(1) + 'т' : state.totalVolume + 'кг';
@@ -973,18 +989,23 @@
         document.getElementById('tip-text').textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)];
 
         // ==========================================
-        // 9. INIT APP
-        // ==========================================
-        loadState();
-        if (state.currentStep === 2) {
-            document.getElementById('bottom-nav').classList.remove('hidden');
-            document.getElementById('screen-0').classList.remove('active');
-            document.getElementById('screen-2').classList.add('active');
-            initHomeScreen();
-        } else {
-            inputName.value = state.name;
-            btnNext0.disabled = !state.name;
-        }
+// 9. INIT APP
+// ==========================================
+loadState();
+
+// Восстанавливаем имя в поле ввода, если оно там было
+if (state.name) {
+    inputName.value = state.name;
+    btnNext0.disabled = false;
+}
+
+// Используем единую функцию навигации для корректного запуска любого экрана
+if (state.currentStep > 0) {
+    if (state.currentStep >= 2) {
+        document.getElementById('bottom-nav').classList.remove('hidden');
+    }
+    goToStep(state.currentStep);
+}
 
     </script>
 </body>
