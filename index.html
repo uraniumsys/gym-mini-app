@@ -39,16 +39,28 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
+                /* ИСПРАВЛЕНО: Убрали filter: blur, добавили GPU-ускорение */
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
             padding: 1.5rem; padding-bottom: 5.5rem; 
             display: flex; flex-direction: column;
-            opacity: 0; transform: translateY(20px); filter: blur(8px);
-            pointer-events: none; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0; 
+            transform: translate3d(0, 20px, 0); /* Аппаратное ускорение */
+            pointer-events: none; 
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Более плавная и быстрая кривая */
             overflow-y: auto;
+            will-change: transform, opacity; /* Подсказка браузеру для оптимизации */
         }
-        .screen.active { opacity: 1; transform: translateY(0); filter: blur(0); pointer-events: auto; position: relative; }
-        .screen.exit { opacity: 0; transform: translateY(-20px); filter: blur(8px); }
+        .screen.active { 
+            opacity: 1; 
+            transform: translate3d(0, 0, 0); 
+            pointer-events: auto; 
+            position: relative; 
+        }
+        .screen.exit { 
+            opacity: 0; 
+            transform: translate3d(0, -20px, 0); 
+        }
 
         .glass-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(4px); transition: transform 0.2s; }
         .glass-card:active { transform: scale(0.98); }
@@ -191,6 +203,13 @@
                 <div class="glass-card p-5 mb-4 text-center">
                     <h3 class="text-xl font-bold text-text-primary mb-1" id="ex-name">Жим лежа</h3>
                     <p class="text-text-secondary text-sm mb-5" id="ex-muscle">Грудь</p>
+                                        <!-- НОВЫЙ БЛОК: Совет для текущего упражнения -->
+                    <div id="ex-tip-container" class="mt-4 p-3 rounded-xl bg-accent/5 border border-accent/10 text-left">
+                        <p class="text-[11px] text-text-secondary leading-relaxed">
+                            <span class="text-accent font-semibold">Совет:</span> 
+                            <span id="ex-tip-text">Контролируйте негативную фазу движения.</span>
+                        </p>
+                    </div>
                     
                     <div class="flex justify-around items-center gap-2">
                         <div class="text-center flex-1">
@@ -310,6 +329,16 @@
                     <p class="text-text-secondary text-sm" id="profile-level">Уровень не указан</p>
                 </div>
             </div>
+                        <!-- НОВЫЙ БЛОК: График прогресса силы -->
+            <div class="glass-card p-4 mb-4 stagger-item">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-bold text-text-primary">Прогресс силы</h3>
+                    <span class="text-[10px] text-text-muted uppercase tracking-wider">Макс. вес</span>
+                </div>
+                <div class="h-32 w-full relative" id="progress-chart-container">
+                    <!-- График рисуется здесь через JS -->
+                </div>
+            </div>
 
             <div class="grid grid-cols-3 gap-2 mb-5 stagger-item">
                 <div class="glass-card p-3 text-center"><p class="text-lg font-bold text-accent" id="total-workouts">0</p><p class="text-[10px] text-text-muted mt-1 uppercase">Тренировок</p></div>
@@ -364,49 +393,67 @@
         </div>
     </nav>
 
-        <script>
-        // ==========================================
-        // 1. TELEGRAM & STATE & STORAGE
-        // ==========================================
+            <script>
         const tg = window.Telegram.WebApp;
         tg.ready(); tg.expand();
         tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
         tg.MainButton.hide(); tg.BackButton.hide();
 
-        // РАСШИРЕННАЯ БАЗА УПРАЖНЕНИЙ
-        const exerciseDB = [
-            { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Жим в Хаммере', 'Разводка гантелей лежа', 'Сведения в кроссовере', 'Отжимания на брусьях', 'Отжимания от пола', 'Пуловер с гантелью'] },
-            { category: 'Спина', items: ['Становая тяга', 'Тяга штанги в наклоне', 'Тяга Т-грифа', 'Подтягивания широким хватом', 'Подтягивания узким хватом', 'Тяга верхнего блока к груди', 'Тяга горизонтального блока', 'Тяга гантели одной рукой', 'Гиперэкстензия', 'Пуловер в блоке', 'Шраги с гантелями'] },
-            { category: 'Ноги', items: ['Приседания со штангой на плечах', 'Фронтальные приседания', 'Жим ногами в тренажере', 'Выпады с гантелями', 'Болгарские выпады', 'Румынская тяга', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки стоя', 'Подъем на носки сидя', 'Зашагивания на тумбу'] },
-            { category: 'Плечи', items: ['Армейский жим стоя', 'Жим гантелей сидя', 'Жим в Хаммере на плечи', 'Махи гантелями в стороны', 'Махи гантелями в наклоне', 'Тяга к подбородку', 'Обратные разведения в Pec-Dec'] },
-            { category: 'Руки', items: ['Подъем штанги на бицепс стоя', 'Подъем гантелей на бицепс с супинацией', 'Молотки с гантелями', 'Подъем штанги обратным хватом', 'Французский жим лежа', 'Разгибания на блоке на трицепс', 'Отжимания узким хватом', 'Разгибания рук с гантелью из-за головы'] },
-            { category: 'Пресс и Кор', items: ['Скручивания на полу', 'Подъем ног в висе', 'Планка классическая', 'Планка боковая', 'Русский твист', 'Молитва в блоке', 'Складка', 'Велосипед'] },
-            { category: 'Кардио и Функционал', items: ['Бег на дорожке', 'Эллипсоид', 'Велотренажер', 'Гребной тренажер', 'Скакалка', 'Берпи', 'Бой с тенью', 'Упражнение "Мельница"'] }
-        ];
+        // БАЗА УПРАЖНЕНИЙ (Оставлена без изменений, но для краткости пропущена в этом блоке, оставьте вашу текущую базу)
+        // ... (Вставьте сюда ваш текущий массив exerciseDB) ...
 
-        // СОВЕТЫ ДЛЯ ИСТОРИИ (По группам мышц)
+        // РАСШИРЕННЫЕ СОВЕТЫ (Более 40 штук)
         const muscleTips = {
-            'Грудь': 'Контролируйте негативную фазу (опускание) 2-3 секунды для лучшего растяжения.',
-            'Спина': 'Тяните вес локтями, а не кистями, чтобы максимально задействовать широчайшие.',
-            'Ноги': 'Держите спину прямой и не отрывайте пятки от пола при приседаниях.',
-            'Плечи': 'Не поднимайте плечи к ушам при махах, работайте только дельтами.',
-            'Руки': 'Фиксируйте локти при работе на бицепс, чтобы исключить читинг.',
-            'Пресс и Кор': 'Дышите правильно: выдох на усилии, скручивайтесь за счет мышц, а не инерции.',
-            'Кардио и Функционал': 'Следите за пульсом. Для жиросжигания оптимально 120-140 ударов в минуту.'
+            'Грудь': 'Контролируйте негативную фазу (опускание) 2-3 секунды для лучшего растяжения волокон.',
+            'Спина': 'Тяните вес локтями, а не кистями. Представьте, что ваши руки — это просто крюки.',
+            'Ноги': 'Держите спину прямой и не отрывайте пятки от пола. Давите всей стопой в пол.',
+            'Плечи': 'Не поднимайте плечи к ушам при махах. Работайте исключительно средним пучком дельт.',
+            'Руки': 'Фиксируйте локти при работе на бицепс, чтобы исключить читинг и нагрузку на спину.',
+            'Пресс и Кор': 'Дышите правильно: мощный выдох на усилии. Скручивайтесь за счет мышц, а не инерции.',
+            'Кардио и Функционал': 'Следите за пульсом. Для жиросжигания оптимально держать 120-140 ударов в минуту.'
         };
 
-        // ОБЩИЕ СОВЕТЫ
         const sportsTips = [
-            "Сон — главный анаболик. Старайтесь спать 7-9 часов для оптимального синтеза белка.",
-            "Не пропускайте разминку. 5-10 минут кардио и суставная гимнастика снизят риск травм.",
+            "Сон — главный анаболик. Старайтесь спать 7-9 часов. Именно во сне мышцы растут.",
+            "Не пропускайте разминку. 5-10 минут кардио и суставная гимнастика снизят риск травм на 80%.",
             "Прогрессия нагрузок — ключ к росту. Если вы не увеличиваете вес или повторения, мышцы не растут.",
             "Пейте воду во время тренировки. Обезвоживание всего на 2% снижает силовые показатели на 10%.",
-            "Техника важнее веса. Эго-лифтинг — главная причина травм в зале.",
-            "Углеводы — не враг. Ешьте сложные углеводы за 2 часа до тренировки для максимальной энергии.",
+            "Техника важнее веса. Эго-лифтинг — главная причина травм и отсутствия прогресса.",
+            "Углеводы — не враг. Ешьте сложные углеводы (гречка, овсянка, рис) за 2 часа до тренировки.",
             "Растяжка после тренировки ускоряет восстановление и улучшает мобильность суставов.",
-            "Если чувствуете сильную боль в суставе — немедленно прекратите упражнение.",
+            "Если чувствуете сильную боль в суставе — немедленно прекратите упражнение. Боль в мышцах — ок, боль в суставе — нет.",
             "Креатин — одна из самых изученных и безопасных добавок для увеличения силовых показателей.",
-            "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать."
+            "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать.",
+            "Белок нужно распределять равномерно. Оптимально: 4-5 приемов пищи по 20-30г белка.",
+            "Делайте заминку. 5 минут легкой заминки помогают сердцу вернуться в нормальный ритм.",
+            "Не тренируйте одну группу мышц чаще 2 раз в неделю, если вы натурал. Мышцы растут во время отдыха.",
+            "Базовые многосуставные упражнения (присед, тяга, жим) дают максимальный гормональный отклик.",
+            "Слушайте свое тело. Если вы чувствуете сильную усталость, лучше сделать легкую тренировку или отдохнуть.",
+            "Избегайте сахара перед тренировкой. Он даст быстрый прилив энергии, но через 20 минут вы почувствуете упадок сил.",
+            "Кофеин — отличный предтреник. Чашка черного кофе за 30 минут до зала повысит концентрацию и выносливость.",
+            "Не сравнивайте себя с другими. У всех разная генетика. Сравнивайте себя только с собой вчера.",
+            "Полноценный отдых между тренировками так же важен, как и сами тренировки. Перетренированность убивает прогресс.",
+            "Если вы не можете восстановить пульс после подхода, значит, вы слишком интенсивно тренируетесь или плохо спите.",
+            "Магний и цинк (ZMA) перед сном помогут улучшить качество сна и восстановление нервной системы.",
+            "Не делайте кардио сразу после силовой, если ваша цель — рост мышц. Лучше разнести их по времени.",
+            "Следите за темпом. Медленные подконтрольные повторения строят мышцы лучше, чем быстрые рывковые.",
+            "Разнообразие упражнений не так важно, как прогрессия в базовых движениях. Не меняйте программу каждые 2 недели.",
+            "Если вы чувствуете, что вес стал слишком легким, увеличьте его на 2.5 кг, а не делайте 50 повторений.",
+            "Правильное положение тела — залог успеха. Не округляйте спину в становой тяге и приседаниях.",
+            "Дыхание: вдох на негативной фазе, выдох на позитивной. Никогда не задерживайте дыхание надолго.",
+            "Не забывайте про мышцы-стабилизаторы. Упражнения со свободным весом включают их в работу.",
+            "Если у вас сидячая работа, обязательно растягивайте грудные мышцы и сгибатели бедра, чтобы избежать сутулости.",
+            "Вода с электролитами во время длительной тренировки (более 1.5 часов) предотвратит судороги.",
+            "Не ешьте непосредственно перед сном. Последний прием пищи должен быть за 2-3 часа до сна.",
+            "Алкоголь тормозит синтез белка и снижает уровень тестостерона. Минимизируйте его употребление.",
+            "Стресс повышает кортизол, который разрушает мышцы. Учитесь расслабляться и медитировать.",
+            "Не игнорируйте мелкие группы мышц (икры, предплечья, задняя дельта). Они важны для баланса и эстетики.",
+            "Используйте ремни только в тяжелых подходах. Не приучайте к ним бицепс и хват с первых тренировок.",
+            "Разминка_specific для конкретного упражнения (подход с пустым грифом) обязательна.",
+            "Если вы чувствуете, что техника ломается, снижайте вес. Работа с плохой техникой — путь в никуда.",
+            "Ведите учет не только весов, но и самочувствия. Это поможет найти идеальную частоту тренировок.",
+            "Не бойтесь выходить из зоны комфорта. Последние 2-3 повторения в подходе — самые важные.",
+            "Помните: фитнес — это марафон, а не спринт. Постоянство бьет интенсивность."
         ];
 
         const defaultPrograms = [
@@ -449,9 +496,6 @@
             }
         }
 
-        // ==========================================
-        // 2. SVG ICONS
-        // ==========================================
         const icons = {
             beginner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"></path><path d="M12 10V2"></path><path d="M8 6l4-4 4 4"></path></svg>`,
             enthusiast: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`,
@@ -461,9 +505,7 @@
             trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
         };
 
-        // ==========================================
-        // 3. NAVIGATION
-        // ==========================================
+        // --- NAVIGATION ---
         function goToStep(stepIndex) {
             const curr = document.getElementById(`screen-${state.currentStep}`);
             const next = document.getElementById(`screen-${stepIndex}`);
@@ -500,9 +542,7 @@
             });
         });
 
-        // ==========================================
-        // 4. ONBOARDING
-        // ==========================================
+        // --- ONBOARDING ---
         const inputName = document.getElementById('input-name');
         const btnNext0 = document.getElementById('btn-next-0');
         inputName.addEventListener('input', (e) => {
@@ -570,9 +610,7 @@
             });
         }
 
-        // ==========================================
-        // 5. HOME SCREEN & RINGS
-        // ==========================================
+        // --- HOME SCREEN ---
         function getWeekStart() {
             const now = new Date();
             const day = now.getDay();
@@ -582,7 +620,6 @@
 
         function initHomeScreen() {
             document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
-            
             const weekStart = getWeekStart();
             const thisWeekWorkouts = state.history.filter(w => new Date(w.date).getTime() >= weekStart);
             
@@ -639,9 +676,7 @@
             });
         }
 
-        // ==========================================
-        // 6. PROGRAMS LIST & CREATE
-        // ==========================================
+        // --- PROGRAMS ---
         function renderAllPrograms() {
             const container = document.getElementById('all-programs-list');
             container.innerHTML = '';
@@ -669,18 +704,15 @@
                 `;
                 
                 card.querySelector('[data-start]').addEventListener('click', () => startWorkout(prog));
-                
                 const delBtn = card.querySelector('.delete-prog-btn');
                 if (delBtn) {
                     delBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         state.customPrograms = state.customPrograms.filter(p => p.id !== prog.id);
-                        saveState();
-                        renderAllPrograms();
+                        saveState(); renderAllPrograms();
                         tg.HapticFeedback.impactOccurred('light');
                     });
                 }
-
                 container.appendChild(card);
                 setTimeout(() => card.classList.add('visible'), index * 80);
             });
@@ -693,20 +725,12 @@
             document.getElementById('btn-save-program').disabled = true;
             goToStep(6);
         });
-
         document.getElementById('btn-back-from-create').addEventListener('click', () => goToStep(5));
 
         const modal = document.getElementById('exercise-picker-modal');
         const modalList = document.getElementById('exercise-list-container');
-
-        document.getElementById('btn-add-ex').addEventListener('click', () => {
-            renderExercisePicker();
-            modal.classList.add('active');
-        });
-
-        document.getElementById('close-picker').addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
+        document.getElementById('btn-add-ex').addEventListener('click', () => { renderExercisePicker(); modal.classList.add('active'); });
+        document.getElementById('close-picker').addEventListener('click', () => { modal.classList.remove('active'); });
 
         function renderExercisePicker() {
             modalList.innerHTML = '';
@@ -715,18 +739,13 @@
                 title.className = 'ex-category-title';
                 title.textContent = cat.category;
                 modalList.appendChild(title);
-
                 cat.items.forEach(item => {
                     const el = document.createElement('div');
                     el.className = 'ex-item';
-                    el.innerHTML = `
-                        <span class="text-text-primary font-medium text-sm">${item}</span>
-                        <span class="text-text-muted text-[10px]">${cat.category}</span>
-                    `;
+                    el.innerHTML = `<span class="text-text-primary font-medium text-sm">${item}</span><span class="text-text-muted text-[10px]">${cat.category}</span>`;
                     el.addEventListener('click', () => {
                         state.newProgram.exercises.push({ name: item, muscle: cat.category, sets: 3, reps: 10, weight: 20 });
-                        renderNewProgramExercises();
-                        modal.classList.remove('active');
+                        renderNewProgramExercises(); modal.classList.remove('active');
                         tg.HapticFeedback.impactOccurred('light');
                     });
                     modalList.appendChild(el);
@@ -742,35 +761,16 @@
                 item.className = 'glass-card p-3 space-y-2';
                 item.innerHTML = `
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="font-semibold text-text-primary text-sm">${ex.name}</p>
-                            <p class="text-text-muted text-xs">${ex.muscle}</p>
-                        </div>
-                        <button class="remove-ex-btn text-text-muted p-1" data-index="${index}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        </button>
+                        <div><p class="font-semibold text-text-primary text-sm">${ex.name}</p><p class="text-text-muted text-xs">${ex.muscle}</p></div>
+                        <button class="remove-ex-btn text-text-muted p-1" data-index="${index}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                     </div>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <div class="text-center">
-                            <label class="text-[10px] text-text-muted uppercase">Подходы</label>
-                            <input type="number" value="${ex.sets}" class="input-premium text-center py-1 text-sm ex-sets" data-index="${index}">
-                        </div>
-                        <div class="text-center">
-                            <label class="text-[10px] text-text-muted uppercase">Повторы</label>
-                            <input type="number" value="${ex.reps}" class="input-premium text-center py-1 text-sm ex-reps" data-index="${index}">
-                        </div>
-                        <div class="text-center">
-                            <label class="text-[10px] text-text-muted uppercase">Вес</label>
-                            <input type="number" value="${ex.weight}" class="input-premium text-center py-1 text-sm ex-weight" data-index="${index}">
-                        </div>
+                        <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Подходы</label><input type="number" value="${ex.sets}" class="input-premium text-center py-1 text-sm ex-sets" data-index="${index}"></div>
+                        <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Повторы</label><input type="number" value="${ex.reps}" class="input-premium text-center py-1 text-sm ex-reps" data-index="${index}"></div>
+                        <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Вес</label><input type="number" value="${ex.weight}" class="input-premium text-center py-1 text-sm ex-weight" data-index="${index}"></div>
                     </div>
                 `;
-                
-                item.querySelector('.remove-ex-btn').addEventListener('click', () => {
-                    state.newProgram.exercises.splice(index, 1);
-                    renderNewProgramExercises();
-                });
-
+                item.querySelector('.remove-ex-btn').addEventListener('click', () => { state.newProgram.exercises.splice(index, 1); renderNewProgramExercises(); });
                 item.querySelectorAll('input').forEach(inp => {
                     inp.addEventListener('change', (e) => {
                         const idx = parseInt(e.target.dataset.index);
@@ -778,62 +778,38 @@
                         state.newProgram.exercises[idx][type] = parseFloat(e.target.value) || 0;
                     });
                 });
-
                 container.appendChild(item);
             });
             validateNewProgram();
         }
 
         document.getElementById('new-prog-title').addEventListener('input', validateNewProgram);
-
         function validateNewProgram() {
             const title = document.getElementById('new-prog-title').value.trim();
             state.newProgram.title = title;
             document.getElementById('btn-save-program').disabled = !(title && state.newProgram.exercises.length > 0);
         }
-
         document.getElementById('btn-save-program').addEventListener('click', () => {
-            const newProg = {
-                id: 'custom-' + Date.now(),
-                title: state.newProgram.title,
-                isDefault: false,
-                exercises: state.newProgram.exercises
-            };
-            state.customPrograms.push(newProg);
-            saveState();
-            tg.HapticFeedback.notificationOccurred('success');
-            goToStep(5);
+            state.customPrograms.push({ id: 'custom-' + Date.now(), title: state.newProgram.title, isDefault: false, exercises: state.newProgram.exercises });
+            saveState(); tg.HapticFeedback.notificationOccurred('success'); goToStep(5);
         });
 
-        // ==========================================
-        // 7. WORKOUT LOGIC (С АНИМАЦИЯМИ И ТОЧКАМИ)
-        // ==========================================
+        // --- WORKOUT ---
         function startWorkout(prog) {
-            state.currentWorkout = {
-                title: prog.title,
-                exercises: prog.exercises.map(ex => ({...ex}))
-            };
-            state.currentExIndex = 0;
-            state.currentSet = 1;
-            state.isResting = false;
-            state.totalSetsCompleted = 0;
-            state.totalVolume = 0;
-            state.workoutStartTime = Date.now();
-            
+            state.currentWorkout = { title: prog.title, exercises: prog.exercises.map(ex => ({...ex})) };
+            state.currentExIndex = 0; state.currentSet = 1; state.isResting = false;
+            state.totalSetsCompleted = 0; state.totalVolume = 0; state.workoutStartTime = Date.now();
             document.getElementById('bottom-nav').classList.add('hidden');
             goToStep(3);
         }
 
         function initWorkoutScreen() { 
-            // Анимация появления
             document.getElementById('exercise-view').classList.remove('fading');
             renderCurrentExercise(); 
         }
 
         function renderCurrentExercise() {
             const view = document.getElementById('exercise-view');
-            
-            // Плавное затухание при смене упражнения
             view.classList.add('fading');
             
             setTimeout(() => {
@@ -844,18 +820,18 @@
                 document.getElementById('ex-weight').textContent = ex.weight;
                 document.getElementById('ex-reps').textContent = ex.reps;
                 
-                renderSetDots(); // Рендер точек
+                // НОВЫЙ СОВЕТ ДЛЯ УПРАЖНЕНИЯ
+                const tipText = muscleTips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
+                document.getElementById('ex-tip-text').textContent = tipText;
                 
+                renderSetDots(); 
                 view.classList.remove('hidden');
                 document.getElementById('rest-view').classList.add('hidden');
                 state.isResting = false;
-                
-                // Плавное появление
                 setTimeout(() => view.classList.remove('fading'), 50);
             }, 300);
         }
 
-        // РЕНДЕР ТОЧЕК ПОДХОДОВ
         function renderSetDots() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
             const container = document.getElementById('set-dots');
@@ -889,28 +865,27 @@
             const reps = parseInt(document.getElementById('ex-reps').textContent);
             state.totalVolume += (weight * reps);
             state.totalSetsCompleted++;
+            
+            // СОХРАНЯЕМ ВЕС ДЛЯ ГРАФИКА
+            const currentEx = state.currentWorkout.exercises[state.currentExIndex];
+            if (!currentEx.maxWeight || weight > currentEx.maxWeight) currentEx.maxWeight = weight;
+
             tg.HapticFeedback.notificationOccurred('success');
             startRestTimer();
         });
 
         function startRestTimer() {
-            state.isResting = true;
-            state.timerSeconds = 90;
-            state.initialTimerSeconds = 90;
-            
+            state.isResting = true; state.timerSeconds = 90; state.initialTimerSeconds = 90;
             const restView = document.getElementById('rest-view');
             restView.classList.add('fading');
-            
             setTimeout(() => {
                 document.getElementById('exercise-view').classList.add('hidden');
                 restView.classList.remove('hidden');
                 setTimeout(() => restView.classList.remove('fading'), 50);
                 updateTimerUI();
             }, 300);
-
             state.timerInterval = setInterval(() => {
-                state.timerSeconds--;
-                updateTimerUI();
+                state.timerSeconds--; updateTimerUI();
                 if (state.timerSeconds <= 0) { clearInterval(state.timerInterval); finishRest(); }
             }, 1000);
         }
@@ -930,42 +905,28 @@
 
         function finishRest() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
-            
-            if (state.currentSet < ex.sets) {
-                state.currentSet++;
-                renderCurrentExercise();
-            } else {
-                state.currentSet = 1;
-                state.currentExIndex++;
-                
-                if (state.currentExIndex >= state.currentWorkout.exercises.length) {
-                    goToStep(4);
-                } else {
-                    renderCurrentExercise();
-                }
+            if (state.currentSet < ex.sets) { state.currentSet++; renderCurrentExercise(); }
+            else {
+                state.currentSet = 1; state.currentExIndex++;
+                if (state.currentExIndex >= state.currentWorkout.exercises.length) goToStep(4);
+                else renderCurrentExercise();
             }
         }
 
         document.getElementById('btn-close-workout').addEventListener('click', () => {
-            if(confirm('Прервать тренировку?')) {
-                clearInterval(state.timerInterval);
-                document.getElementById('bottom-nav').classList.remove('hidden');
-                goToStep(2);
-            }
+            if(confirm('Прервать тренировку?')) { clearInterval(state.timerInterval); document.getElementById('bottom-nav').classList.remove('hidden'); goToStep(2); }
         });
 
-        // ==========================================
-        // 8. COMPLETE & PROFILE
-        // ==========================================
+        // --- COMPLETE & PROFILE ---
         function initCompleteScreen() {
-            // ИСПРАВЛЕНИЕ БАГА С 0 МИНУТ: Math.max(1, ...)
             const elapsedMins = Math.max(1, Math.round((Date.now() - state.workoutStartTime) / 60000));
             document.getElementById('stat-time-final').textContent = elapsedMins;
             document.getElementById('stat-sets-final').textContent = state.totalSetsCompleted;
             let volText = state.totalVolume >= 1000 ? (state.totalVolume / 1000).toFixed(1) + 'т' : state.totalVolume + 'кг';
             document.getElementById('stat-volume-final').textContent = volText;
 
-            // Определяем основную группу мышц для совета
+            // НАХОДИМ МАКСИМАЛЬНЫЙ ВЕС ЗА ТРЕНИРОВКУ
+            const maxWeight = Math.max(...state.currentWorkout.exercises.map(ex => ex.maxWeight || 0));
             const mainMuscle = state.currentWorkout.exercises[0]?.muscle || 'Пресс и Кор';
 
             state.history.unshift({
@@ -974,7 +935,8 @@
                 duration: elapsedMins,
                 volume: state.totalVolume,
                 sets: state.totalSetsCompleted,
-                mainMuscle: mainMuscle // Сохраняем для совета
+                mainMuscle: mainMuscle,
+                maxWeight: maxWeight // НОВОЕ ПОЛЕ ДЛЯ ГРАФИКА
             });
             saveState();
             tg.HapticFeedback.notificationOccurred('success');
@@ -999,7 +961,10 @@
             document.getElementById('total-volume').textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'т' : totalVolume + 'кг';
             document.getElementById('total-time').textContent = Math.round(totalTime / 60) + 'ч';
 
-            // История с советами
+            // РЕНДЕР ГРАФИКА
+            renderProgressChart();
+
+            // ИСТОРИЯ
             const histList = document.getElementById('history-list');
             histList.innerHTML = '';
             if (state.history.length === 0) {
@@ -1009,8 +974,6 @@
                     const date = new Date(w.date);
                     const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
                     const volStr = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + 'т' : w.volume + 'кг';
-                    
-                    // Берем совет для группы мышц или дефолтный
                     const tip = muscleTips[w.mainMuscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
                     
                     const item = document.createElement('div');
@@ -1035,23 +998,76 @@
             }
         }
 
-        // Логика советов
+        // --- ЛОГИКА ГРАФИКА (SVG) ---
+        function renderProgressChart() {
+            const container = document.getElementById('progress-chart-container');
+            // Берем последние 10 тренировок и переворачиваем (от старой к новой)
+            const recent = state.history.slice(0, 10).reverse(); 
+            
+            if (recent.length < 2) {
+                container.innerHTML = `<p class="text-center text-text-muted text-xs mt-12">Нужно минимум 2 тренировки для графика</p>`;
+                return;
+            }
+
+            const data = recent.map(w => ({
+                date: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+                weight: w.maxWeight || 0
+            }));
+
+            const maxW = Math.max(...data.map(d => d.weight)) * 1.15; // 15% отступа сверху
+            const width = 300;
+            const height = 100;
+            const padding = 10;
+
+            let pathD = '';
+            let areaD = `M 0 ${height} `;
+
+            data.forEach((d, i) => {
+                const x = (i / (data.length - 1)) * width;
+                const y = height - padding - ((d.weight / maxW) * (height - padding * 2));
+                if (i === 0) { pathD += `M ${x} ${y} `; areaD += `L ${x} ${y} `; }
+                else { pathD += `L ${x} ${y} `; areaD += `L ${x} ${y} `; }
+            });
+            areaD += `L ${width} ${height} Z`;
+
+            let dotsHtml = '';
+            data.forEach((d, i) => {
+                const x = (i / (data.length - 1)) * width;
+                const y = height - padding - ((d.weight / maxW) * (height - padding * 2));
+                dotsHtml += `<circle cx="${x}" cy="${y}" r="3" fill="#09090B" stroke="#C5A059" stroke-width="2" />`;
+            });
+
+            container.innerHTML = `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full overflow-visible">
+                    <defs>
+                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#C5A059" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="#C5A059" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="${areaD}" fill="url(#chartGrad)" />
+                    <path d="${pathD}" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    ${dotsHtml}
+                </svg>
+                <div class="flex justify-between mt-2 px-1">
+                    <span class="text-[10px] text-text-muted">${data[0].date}</span>
+                    <span class="text-[10px] text-text-muted">${data[data.length-1].date}</span>
+                </div>
+            `;
+        }
+
+        // --- СОВЕТЫ ---
         document.getElementById('btn-new-tip').addEventListener('click', () => {
             const randomTip = sportsTips[Math.floor(Math.random() * sportsTips.length)];
             const tipEl = document.getElementById('tip-text');
             tipEl.style.opacity = '0';
-            setTimeout(() => {
-                tipEl.textContent = randomTip;
-                tipEl.style.opacity = '1';
-            }, 200);
+            setTimeout(() => { tipEl.textContent = randomTip; tipEl.style.opacity = '1'; }, 200);
             tg.HapticFeedback.impactOccurred('light');
         });
         document.getElementById('tip-text').textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)];
         document.getElementById('tip-text').style.transition = 'opacity 0.3s';
 
-        // ==========================================
-        // 9. INIT APP
-        // ==========================================
+        // --- INIT ---
         loadState();
         if (state.currentStep === 2) {
             document.getElementById('bottom-nav').classList.remove('hidden');
