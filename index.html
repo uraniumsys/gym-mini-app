@@ -145,17 +145,20 @@
 .stagger-item { opacity: 0; transform: translate3d(0,10px,0); transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1); }
 .stagger-item.visible { opacity: 1; transform: translate3d(0,0,0); }
 
-/* ===== ЭКРАН ТРЕНИРОВКИ: Премиум контраст и переходы ===== */
+/* ===== ЭКРАН ТРЕНИРОВКИ: Простор, Чистота и Идеальное Центрирование ===== */
 #screen-3 { 
     overflow: hidden; 
+    padding: 1.5rem;
     padding-bottom: calc(5rem + env(safe-area-inset-bottom)); 
+    display: flex; 
+    flex-direction: column; 
     justify-content: space-between; 
 }
 
 .workout-header {
     flex: 0 0 auto;
     display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; margin-bottom: 16px;
+    gap: 12px; margin-bottom: 24px;
 }
 .icon-btn {
     width: 40px; height: 40px; flex-shrink: 0;
@@ -172,20 +175,25 @@
     background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15);
     color: #C5A059; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
 }
-            
-            /* Контейнер для плавного переключения видов */
+
+/* Контейнер для плавного переключения видов */
 .view-switcher {
-    flex: 1 1 auto; display: grid; grid-template-rows: 1fr; 
-    min-height: 0; position: relative;
+    flex: 1 1 auto; 
+    display: grid; 
+    grid-template-rows: 1fr; 
+    min-height: 0; 
+    position: relative;
+    align-items: center; /* Вертикальное центрирование, если контента мало */
 }
 .view-panel {
     grid-row: 1; grid-column: 1;
     display: flex; flex-direction: column;
-    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 100%;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .view-panel.hidden-panel {
     opacity: 0;
-    transform: translateY(30px) scale(0.96);
+    transform: translateY(20px) scale(0.98);
     pointer-events: none;
     z-index: 0;
 }
@@ -196,91 +204,138 @@
     z-index: 10;
 }
 
-/* Центральная часть: сжата, но дышит */
-.workout-core {
-    flex: 1 1 auto; 
-    display: flex; flex-direction: column; 
-    justify-content: center; /* Центрируем по вертикали */
-    gap: 14px;
-    min-height: 0;
+/* Точки подходов: ЖЁСТКОЕ центрирование */
+.set-dots-wrap { 
+    display: flex; 
+    justify-content: center; 
+    gap: 10px; 
+    margin-bottom: 24px; 
+    width: 100%;
+}
+.set-dot { 
+    width: 10px; height: 10px; border-radius: 50%; 
+    transition: all .3s cubic-bezier(.16,1,.3,1); 
+}
+.set-dot.completed { background: #C5A059; }
+.set-dot.current { 
+    background: rgba(197,160,89,.3); 
+    box-shadow: 0 0 0 3px rgba(197,160,89,.15); 
+    animation: pulseDot 1.5s infinite; 
+}
+.set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,.1); }
+@keyframes pulseDot { 
+    0%, 100% { box-shadow: 0 0 0 3px rgba(197,160,89,.15); } 
+    50% { box-shadow: 0 0 0 6px rgba(197,160,89,.05); } 
 }
 
-.eyebrow { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #52525B; font-weight: 600; text-align: center; }
-
-/* Выравнивание точек подходов СТРОГО по центру */
-.set-dots-wrap { display: flex; justify-content: center; gap: 8px; margin-bottom: 4px; }
-.set-dot { width: 10px; height: 10px; border-radius: 50%; transition: all .35s cubic-bezier(.16,1,.3,1); }
-.set-dot.completed { background: #C5A059; }
-.set-dot.current { background: rgba(197,160,89,.4); box-shadow: 0 0 0 3px rgba(197,160,89,.15); animation: pulseDot 1.5s infinite; }
-.set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,.1); }
-@keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px rgba(197,160,89,.15); } 50% { box-shadow: 0 0 0 5px rgba(197,160,89,.05); } }
-
-/* Карточка упражнения с глубиной */
+/* Карточка упражнения: больше воздуха, чистые границы */
 .workout-card {
-    background: linear-gradient(160deg, #18181B 0%, #111114 100%);
-    border: 1px solid rgba(197, 160, 89, 0.15);
-    border-top: 2px solid rgba(197, 160, 89, 0.4); /* Акцент сверху */
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    background: #111114;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    padding: 24px 20px;
+    width: 100%;
+    box-sizing: border-box; /* ГАРАНТИЯ: не вылезет за границы и не сдвинется */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .ex-title { 
-    font-size: 22px; line-height: 1.2; font-weight: 700; color: #FFFFFF; text-align: center; 
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-}
-.muscle-chip {
-    display: block; margin: 8px auto 0; width: fit-content;
-    padding: 4px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
-    color: #C5A059; background: rgba(197, 160, 89, 0.08); 
-    border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 99px; text-align: center;
+    font-size: 22px; 
+    line-height: 1.3; 
+    font-weight: 700; 
+    color: #FFFFFF; 
+    text-align: center; 
+    margin: 0;
 }
 
-/* Степперы: высокий контраст */
-.stepper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-.stepper-cell {
-    padding: 12px 8px;
-    background: #09090B; /* Ещё темнее для контраста с карточкой */
-    border: 1px solid rgba(255,255,255,.06); border-radius: 14px;
+.muscle-chip {
+    display: block; 
+    margin: 12px auto 0 auto; /* Строго по центру с отступом сверху */
+    padding: 5px 14px; 
+    font-size: 11px; 
+    font-weight: 600; 
+    letter-spacing: 0.08em;
+    color: #C5A059; 
+    background: rgba(197, 160, 89, 0.08); 
+    border: 1px solid rgba(197, 160, 89, 0.15); 
+    border-radius: 99px; 
+    text-align: center;
 }
-.stepper-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #71717A; margin-bottom: 8px; text-align: center; font-weight: 600; }
-.stepper-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* Степперы: идеальный порядок и симметрия */
+.stepper-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px; 
+    margin-top: 28px; 
+}
+.stepper-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем ВСЁ внутри ячейки по горизонтали */
+    padding: 16px 8px;
+    background: #09090B;
+    border: 1px solid rgba(255,255,255,.06); 
+    border-radius: 16px;
+}
+.stepper-label { 
+    display: block; 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: .12em; 
+    color: #71717A; 
+    margin-bottom: 12px; 
+    text-align: center; 
+    font-weight: 600; 
+}
+.stepper-row { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+    width: 100%;
+}
 .stepper-btn { 
-    width: 36px; height: 36px; flex: 0 0 36px; 
-    border-radius: 10px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
-    color: #F4F4F5; font-size: 20px; font-weight: 300;
+    width: 40px; height: 40px; flex: 0 0 40px; 
+    border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
+    color: #F4F4F5; font-size: 20px; font-weight: 400;
     display: flex; align-items: center; justify-content: center;
     transition: all .15s ease;
 }
-.stepper-btn:active { transform: scale(0.9); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
+.stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
+
 .stepper-value {
-    width: 50px; background: transparent; border: 0; outline: 0; padding: 0;
-    text-align: center; color: #C5A059; /* ЗОЛОТОЙ ЦВЕТ ДЛЯ ЦИФР */
+    width: 50px; 
+    background: transparent; border: 0; outline: 0; padding: 0;
+    text-align: center; color: #C5A059;
     font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;
 }
 
-/* Совет: выделенный блок */
+/* Совет: выделенный, но не навязчивый блок */
 .ex-tip {
-    margin-top: 16px; padding: 12px 14px;
-    display: flex; align-items: flex-start; gap: 10px;
-    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px;
+    margin-top: 24px; 
+    padding: 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+    background: rgba(197, 160, 89, 0.04); 
+    border: 1px solid rgba(197, 160, 89, 0.1); 
+    border-radius: 16px;
 }
-.ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #A1A1AA; width: 16px; height: 16px; }
-.ex-tip p { font-size: 12px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+.ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 18px; height: 18px; }
+.ex-tip p { font-size: 13px; line-height: 1.5; color: #A1A1AA; margin: 0; }
 .ex-tip span.text-accent { color: #C5A059; font-weight: 600; }
 
 /* Кнопка действия */
 .action-dock {
-    flex: 0 0 auto; padding-top: 16px;
+    flex: 0 0 auto; padding-top: 24px;
     background: linear-gradient(180deg, rgba(9,9,11,0) 0%, #09090B 40%);
 }
 .dock-btn {
-    height: 54px; padding: 0 24px; border-radius: 14px;
+    height: 56px; padding: 0 24px; border-radius: 16px;
     display: flex; align-items: center; justify-content: center; gap: 10px;
     font-size: 16px; font-weight: 700; letter-spacing: .02em;
-    box-shadow: 0 8px 24px rgba(197, 160, 89, 0.25);
+    box-shadow: 0 8px 24px rgba(197, 160, 89, 0.2);
 }
-.dock-hint { text-align: center; font-size: 11px; color: #52525B; margin-top: 10px; font-weight: 500; }
+.dock-hint { text-align: center; font-size: 12px; color: #52525B; margin-top: 12px; font-weight: 500; }
 
 /* Таймер отдыха */
 .rest-panel { align-items: center; justify-content: center; text-align: center; }
@@ -290,7 +345,7 @@
     margin-top: 16px; padding: 8px 16px; 
     background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
     border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600;
-    }
+}
 
 /* ПРОФИЛЬ: личность из Telegram */
 .tg-profile { display: flex; align-items: center; gap: 14px; }
@@ -401,7 +456,7 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
             <div class="space-y-3 mb-6" id="quick-start-container"></div>
         </section>
 
-        <!-- ЭКРАН 3: ТРЕНИРОВКА (Премиум контраст) -->
+        <!-- ЭКРАН 3: ТРЕНИРОВКА (Простор и Чистота) -->
 <section id="screen-3" class="screen">
 
     <header class="workout-header">
@@ -423,10 +478,10 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
     <!-- Контейнер для плавного переключения -->
     <div class="view-switcher">
         
-                <!-- ПАНЕЛЬ УПРАЖНЕНИЯ -->
+        <!-- ПАНЕЛЬ УПРАЖНЕНИЯ -->
         <div id="exercise-view" class="view-panel active-panel">
             
-            <!-- ВОССТАНОВЛЕНО: Контейнер для точек подходов -->
+            <!-- Точки подходов: СТРОГО по центру, сверху -->
             <div class="set-dots-wrap" id="set-dots"></div>
 
             <div class="workout-card">
