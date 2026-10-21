@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        <style>
+    <style>
         :root { color-scheme: dark; }
         body {
             margin: 0; background-color: #09090B; color: #F4F4F5;
@@ -39,6 +39,7 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
+        /* ===== БАЗОВЫЕ КОМПОНЕНТЫ ===== */
         .glass-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(4px); transition: transform 0.2s; }
         .glass-card:active { transform: scale(0.98); }
         
@@ -51,9 +52,28 @@
         
         .input-premium { width: 100%; background: #18181B; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0.75rem; padding: 0.875rem 1rem; color: #F4F4F5; font-size: 1rem; outline: none; transition: border-color 0.3s; box-sizing: border-box; }
         .input-premium:focus { border-color: rgba(197, 160, 89, 0.5); }
+        select.input-premium { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
 
-        .stagger-item { opacity: 0; transform: translateX(-15px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .stagger-item.visible { opacity: 1; transform: translateX(0); }
+        /* ===== АНИМАЦИИ И ЭКРАНЫ ===== */
+        .screen {
+            position: absolute; top: 0; left: 0; right: 0; 
+            max-width: 520px; margin: 0 auto;
+            width: 100%; height: 100dvh;
+            padding: 1.5rem; padding-bottom: 5.5rem; 
+            display: flex; flex-direction: column;
+            opacity: 0; 
+            transform: translate3d(0, 22px, 0);
+            filter: blur(7px);
+            pointer-events: none; 
+            transition: opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1), filter .5s cubic-bezier(.16,1,.3,1);
+            overflow-y: auto;
+            will-change: transform, opacity, filter;
+        }
+        .screen.active { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0px); pointer-events: auto; position: relative; }
+        .screen.exit { opacity: 0; transform: translate3d(0, -22px, 0); filter: blur(7px); }
+
+        .stagger-item { opacity: 0; transform: translate3d(0, 10px, 0); transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1); }
+        .stagger-item.visible { opacity: 1; transform: translate3d(0, 0, 0); }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 17, 20, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: #52525B; transition: all 0.3s; padding: 0.5rem; flex: 1; background: none; border: none; cursor: pointer; }
@@ -66,15 +86,7 @@
         @keyframes pulseGlow { 0%, 100% { filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.3)); } 50% { filter: drop-shadow(0 0 30px rgba(197, 160, 89, 0.6)); } }
         .glow-effect { animation: pulseGlow 3s infinite ease-in-out; }
 
-        /* ИСПРАВЛЕННЫЕ СТЕППЕРЫ (не выходят за края) */
-        .stepper-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F4F4F5; font-size: 1.2rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; flex-shrink: 0; }
-        .stepper-btn:active { transform: scale(0.9); background: rgba(197, 160, 89, 0.2); border-color: #C5A059; }
-
-        /* Анимация переключения упражнений */
-        .exercise-fade { transition: opacity 0.3s ease, transform 0.3s ease; }
-        .exercise-fade.fading { opacity: 0; transform: translateY(10px); }
-
-        /* Модальное окно */
+        /* ===== МОДАЛЬНОЕ ОКНО ===== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: #111114; width: 100%; max-height: 85vh; border-radius: 1.5rem 1.5rem 0 0; padding: 1.5rem; overflow-y: auto; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -83,285 +95,238 @@
         .ex-category-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #C5A059; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         .ex-item { padding: 0.75rem 1rem; background: #18181B; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
         .ex-item:active { background: #27272A; border-color: rgba(197, 160, 89, 0.3); transform: scale(0.98); }
-        
-        /* Точки прогресса подходов */
-        .set-dot { width: 12px; height: 12px; border-radius: 50%; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* ===== ЭКРАН ТРЕНИРОВКИ: Простор и Чистота ===== */
+        #screen-3 { 
+            overflow: hidden; 
+            padding: 1.5rem;
+            padding-bottom: calc(5rem + env(safe-area-inset-bottom)); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+        }
+
+        .workout-header {
+            flex: 0 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; margin-bottom: 24px;
+        }
+        .icon-btn {
+            width: 40px; height: 40px; flex-shrink: 0;
+            border-radius: 50%; background: #18181B;
+            border: 1px solid rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: center; color: #A1A1AA;
+            transition: all .2s ease;
+        }
+        .icon-btn:active { transform: scale(.92); background: #27272A; color: #F4F4F5; }
+
+        .workout-clock {
+            flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+            padding: 8px 12px; border-radius: 99px;
+            background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15);
+            color: #C5A059; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+        }
+
+        .view-switcher {
+            flex: 1 1 auto; 
+            display: grid; 
+            grid-template-rows: 1fr; 
+            min-height: 0; 
+            position: relative;
+            align-items: center;
+        }
+        .view-panel {
+            grid-row: 1; grid-column: 1;
+            display: flex; flex-direction: column;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .view-panel.hidden-panel {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .view-panel.active-panel {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .set-dots-wrap { 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 24px; 
+            width: 100%;
+        }
+        .set-dot { 
+            width: 10px; height: 10px; border-radius: 50%; 
+            transition: all .3s cubic-bezier(.16,1,.3,1); 
+        }
         .set-dot.completed { background: #C5A059; }
-        .set-dot.current { background: rgba(197, 160, 89, 0.4); box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2); animation: pulseDot 1.5s infinite; }
-        .set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,0.1); }
-        @keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2); } 50% { box-shadow: 0 0 0 6px rgba(197, 160, 89, 0.1); } }
-            /* ===== GYM*** / Premium patch ===== */
+        .set-dot.current { 
+            background: rgba(197,160,89,.3); 
+            box-shadow: 0 0 0 3px rgba(197,160,89,.15); 
+            animation: pulseDot 1.5s infinite; 
+        }
+        .set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,.1); }
+        @keyframes pulseDot { 
+            0%, 100% { box-shadow: 0 0 0 3px rgba(197,160,89,.15); } 
+            50% { box-shadow: 0 0 0 6px rgba(197,160,89,.05); } 
+        }
 
-/* Blur возвращён, но работает ТОЛЬКО во время перехода (500мс).
-   На активном экране blur = 0, поэтому при скролле нет тяжёлой перерисовки. */
-.screen {
-    max-width: 520px;
-    left: 0; right: 0; margin: 0 auto;
-    height: 100dvh;
-    opacity: 0;
-    transform: translate3d(0, 22px, 0);
-    filter: blur(7px);
-    transition:
-        opacity .5s cubic-bezier(.16,1,.3,1),
-        transform .5s cubic-bezier(.16,1,.3,1),
-        filter .5s cubic-bezier(.16,1,.3,1);
-    will-change: transform, opacity;
-}
-.screen.active {
-    opacity: 1;
-    transform: translate3d(0,0,0);
-    filter: blur(0px);
-}
-.screen.exit {
-    opacity: 0;
-    transform: translate3d(0,-22px,0);
-    filter: blur(7px);
-}
+        .workout-card {
+            background: #111114;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 24px 20px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
 
-/* Список больше не "растёт снизу": появление только по вертикали */
-.stagger-item { opacity: 0; transform: translate3d(0,10px,0); transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1); }
-.stagger-item.visible { opacity: 1; transform: translate3d(0,0,0); }
+        .ex-title { 
+            font-size: 22px; 
+            line-height: 1.3; 
+            font-weight: 700; 
+            color: #FFFFFF; 
+            text-align: center; 
+            margin: 0;
+        }
 
-/* ===== ЭКРАН ТРЕНИРОВКИ: Простор, Чистота и Идеальное Центрирование ===== */
-#screen-3 { 
-    overflow: hidden; 
-    padding: 1.5rem;
-    padding-bottom: calc(5rem + env(safe-area-inset-bottom)); 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between; 
-}
+        .muscle-chip {
+            display: block; 
+            margin: 12px auto 0 auto; 
+            padding: 5px 14px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            letter-spacing: 0.08em;
+            color: #C5A059; 
+            background: rgba(197, 160, 89, 0.08); 
+            border: 1px solid rgba(197, 160, 89, 0.15); 
+            border-radius: 99px; 
+            text-align: center;
+        }
 
-.workout-header {
-    flex: 0 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; margin-bottom: 24px;
-}
-.icon-btn {
-    width: 40px; height: 40px; flex-shrink: 0;
-    border-radius: 50%; background: #18181B;
-    border: 1px solid rgba(255,255,255,.08);
-    display: flex; align-items: center; justify-content: center; color: #A1A1AA;
-    transition: all .2s ease;
-}
-.icon-btn:active { transform: scale(.92); background: #27272A; color: #F4F4F5; }
+        .stepper-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px; 
+            margin-top: 28px; 
+        }
+        .stepper-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 8px;
+            background: #09090B;
+            border: 1px solid rgba(255,255,255,.06); 
+            border-radius: 16px;
+        }
+        .stepper-label { 
+            display: block; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            letter-spacing: .12em; 
+            color: #71717A; 
+            margin-bottom: 12px; 
+            text-align: center; 
+            font-weight: 600; 
+        }
+        .stepper-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            width: 100%;
+        }
+        .stepper-btn { 
+            width: 40px; height: 40px; flex: 0 0 40px; 
+            border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
+            color: #F4F4F5; font-size: 20px; font-weight: 400;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .15s ease;
+        }
+        .stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
 
-.workout-clock {
-    flex-shrink: 0; display: flex; align-items: center; gap: 6px;
-    padding: 8px 12px; border-radius: 99px;
-    background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15);
-    color: #C5A059; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
-}
+        .stepper-value {
+            width: 50px; 
+            background: transparent; border: 0; outline: 0; padding: 0;
+            text-align: center; color: #C5A059;
+            font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;
+        }
 
-/* Контейнер для плавного переключения видов */
-.view-switcher {
-    flex: 1 1 auto; 
-    display: grid; 
-    grid-template-rows: 1fr; 
-    min-height: 0; 
-    position: relative;
-    align-items: center; /* Вертикальное центрирование, если контента мало */
-}
-.view-panel {
-    grid-row: 1; grid-column: 1;
-    display: flex; flex-direction: column;
-    width: 100%;
-    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.view-panel.hidden-panel {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-    pointer-events: none;
-    z-index: 0;
-}
-.view-panel.active-panel {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-    z-index: 10;
-}
+        .ex-tip {
+            margin-top: 24px; 
+            padding: 16px;
+            display: flex; align-items: flex-start; gap: 12px;
+            background: rgba(197, 160, 89, 0.04); 
+            border: 1px solid rgba(197, 160, 89, 0.1); 
+            border-radius: 16px;
+        }
+        .ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 18px; height: 18px; }
+        .ex-tip p { font-size: 13px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+        .ex-tip span.text-accent { color: #C5A059; font-weight: 600; }
 
-/* Точки подходов: ЖЁСТКОЕ центрирование */
-.set-dots-wrap { 
-    display: flex; 
-    justify-content: center; 
-    gap: 10px; 
-    margin-bottom: 24px; 
-    width: 100%;
-}
-.set-dot { 
-    width: 10px; height: 10px; border-radius: 50%; 
-    transition: all .3s cubic-bezier(.16,1,.3,1); 
-}
-.set-dot.completed { background: #C5A059; }
-.set-dot.current { 
-    background: rgba(197,160,89,.3); 
-    box-shadow: 0 0 0 3px rgba(197,160,89,.15); 
-    animation: pulseDot 1.5s infinite; 
-}
-.set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,.1); }
-@keyframes pulseDot { 
-    0%, 100% { box-shadow: 0 0 0 3px rgba(197,160,89,.15); } 
-    50% { box-shadow: 0 0 0 6px rgba(197,160,89,.05); } 
-}
+        .action-dock {
+            flex: 0 0 auto; padding-top: 24px;
+            background: linear-gradient(180deg, rgba(9,9,11,0) 0%, #09090B 40%);
+        }
+        .dock-btn {
+            height: 56px; padding: 0 24px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 16px; font-weight: 700; letter-spacing: .02em;
+            box-shadow: 0 8px 24px rgba(197, 160, 89, 0.2);
+        }
+        .dock-hint { text-align: center; font-size: 12px; color: #52525B; margin-top: 12px; font-weight: 500; }
 
-/* Карточка упражнения: больше воздуха, чистые границы */
-.workout-card {
-    background: #111114;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 20px;
-    padding: 24px 20px;
-    width: 100%;
-    box-sizing: border-box; /* ГАРАНТИЯ: не вылезет за границы и не сдвинется */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
+        .rest-panel { align-items: center; justify-content: center; text-align: center; }
+        .rest-ring-wrap { position: relative; width: 220px; height: 220px; margin: 24px 0; }
+        .rest-time { font-size: 56px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #FFFFFF; }
+        .rest-next { 
+            margin-top: 16px; padding: 8px 16px; 
+            background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
+            border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600;
+        }
 
-.ex-title { 
-    font-size: 22px; 
-    line-height: 1.3; 
-    font-weight: 700; 
-    color: #FFFFFF; 
-    text-align: center; 
-    margin: 0;
-}
+        /* ===== ПРОФИЛЬ И ГРАФИКИ ===== */
+        .tg-profile { display: flex; align-items: center; gap: 14px; }
+        .tg-avatar {
+            width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(145deg, rgba(197,160,89,.22), rgba(197,160,89,.05));
+            border: 1px solid rgba(197,160,89,.30);
+            color: #C5A059; font-size: 20px; font-weight: 600;
+        }
+        .tg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .tg-name { font-size: 18px; font-weight: 600; color: #F4F4F5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tg-handle { font-size: 12px; color: #A1A1AA; margin-top: 2px; }
+        .tg-badge {
+            display: flex; align-items: center; gap: 5px;
+            padding: 6px 10px; border-radius: 999px;
+            background: rgba(197,160,89,.08); border: 1px solid rgba(197,160,89,.18);
+            font-size: 10px; color: #C5A059; font-weight: 500;
+        }
 
-.muscle-chip {
-    display: block; 
-    margin: 12px auto 0 auto; /* Строго по центру с отступом сверху */
-    padding: 5px 14px; 
-    font-size: 11px; 
-    font-weight: 600; 
-    letter-spacing: 0.08em;
-    color: #C5A059; 
-    background: rgba(197, 160, 89, 0.08); 
-    border: 1px solid rgba(197, 160, 89, 0.15); 
-    border-radius: 99px; 
-    text-align: center;
-}
+        .chart-tabs { display: flex; gap: 5px; padding: 4px; background: #18181B; border-radius: 12px; }
+        .chart-tab {
+            flex: 1; padding: 8px 6px; border: 0; background: transparent; cursor: pointer;
+            border-radius: 9px; font-size: 12px; color: #71717A; transition: all .25s ease;
+        }
+        .chart-tab.active { background: rgba(197,160,89,.13); color: #C5A059; font-weight: 600; }
+        .chart-wrap { height: 150px; width: 100%; position: relative; }
+        .chart-summary { margin-top: 12px; font-size: 11px; color: #A1A1AA; text-align: center; }
+        .chart-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawChart 1.3s cubic-bezier(.16,1,.3,1) forwards; }
+        @keyframes drawChart { to { stroke-dashoffset: 0; } }
+        .chart-dot { cursor: pointer; transition: r .2s ease; }
+        .chart-empty { height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
 
-/* Степперы: идеальный порядок и симметрия */
-.stepper-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 16px; 
-    margin-top: 28px; 
-}
-.stepper-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Центрируем ВСЁ внутри ячейки по горизонтали */
-    padding: 16px 8px;
-    background: #09090B;
-    border: 1px solid rgba(255,255,255,.06); 
-    border-radius: 16px;
-}
-.stepper-label { 
-    display: block; 
-    font-size: 10px; 
-    text-transform: uppercase; 
-    letter-spacing: .12em; 
-    color: #71717A; 
-    margin-bottom: 12px; 
-    text-align: center; 
-    font-weight: 600; 
-}
-.stepper-row { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 8px; 
-    width: 100%;
-}
-.stepper-btn { 
-    width: 40px; height: 40px; flex: 0 0 40px; 
-    border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
-    color: #F4F4F5; font-size: 20px; font-weight: 400;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .15s ease;
-}
-.stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
-
-.stepper-value {
-    width: 50px; 
-    background: transparent; border: 0; outline: 0; padding: 0;
-    text-align: center; color: #C5A059;
-    font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;
-}
-
-/* Совет: выделенный, но не навязчивый блок */
-.ex-tip {
-    margin-top: 24px; 
-    padding: 16px;
-    display: flex; align-items: flex-start; gap: 12px;
-    background: rgba(197, 160, 89, 0.04); 
-    border: 1px solid rgba(197, 160, 89, 0.1); 
-    border-radius: 16px;
-}
-.ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 18px; height: 18px; }
-.ex-tip p { font-size: 13px; line-height: 1.5; color: #A1A1AA; margin: 0; }
-.ex-tip span.text-accent { color: #C5A059; font-weight: 600; }
-
-/* Кнопка действия */
-.action-dock {
-    flex: 0 0 auto; padding-top: 24px;
-    background: linear-gradient(180deg, rgba(9,9,11,0) 0%, #09090B 40%);
-}
-.dock-btn {
-    height: 56px; padding: 0 24px; border-radius: 16px;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    font-size: 16px; font-weight: 700; letter-spacing: .02em;
-    box-shadow: 0 8px 24px rgba(197, 160, 89, 0.2);
-}
-.dock-hint { text-align: center; font-size: 12px; color: #52525B; margin-top: 12px; font-weight: 500; }
-
-/* Таймер отдыха */
-.rest-panel { align-items: center; justify-content: center; text-align: center; }
-.rest-ring-wrap { position: relative; width: 220px; height: 220px; margin: 24px 0; }
-.rest-time { font-size: 56px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #FFFFFF; }
-.rest-next { 
-    margin-top: 16px; padding: 8px 16px; 
-    background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
-    border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600;
-}
-
-/* ПРОФИЛЬ: личность из Telegram */
-.tg-profile { display: flex; align-items: center; gap: 14px; }
-.tg-avatar {
-    width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(145deg, rgba(197,160,89,.22), rgba(197,160,89,.05));
-    border: 1px solid rgba(197,160,89,.30);
-    color: #C5A059; font-size: 20px; font-weight: 600;
-}
-.tg-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.tg-name { font-size: 18px; font-weight: 600; color: #F4F4F5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tg-handle { font-size: 12px; color: #A1A1AA; margin-top: 2px; }
-.tg-badge {
-    display: flex; align-items: center; gap: 5px;
-    padding: 6px 10px; border-radius: 999px;
-    background: rgba(197,160,89,.08); border: 1px solid rgba(197,160,89,.18);
-    font-size: 10px; color: #C5A059; font-weight: 500;
-}
-
-/* ГРАФИКИ */
-.chart-tabs { display: flex; gap: 5px; padding: 4px; background: #18181B; border-radius: 12px; }
-.chart-tab {
-    flex: 1; padding: 8px 6px; border: 0; background: transparent; cursor: pointer;
-    border-radius: 9px; font-size: 12px; color: #71717A; transition: all .25s ease;
-}
-.chart-tab.active { background: rgba(197,160,89,.13); color: #C5A059; font-weight: 600; }
-.chart-wrap { height: 150px; width: 100%; position: relative; }
-.chart-summary { margin-top: 12px; font-size: 11px; color: #A1A1AA; text-align: center; }
-.chart-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawChart 1.3s cubic-bezier(.16,1,.3,1) forwards; }
-@keyframes drawChart { to { stroke-dashoffset: 0; } }
-.chart-dot { cursor: pointer; transition: r .2s ease; }
-.chart-empty { height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
-select.input-premium { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-
-@media (prefers-reduced-motion: reduce) {
-    .screen, .stagger-item, .exercise-fade { transition-duration: .01ms; }
-    .chart-line { animation: none; stroke-dashoffset: 0; }
-}
+        @media (prefers-reduced-motion: reduce) {
+            .screen, .stagger-item, .view-panel { transition-duration: .01ms; }
+            .chart-line { animation: none; stroke-dashoffset: 0; }
+        }
     </style>
 </head>
 <body>
@@ -433,114 +398,95 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
             <div class="space-y-3 mb-6" id="quick-start-container"></div>
         </section>
 
-        <!-- ЭКРАН 3: ТРЕНИРОВКА (Простор и Чистота) -->
-<section id="screen-3" class="screen">
+        <!-- ЭКРАН 3: ТРЕНИРОВКА -->
+        <section id="screen-3" class="screen">
+            <header class="workout-header">
+                <button id="btn-close-workout" class="icon-btn" aria-label="Завершить">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
 
-    <header class="workout-header">
-        <button id="btn-close-workout" class="icon-btn" aria-label="Завершить">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
+                <div class="text-center min-w-0 flex-1">
+                    <h2 id="workout-title" class="text-base font-bold text-text-primary truncate">Программа</h2>
+                    <p id="workout-progress-text" class="text-[11px] text-text-muted mt-1 font-medium">Подход 1 из 4</p>
+                </div>
 
-        <div class="text-center min-w-0 flex-1">
-            <h2 id="workout-title" class="text-base font-bold text-text-primary truncate">Программа</h2>
-            <p id="workout-progress-text" class="text-[11px] text-text-muted mt-1 font-medium">Подход 1 из 4</p>
-        </div>
+                <div class="workout-clock">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
+                    <span id="workout-clock">00:00</span>
+                </div>
+            </header>
 
-        <div class="workout-clock">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
-            <span id="workout-clock">00:00</span>
-        </div>
-    </header>
-
-    <!-- Контейнер для плавного переключения -->
-    <div class="view-switcher">
-        
-        <!-- ПАНЕЛЬ УПРАЖНЕНИЯ -->
-        <div id="exercise-view" class="view-panel active-panel">
-            
-            <!-- Точки подходов: СТРОГО по центру, сверху -->
-            <div class="set-dots-wrap" id="set-dots"></div>
-
-            <div class="workout-card">
-                <h3 id="ex-name" class="ex-title">Жим штанги лежа</h3>
-                <span id="ex-muscle" class="muscle-chip">ГРУДЬ</span>
-
-                <div class="stepper-grid">
-                    <div class="stepper-cell">
-                        <label class="stepper-label">Вес, кг</label>
-                        <div class="stepper-row">
-                            <button class="stepper-btn" data-target="weight" data-action="minus">−</button>
-                            <input id="ex-weight" class="stepper-value" type="number" inputmode="decimal" value="60">
-                            <button class="stepper-btn" data-target="weight" data-action="plus">+</button>
+            <div class="view-switcher">
+                <div id="exercise-view" class="view-panel active-panel">
+                    <div class="set-dots-wrap" id="set-dots"></div>
+                    <div class="workout-card">
+                        <h3 id="ex-name" class="ex-title">Жим штанги лежа</h3>
+                        <span id="ex-muscle" class="muscle-chip">ГРУДЬ</span>
+                        <div class="stepper-grid">
+                            <div class="stepper-cell">
+                                <label class="stepper-label">Вес, кг</label>
+                                <div class="stepper-row">
+                                    <button class="stepper-btn" data-target="weight" data-action="minus">−</button>
+                                    <input id="ex-weight" class="stepper-value" type="number" inputmode="decimal" value="60">
+                                    <button class="stepper-btn" data-target="weight" data-action="plus">+</button>
+                                </div>
+                            </div>
+                            <div class="stepper-cell">
+                                <label class="stepper-label">Повторы</label>
+                                <div class="stepper-row">
+                                    <button class="stepper-btn" data-target="reps" data-action="minus">−</button>
+                                    <input id="ex-reps" class="stepper-value" type="number" inputmode="numeric" value="10">
+                                    <button class="stepper-btn" data-target="reps" data-action="plus">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="ex-tip">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <p><span class="text-accent">Совет:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
+                    </div>
+                </div>
 
-                    <div class="stepper-cell">
-                        <label class="stepper-label">Повторы</label>
-                        <div class="stepper-row">
-                            <button class="stepper-btn" data-target="reps" data-action="minus">−</button>
-                            <input id="ex-reps" class="stepper-value" type="number" inputmode="numeric" value="10">
-                            <button class="stepper-btn" data-target="reps" data-action="plus">+</button>
+                <div id="rest-view" class="view-panel hidden-panel rest-panel">
+                    <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
+                    <div class="rest-ring-wrap">
+                        <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                            <defs>
+                                <linearGradient id="gradRest" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#E5C07B"/>
+                                    <stop offset="100%" stop-color="#C5A059"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6"/>
+                            <circle id="timer-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gradRest)" stroke-width="6" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0" style="transition: stroke-dashoffset .25s linear;"/>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="timer-text" class="rest-time">01:30</span>
+                            <span class="text-[10px] text-text-muted uppercase tracking-widest mt-1">осталось</span>
                         </div>
                     </div>
+                    <div id="rest-next-label" class="rest-next">Следующий подход: 2 из 4</div>
                 </div>
             </div>
 
-            <div class="ex-tip">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                <p><span class="text-accent">Совет:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
-            </div>
-        </div>
-
-        <!-- ПАНЕЛЬ ОТДЫХА -->
-        <div id="rest-view" class="view-panel hidden-panel rest-panel">
-            <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
-            
-            <div class="rest-ring-wrap">
-                <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-                    <defs>
-                        <linearGradient id="gradRest" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#E5C07B"/>
-                            <stop offset="100%" stop-color="#C5A059"/>
-                        </linearGradient>
-                    </defs>
-                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6"/>
-                    <circle id="timer-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gradRest)" stroke-width="6"
-                            stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0"
-                            style="transition: stroke-dashoffset .25s linear;"/>
-                </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <span id="timer-text" class="rest-time">01:30</span>
-                    <span class="text-[10px] text-text-muted uppercase tracking-widest mt-1">осталось</span>
+            <div class="action-dock">
+                <div id="dock-exercise">
+                    <button id="btn-complete-set" class="btn-primary dock-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Завершить подход
+                    </button>
+                    <p id="dock-hint" class="dock-hint">Осталось 4 подхода</p>
+                </div>
+                <div id="dock-rest" class="hidden-panel" style="pointer-events: none;">
+                    <div class="flex gap-3">
+                        <button id="btn-less-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">− 15с</button>
+                        <button id="btn-skip-rest" class="btn-primary flex-1 py-3.5 text-sm font-semibold">Далее</button>
+                        <button id="btn-more-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">+ 15с</button>
+                    </div>
+                    <p class="dock-hint">Время считается автоматически</p>
                 </div>
             </div>
-            
-            <div id="rest-next-label" class="rest-next">Следующий подход: 2 из 4</div>
-        </div>
-
-    </div>
-
-    <!-- Кнопка действия -->
-    <div class="action-dock">
-        <div id="dock-exercise">
-            <button id="btn-complete-set" class="btn-primary dock-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Завершить подход
-            </button>
-            <p id="dock-hint" class="dock-hint">Осталось 4 подхода</p>
-        </div>
-
-        <div id="dock-rest" class="hidden-panel" style="pointer-events: none;">
-            <div class="flex gap-3">
-                <button id="btn-less-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">− 15с</button>
-                <button id="btn-skip-rest" class="btn-primary flex-1 py-3.5 text-sm font-semibold">Далее</button>
-                <button id="btn-more-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">+ 15с</button>
-            </div>
-            <p class="dock-hint">Время считается автоматически</p>
-        </div>
-    </div>
-
-</section>
+        </section>
 
         <!-- ЭКРАН 4: ЗАВЕРШЕНИЕ -->
         <section id="screen-4" class="screen">
@@ -582,13 +528,11 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
                 </button>
                 <h1 class="text-2xl font-bold text-text-primary">Новая программа</h1>
             </header>
-
             <div class="space-y-4 flex-1">
                 <div>
                     <label class="block text-text-muted text-xs font-medium mb-2 uppercase tracking-widest">Название</label>
                     <input type="text" id="new-prog-title" placeholder="Например: День ног" class="input-premium">
                 </div>
-
                 <div>
                     <div class="flex items-center justify-between mb-3">
                         <label class="text-text-muted text-xs font-medium uppercase tracking-widest">Упражнения</label>
@@ -600,91 +544,75 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
                     <div id="new-prog-exercises" class="space-y-2 mb-4"></div>
                 </div>
             </div>
-
             <button id="btn-save-program" class="btn-primary mt-6" disabled>Сохранить программу</button>
         </section>
 
-                <!-- ЭКРАН 7: ПРОФИЛЬ -->
         <!-- ЭКРАН 7: ПРОФИЛЬ -->
-<section id="screen-7" class="screen">
+        <section id="screen-7" class="screen">
+            <header class="mb-5 pt-2 flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] text-text-muted uppercase tracking-wider font-semibold">Личный кабинет</p>
+                    <h1 class="text-3xl font-bold text-text-primary mt-1">Профиль</h1>
+                </div>
+                <span class="tg-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+                    Telegram
+                </span>
+            </header>
 
-    <header class="mb-5 pt-2 flex items-center justify-between">
-        <div>
-            <p class="eyebrow">Личный кабинет</p>
-            <h1 class="text-3xl font-bold text-text-primary mt-1">Профиль</h1>
-        </div>
-        <span class="tg-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-            Telegram
-        </span>
-    </header>
+            <div class="glass-card p-4 mb-4 stagger-item tg-profile">
+                <div id="profile-avatar" class="tg-avatar"></div>
+                <div class="min-w-0 flex-1">
+                    <h2 id="profile-name" class="tg-name">Атлет</h2>
+                    <p id="profile-handle" class="tg-handle">gym***</p>
+                    <p id="profile-level" class="text-[11px] text-accent mt-1 font-medium">Новичок</p>
+                </div>
+            </div>
 
-    <!-- Аккаунт Telegram -->
-    <div class="glass-card p-4 mb-4 stagger-item tg-profile">
-        <div id="profile-avatar" class="tg-avatar"></div>
-        <div class="min-w-0 flex-1">
-            <h2 id="profile-name" class="tg-name">Атлет</h2>
-            <p id="profile-handle" class="tg-handle">gym***</p>
-            <p id="profile-level" class="text-[11px] text-accent mt-1">Новичок</p>
-        </div>
-    </div>
+            <div class="grid grid-cols-3 gap-2 mb-4 stagger-item">
+                <div class="glass-card p-3 text-center">
+                    <p id="total-workouts" class="text-lg font-bold text-accent">0</p>
+                    <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Тренировок</p>
+                </div>
+                <div class="glass-card p-3 text-center">
+                    <p id="total-volume" class="text-lg font-bold text-accent">0</p>
+                    <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Общий объем</p>
+                </div>
+                <div class="glass-card p-3 text-center">
+                    <p id="total-time" class="text-lg font-bold text-accent">0</p>
+                    <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Минут</p>
+                </div>
+            </div>
 
-    <!-- Статистика -->
-    <div class="grid grid-cols-3 gap-2 mb-4 stagger-item">
-        <div class="glass-card p-3 text-center">
-            <p id="total-workouts" class="text-lg font-bold text-accent">0</p>
-            <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Тренировок</p>
-        </div>
-        <div class="glass-card p-3 text-center">
-            <p id="total-volume" class="text-lg font-bold text-accent">0</p>
-               <!-- Было: <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Объем, т</p> -->
-   <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Общий объем</p>
-        </div>
-        <div class="glass-card p-3 text-center">
-            <p id="total-time" class="text-lg font-bold text-accent">0</p>
-            <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Минут</p>
-        </div>
-    </div>
+            <div class="glass-card p-4 mb-5 stagger-item">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-bold text-text-primary">Прогресс</h3>
+                    <span class="text-[9px] text-text-muted uppercase tracking-widest">Последние 10</span>
+                </div>
+                <div class="chart-tabs mb-3">
+                    <button class="chart-tab active" data-metric="weight">Сила</button>
+                    <button class="chart-tab" data-metric="volume">Объем</button>
+                    <button class="chart-tab" data-metric="duration">Время</button>
+                </div>
+                <div id="chart-exercise-wrap" class="mb-3">
+                    <select id="chart-exercise" class="input-premium text-sm py-2"></select>
+                </div>
+                <div id="progress-chart-container" class="chart-wrap"></div>
+                <p id="chart-summary" class="chart-summary">Завершите тренировку, чтобы увидеть прогресс.</p>
+            </div>
 
-    <!-- ГРАФИКИ -->
-    <div class="glass-card p-4 mb-5 stagger-item">
-        <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-bold text-text-primary">Прогресс</h3>
-            <span class="text-[9px] text-text-muted uppercase tracking-widest">Последние 10</span>
-        </div>
+            <h3 class="text-lg font-bold text-text-primary mb-3 stagger-item">История тренировок</h3>
+            <div class="space-y-3 mb-5" id="history-list"></div>
 
-        <div class="chart-tabs mb-3">
-            <button class="chart-tab active" data-metric="weight">Сила</button>
-            <button class="chart-tab" data-metric="volume">Объем</button>
-            <button class="chart-tab" data-metric="duration">Время</button>
-        </div>
-
-        <div id="chart-exercise-wrap" class="mb-3">
-            <select id="chart-exercise" class="input-premium text-sm py-2"></select>
-        </div>
-
-        <div id="progress-chart-container" class="chart-wrap"></div>
-        <p id="chart-summary" class="chart-summary">Завершите тренировку, чтобы увидеть прогресс.</p>
-    </div>
-
-    <!-- История сразу после графика -->
-    <h3 class="text-lg font-bold text-text-primary mb-3 stagger-item">История тренировок</h3>
-    <div class="space-y-3 mb-5" id="history-list"></div>
-
-    <!-- Совет дня -->
-    <div class="glass-card p-4 stagger-item">
-        <div class="flex items-center gap-2 mb-2">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="1.7" stroke-linecap="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"></path></svg>
-            <h3 class="text-xs font-bold text-accent uppercase tracking-wider">Совет дня</h3>
-        </div>
-        <p id="tip-text" class="text-text-secondary text-sm leading-relaxed mb-3"></p>
-        <button id="btn-new-tip" class="w-full py-2.5 rounded-lg bg-bg-tertiary text-text-primary text-xs font-medium border border-border active:scale-95 transition-transform">
-            Другой совет
-        </button>
-    </div>
-
-</section>
-
+            <div class="glass-card p-4 stagger-item">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C5A059" stroke-width="1.7" stroke-linecap="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"></path></svg>
+                    <h3 class="text-xs font-bold text-accent uppercase tracking-wider">Совет дня</h3>
+                </div>
+                <p id="tip-text" class="text-text-secondary text-sm leading-relaxed mb-3"></p>
+                <button id="btn-new-tip" class="w-full py-2.5 rounded-lg bg-bg-tertiary text-text-primary text-xs font-medium border border-border active:scale-95 transition-transform">Другой совет</button>
+            </div>
+        </section>
     </main>
 
     <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА УПРАЖНЕНИЙ -->
@@ -717,983 +645,732 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         </div>
     </nav>
 
-            <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready(); 
-    tg.expand();
-    tg.setHeaderColor('#09090B'); 
-    tg.setBackgroundColor('#09090B');
-    tg.MainButton.hide(); 
-    tg.BackButton.hide();
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready(); tg.expand();
+        tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
+        tg.MainButton.hide(); tg.BackButton.hide();
 
-    // 1. ДОБАВЛЕНА ПОЛНАЯ БАЗА УПРАЖНЕНИЙ (чтобы кнопка выбора работала)
-    const exerciseDB = [
-        { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Разводка гантелей лежа', 'Сведение в кроссовере', 'Отжимания на брусьях (акцент на грудь)'] },
-        { category: 'Спина', items: ['Тяга верхнего блока к груди', 'Тяга штанги в наклоне', 'Тяга гантели одной рукой', 'Подтягивания', 'Горизонтальная тяга в блоке'] },
-        { category: 'Ноги', items: ['Приседания со штангой', 'Фронтальные приседания', 'Румынская тяга', 'Жим ногами в тренажере', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки стоя'] },
-        { category: 'Плечи', items: ['Жим гантелей сидя', 'Махи гантелями в стороны', 'Тяга штанги к подбородку', 'Обратные разведения в тренажере'] },
-        { category: 'Руки', items: ['Подъем штанги на бицепс', 'Молотки с гантелями', 'Французский жим', 'Разгибание рук на верхнем блоке'] },
-        { category: 'Пресс и Кор', items: ['Скручивания на полу', 'Планка', 'Подъем ног в висе', 'Русские скручивания'] }
-    ];
+        const exerciseDB = [
+            { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Разводка гантелей лежа', 'Сведение в кроссовере', 'Отжимания на брусьях'] },
+            { category: 'Спина', items: ['Тяга верхнего блока к груди', 'Тяга штанги в наклоне', 'Тяга гантели одной рукой', 'Подтягивания', 'Горизонтальная тяга в блоке'] },
+            { category: 'Ноги', items: ['Приседания со штангой', 'Фронтальные приседания', 'Румынская тяга', 'Жим ногами в тренажере', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки стоя'] },
+            { category: 'Плечи', items: ['Жим гантелей сидя', 'Махи гантелями в стороны', 'Тяга штанги к подбородку', 'Обратные разведения в тренажере'] },
+            { category: 'Руки', items: ['Подъем штанги на бицепс', 'Молотки с гантелями', 'Французский жим', 'Разгибание рук на верхнем блоке'] },
+            { category: 'Пресс и Кор', items: ['Скручивания на полу', 'Планка', 'Подъем ног в висе', 'Русские скручивания'] }
+        ];
 
-    const muscleTips = {
-        'Грудь': 'Контролируйте негативную фазу (опускание) 2-3 секунды для лучшего растяжения волокон.',
-        'Спина': 'Тяните вес локтями, а не кистями. Представьте, что ваши руки — это просто крюки.',
-        'Ноги': 'Держите спину прямой и не отрывайте пятки от пола. Давите всей стопой в пол.',
-        'Плечи': 'Не поднимайте плечи к ушам при махах. Работайте исключительно средним пучком дельт.',
-        'Руки': 'Фиксируйте локти при работе на бицепс, чтобы исключить читинг и нагрузку на спину.',
-        'Пресс и Кор': 'Дышите правильно: мощный выдох на усилии. Скручивайтесь за счет мышц, а не инерции.',
-        'Кардио и Функционал': 'Следите за пульсом. Для жиросжигания оптимально держать 120-140 ударов в минуту.'
-    };
+        const muscleTips = {
+            'Грудь': 'Контролируйте негативную фазу (опускание) 2-3 секунды для лучшего растяжения волокон.',
+            'Спина': 'Тяните вес локтями, а не кистями. Представьте, что ваши руки — это просто крюки.',
+            'Ноги': 'Держите спину прямой и не отрывайте пятки от пола. Давите всей стопой в пол.',
+            'Плечи': 'Не поднимайте плечи к ушам при махах. Работайте исключительно средним пучком дельт.',
+            'Руки': 'Фиксируйте локти при работе на бицепс, чтобы исключить читинг и нагрузку на спину.',
+            'Пресс и Кор': 'Дышите правильно: мощный выдох на усилии. Скручивайтесь за счет мышц, а не инерции.'
+        };
 
-    const sportsTips = [
-        "Сон — главный анаболик. Старайтесь спать 7-9 часов.",
-        "Не пропускайте разминку. 5-10 минут кардио снизят риск травм на 80%.",
-        "Прогрессия нагрузок — ключ к росту. Увеличивайте вес или повторения.",
-        "Пейте воду во время тренировки. Обезвоживание снижает силовые показатели.",
-        "Техника важнее веса. Эго-лифтинг — главная причина травм.",
-        "Углеводы — не враг. Ешьте сложные углеводы за 2 часа до тренировки.",
-        "Растяжка после тренировки ускоряет восстановление.",
-        "Боль в мышцах — ок, боль в суставе — нет. Останавливайтесь при острой боли.",
-        "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать.",
-        "Базовые многосуставные упражнения дают максимальный гормональный отклик."
-    ];
+        const sportsTips = [
+            "Сон — главный анаболик. Старайтесь спать 7-9 часов.",
+            "Не пропускайте разминку. 5-10 минут кардио снизят риск травм на 80%.",
+            "Прогрессия нагрузок — ключ к росту. Увеличивайте вес или повторения.",
+            "Пейте воду во время тренировки. Обезвоживание снижает силовые показатели.",
+            "Техника важнее веса. Эго-лифтинг — главная причина травм.",
+            "Углеводы — не враг. Ешьте сложные углеводы за 2 часа до тренировки.",
+            "Растяжка после тренировки ускоряет восстановление.",
+            "Боль в мышцах — ок, боль в суставе — нет. Останавливайтесь при острой боли.",
+            "Ведите дневник тренировок. Без отслеживания прогресса невозможно его контролировать.",
+            "Базовые многосуставные упражнения дают максимальный гормональный отклик."
+        ];
 
-    const defaultPrograms = [
-        { 
-            id: 'def-1', title: 'Базовая сила', time: '50 мин', level: 'Новичок', isDefault: true, 
-            exercises: [
+        const defaultPrograms = [
+            { id: 'def-1', title: 'Базовая сила', time: '50 мин', level: 'Новичок', isDefault: true, exercises: [
                 { name: 'Жим штанги лежа', muscle: 'Грудь', sets: 4, reps: 10, weight: 60 },
                 { name: 'Приседания со штангой', muscle: 'Ноги', sets: 4, reps: 8, weight: 80 },
                 { name: 'Тяга штанги в наклоне', muscle: 'Спина', sets: 4, reps: 10, weight: 50 },
                 { name: 'Жим гантелей сидя', muscle: 'Плечи', sets: 3, reps: 12, weight: 20 },
                 { name: 'Подъем штанги на бицепс', muscle: 'Руки', sets: 3, reps: 12, weight: 30 }
-            ]
-        },
-        { 
-            id: 'def-2', title: 'Гипертрофия (Верх)', time: '60 мин', level: 'Энтузиаст', isDefault: true, 
-            exercises: [
+            ]},
+            { id: 'def-2', title: 'Гипертрофия (Верх)', time: '60 мин', level: 'Энтузиаст', isDefault: true, exercises: [
                 { name: 'Жим гантелей на наклонной скамье', muscle: 'Грудь', sets: 4, reps: 12, weight: 25 },
                 { name: 'Тяга верхнего блока к груди', muscle: 'Спина', sets: 4, reps: 12, weight: 55 },
                 { name: 'Махи гантелями в стороны', muscle: 'Плечи', sets: 4, reps: 15, weight: 12 },
                 { name: 'Французский жим', muscle: 'Руки', sets: 3, reps: 12, weight: 25 },
                 { name: 'Скручивания на полу', muscle: 'Пресс и Кор', sets: 3, reps: 20, weight: 0 }
-            ]
-        },
-        { 
-            id: 'def-3', title: 'Мощные ноги', time: '55 мин', level: 'Энтузиаст', isDefault: true, 
-            exercises: [
+            ]},
+            { id: 'def-3', title: 'Мощные ноги', time: '55 мин', level: 'Энтузиаст', isDefault: true, exercises: [
                 { name: 'Фронтальные приседания', muscle: 'Ноги', sets: 4, reps: 10, weight: 60 },
                 { name: 'Румынская тяга', muscle: 'Ноги', sets: 4, reps: 10, weight: 70 },
                 { name: 'Жим ногами в тренажере', muscle: 'Ноги', sets: 3, reps: 15, weight: 120 },
                 { name: 'Сгибания ног в тренажере', muscle: 'Ноги', sets: 3, reps: 15, weight: 40 },
                 { name: 'Подъем на носки стоя', muscle: 'Ноги', sets: 4, reps: 20, weight: 50 }
-            ]
+            ]}
+        ];
+
+        const state = { 
+            currentStep: 0, name: '', level: null,
+            customPrograms: [], history: [],
+            currentWorkout: null, currentExIndex: 0, currentSet: 1, isResting: false,
+            timerInterval: null, timerSeconds: 90, initialTimerSeconds: 90, timerDeadline: 0,
+            totalSetsCompleted: 0, totalVolume: 0, workoutStartTime: null, clockInterval: null,
+            newProgram: { title: '', exercises: [] }, tgUser: null
+        };
+
+        function saveState() {
+            localStorage.setItem('gym_pro_state', JSON.stringify({
+                user: { name: state.name, level: state.level },
+                customPrograms: state.customPrograms,
+                history: state.history
+            }));
         }
-    ];
 
-    const state = { 
-        currentStep: 0, name: '', level: null,
-        customPrograms: [], history: [],
-        currentWorkout: null, currentExIndex: 0, currentSet: 1, isResting: false,
-        timerInterval: null, timerSeconds: 90, initialTimerSeconds: 90, timerDeadline: 0,
-        totalSetsCompleted: 0, totalVolume: 0, workoutStartTime: null, clockInterval: null,
-        newProgram: { title: '', exercises: [] }, tgUser: null
-    };
-
-    function saveState() {
-        localStorage.setItem('gym_pro_state', JSON.stringify({
-            user: { name: state.name, level: state.level },
-            customPrograms: state.customPrograms,
-            history: state.history
-        }));
-    }
-
-    function loadState() {
-        const saved = localStorage.getItem('gym_pro_state');
-        if (saved) {
-            const data = JSON.parse(saved);
-            state.name = data.user?.name || '';
-            state.level = data.user?.level || null;
-            state.customPrograms = data.customPrograms || [];
-            state.history = data.history || [];
-            if (state.name && state.level) state.currentStep = 2;
+        function loadState() {
+            const saved = localStorage.getItem('gym_pro_state');
+            if (saved) {
+                const data = JSON.parse(saved);
+                state.name = data.user?.name || '';
+                state.level = data.user?.level || null;
+                state.customPrograms = data.customPrograms || [];
+                state.history = data.history || [];
+                if (state.name && state.level) state.currentStep = 2;
+            }
         }
-    }
 
-    const icons = {
-        beginner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"></path><path d="M12 10V2"></path><path d="M8 6l4-4 4 4"></path></svg>`,
-        enthusiast: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`,
-        pro: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
-        dumbbell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path></svg>`,
-        timer: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
-        trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
-    };
+        const icons = {
+            beginner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"></path><path d="M12 10V2"></path><path d="M8 6l4-4 4 4"></path></svg>`,
+            enthusiast: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`,
+            pro: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+            dumbbell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M6.5 6.5L17.5 17.5"></path><path d="M17.5 6.5L6.5 17.5"></path></svg>`,
+            timer: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
+            trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
+        };
 
-    // --- НАВИГАЦИЯ ---
-    function goToStep(stepIndex) {
-        const curr = document.getElementById(`screen-${state.currentStep}`);
-        const next = document.getElementById(`screen-${stepIndex}`);
-        if(curr) { curr.classList.remove('active'); curr.classList.add('exit'); }
-        
-        setTimeout(() => {
-            if(curr) curr.classList.remove('exit');
-            if(next) next.classList.add('active');
-            state.currentStep = stepIndex;
-            
-            if (stepIndex === 1) animateItems('#levels-container .stagger-item');
-            if (stepIndex === 2) initHomeScreen();
-            if (stepIndex === 3) initWorkoutScreen();
-            if (stepIndex === 4) initCompleteScreen();
-            if (stepIndex === 5) renderAllPrograms();
-            if (stepIndex === 7) initProfileScreen();
+        function goToStep(stepIndex) {
+            const curr = document.getElementById(`screen-${state.currentStep}`);
+            const next = document.getElementById(`screen-${stepIndex}`);
+            if(curr) { curr.classList.remove('active'); curr.classList.add('exit'); }
+            setTimeout(() => {
+                if(curr) curr.classList.remove('exit');
+                if(next) next.classList.add('active');
+                state.currentStep = stepIndex;
+                if (stepIndex === 1) animateItems('#levels-container .stagger-item');
+                if (stepIndex === 2) initHomeScreen();
+                if (stepIndex === 3) initWorkoutScreen();
+                if (stepIndex === 4) initCompleteScreen();
+                if (stepIndex === 5) renderAllPrograms();
+                if (stepIndex === 7) initProfileScreen();
+                updateBottomNav(stepIndex);
+            }, 300);
+        }
 
-            updateBottomNav(stepIndex);
-        }, 300);
-    }
+        function updateBottomNav(step) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', parseInt(item.dataset.screen) === step);
+            });
+        }
 
-    function updateBottomNav(step) {
-        const navScreens = [2, 5, 7];
-        document.querySelectorAll('.nav-item').forEach(item => {
-            const target = parseInt(item.dataset.screen);
-            item.classList.toggle('active', target === step);
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = parseInt(btn.dataset.screen);
+                if (target !== state.currentStep) goToStep(target);
+            });
         });
-    }
 
-    document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const target = parseInt(btn.dataset.screen);
-            if (target !== state.currentStep) goToStep(target);
+        const inputName = document.getElementById('input-name');
+        const btnNext0 = document.getElementById('btn-next-0');
+        inputName.addEventListener('input', (e) => {
+            state.name = e.target.value.trim();
+            btnNext0.disabled = state.name.length === 0;
         });
-    });
+        btnNext0.addEventListener('click', () => { if (state.name) goToStep(1); });
 
-    // --- ОНБОРДИНГ ---
-    const inputName = document.getElementById('input-name');
-    const btnNext0 = document.getElementById('btn-next-0');
-    inputName.addEventListener('input', (e) => {
-        state.name = e.target.value.trim();
-        btnNext0.disabled = state.name.length === 0;
-    });
-    btnNext0.addEventListener('click', () => { if (state.name) goToStep(1); });
+        const levelsContainer = document.getElementById('levels-container');
+        const btnFinish = document.getElementById('btn-finish');
+        const levelsData = [
+            { id: 'beginner', title: 'Новичок', desc: 'Только начинаете свой путь', icon: icons.beginner },
+            { id: 'enthusiast', title: 'Энтузиаст', desc: 'Тренируетесь регулярно', icon: icons.enthusiast },
+            { id: 'pro', title: 'Профи', desc: 'Целенаправленный и жесткий тренинг', icon: icons.pro }
+        ];
 
-    const levelsContainer = document.getElementById('levels-container');
-    const btnFinish = document.getElementById('btn-finish');
-    const levelsData = [
-        { id: 'beginner', title: 'Новичок', desc: 'Только начинаете свой путь', icon: icons.beginner },
-        { id: 'enthusiast', title: 'Энтузиаст', desc: 'Тренируетесь регулярно', icon: icons.enthusiast },
-        { id: 'pro', title: 'Профи', desc: 'Целенаправленный и жесткий тренинг', icon: icons.pro }
-    ];
+        levelsData.forEach((lvl) => {
+            const card = document.createElement('button');
+            card.className = 'stagger-item w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 glass-card';
+            card.dataset.level = lvl.id;
+            card.innerHTML = `
+                <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">${lvl.icon}</div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-lg text-text-primary level-title">${lvl.title}</h3>
+                    <p class="text-text-secondary text-sm mt-0.5">${lvl.desc}</p>
+                </div>
+                <div class="check-icon w-6 h-6 rounded-full bg-accent flex items-center justify-center opacity-0 scale-0 transition-all duration-300">
+                    <svg class="w-4 h-4 text-bg-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                </div>`;
+            card.addEventListener('click', () => selectLevel(lvl.id));
+            levelsContainer.appendChild(card);
+        });
 
-    levelsData.forEach((lvl) => {
-        const card = document.createElement('button');
-        card.className = 'stagger-item w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 glass-card';
-        card.dataset.level = lvl.id;
-        card.innerHTML = `
-            <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">${lvl.icon}</div>
-            <div class="flex-1">
-                <h3 class="font-semibold text-lg text-text-primary level-title">${lvl.title}</h3>
-                <p class="text-text-secondary text-sm mt-0.5">${lvl.desc}</p>
-            </div>
-            <div class="check-icon w-6 h-6 rounded-full bg-accent flex items-center justify-center opacity-0 scale-0 transition-all duration-300">
-                <svg class="w-4 h-4 text-bg-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-            </div>
-        `;
-        card.addEventListener('click', () => selectLevel(lvl.id));
-        levelsContainer.appendChild(card);
-    });
+        function selectLevel(levelId) {
+            state.level = levelId;
+            btnFinish.disabled = false;
+            document.querySelectorAll('#levels-container button').forEach(card => {
+                const isSelected = card.dataset.level === levelId;
+                const title = card.querySelector('.level-title');
+                const check = card.querySelector('.check-icon');
+                if (isSelected) {
+                    card.classList.add('border-accent/40'); card.style.background = 'rgba(197, 160, 89, 0.05)';
+                    title.classList.add('text-accent'); title.classList.remove('text-text-primary');
+                    check.style.opacity = '1'; check.style.transform = 'scale(1)';
+                } else {
+                    card.classList.remove('border-accent/40'); card.style.background = '';
+                    title.classList.remove('text-accent'); title.classList.add('text-text-primary');
+                    check.style.opacity = '0'; check.style.transform = 'scale(0)';
+                }
+            });
+        }
 
-    function selectLevel(levelId) {
-        state.level = levelId;
-        btnFinish.disabled = false;
-        document.querySelectorAll('#levels-container button').forEach(card => {
-            const isSelected = card.dataset.level === levelId;
-            const title = card.querySelector('.level-title');
-            const check = card.querySelector('.check-icon');
-            if (isSelected) {
-                card.classList.add('border-accent/40'); card.style.background = 'rgba(197, 160, 89, 0.05)';
-                title.classList.add('text-accent'); title.classList.remove('text-text-primary');
-                check.style.opacity = '1'; check.style.transform = 'scale(1)';
-            } else {
-                card.classList.remove('border-accent/40'); card.style.background = '';
-                title.classList.remove('text-accent'); title.classList.add('text-text-primary');
-                check.style.opacity = '0'; check.style.transform = 'scale(0)';
+        btnFinish.addEventListener('click', () => {
+            if (state.level) {
+                saveState();
+                document.getElementById('bottom-nav').classList.remove('hidden');
+                goToStep(2);
             }
         });
-    }
 
-    btnFinish.addEventListener('click', () => {
-        if (state.level) {
-            saveState();
+        function animateItems(selector) {
+            document.querySelectorAll(selector).forEach((item, i) => {
+                setTimeout(() => item.classList.add('visible'), i * 100 + 200);
+            });
+        }
+
+        function getWeekStart() {
+            const now = new Date();
+            const diff = now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1);
+            return new Date(now.setDate(diff)).setHours(0,0,0,0);
+        }
+
+        function initHomeScreen() {
+            document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
+            const weekStart = getWeekStart();
+            const thisWeekWorkouts = state.history.filter(w => new Date(w.date).getTime() >= weekStart);
+            
+            const workoutCount = thisWeekWorkouts.length;
+            document.getElementById('stat-activity').textContent = `${workoutCount}/3`;
+
+            const weekVolume = thisWeekWorkouts.reduce((sum, w) => sum + w.volume, 0);
+            const volumeTarget = state.level === 'pro' ? 15000 : state.level === 'enthusiast' ? 8000 : 4000;
+            document.getElementById('stat-volume').textContent = `${weekVolume} кг`;
+
+            const weekMinutes = thisWeekWorkouts.reduce((sum, w) => sum + w.duration, 0);
+            document.getElementById('stat-time').textContent = `${weekMinutes} мин`;
+
+            setTimeout(() => {
+                animateRing('ring-1', 326.7, Math.min(100, (workoutCount / 3) * 100) / 100);
+                animateRing('ring-2', 251.3, Math.min(100, (weekVolume / volumeTarget) * 100) / 100);
+                animateRing('ring-3', 175.9, Math.min(100, (weekMinutes / 150) * 100) / 100);
+            }, 400);
+
+            renderQuickStart();
+            animateItems('#screen-2 .stagger-item');
+        }
+
+        function animateRing(id, circumference, percent) {
+            const ring = document.getElementById(id);
+            if(ring) ring.style.strokeDashoffset = circumference - (percent * circumference);
+        }
+
+        function renderQuickStart() {
+            const container = document.getElementById('quick-start-container');
+            container.innerHTML = '';
+            const allPrograms = [...defaultPrograms, ...state.customPrograms].slice(0, 3);
+            allPrograms.forEach((prog, index) => {
+                const card = document.createElement('div');
+                card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform';
+                const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
+                card.innerHTML = `
+                    <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">${icons.dumbbell}</div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
+                        <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">${icons.timer}<span>${prog.exercises.length} упр.</span></div>
+                    </div>
+                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${prog.isDefault ? prog.level : 'Моя'}</span>`;
+                card.addEventListener('click', () => startWorkout(prog));
+                container.appendChild(card);
+                setTimeout(() => card.classList.add('visible'), index * 100 + 400);
+            });
+        }
+
+        function renderAllPrograms() {
+            const container = document.getElementById('all-programs-list');
+            container.innerHTML = '';
+            const allPrograms = [...defaultPrograms, ...state.customPrograms];
+            allPrograms.forEach((prog, index) => {
+                const card = document.createElement('div');
+                card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer transition-transform';
+                const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
+                let deleteBtn = prog.isDefault ? '' : `<button class="delete-prog-btn w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400" data-id="${prog.id}">${icons.trash}</button>`;
+                card.innerHTML = `
+                    <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">${icons.dumbbell}</div>
+                    <div class="flex-1 min-w-0" data-start="${prog.id}">
+                        <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
+                        <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">${icons.timer}<span>${prog.exercises.length} упр.</span></div>
+                    </div>
+                    ${deleteBtn}
+                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${prog.isDefault ? prog.level : 'Моя'}</span>`;
+                card.querySelector('[data-start]').addEventListener('click', () => startWorkout(prog));
+                const delBtn = card.querySelector('.delete-prog-btn');
+                if (delBtn) {
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        state.customPrograms = state.customPrograms.filter(p => p.id !== prog.id);
+                        saveState(); renderAllPrograms();
+                        try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+                    });
+                }
+                container.appendChild(card);
+                setTimeout(() => card.classList.add('visible'), index * 80);
+            });
+        }
+
+        document.getElementById('btn-open-create').addEventListener('click', () => {
+            state.newProgram = { title: '', exercises: [] };
+            document.getElementById('new-prog-title').value = '';
+            document.getElementById('new-prog-exercises').innerHTML = '';
+            document.getElementById('btn-save-program').disabled = true;
+            goToStep(6);
+        });
+        document.getElementById('btn-back-from-create').addEventListener('click', () => goToStep(5));
+
+        const modal = document.getElementById('exercise-picker-modal');
+        const modalList = document.getElementById('exercise-list-container');
+        document.getElementById('btn-add-ex').addEventListener('click', () => { renderExercisePicker(); modal.classList.add('active'); });
+        document.getElementById('close-picker').addEventListener('click', () => { modal.classList.remove('active'); });
+
+        function renderExercisePicker() {
+            modalList.innerHTML = '';
+            exerciseDB.forEach(cat => {
+                const title = document.createElement('div');
+                title.className = 'ex-category-title';
+                title.textContent = cat.category;
+                modalList.appendChild(title);
+                cat.items.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'ex-item';
+                    el.innerHTML = `<span class="text-text-primary font-medium text-sm">${item}</span><span class="text-text-muted text-[10px]">${cat.category}</span>`;
+                    el.addEventListener('click', () => {
+                        state.newProgram.exercises.push({ name: item, muscle: cat.category, sets: 3, reps: 10, weight: 20 });
+                        renderNewProgramExercises(); modal.classList.remove('active');
+                        try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+                    });
+                    modalList.appendChild(el);
+                });
+            });
+        }
+
+        function renderNewProgramExercises() {
+            const container = document.getElementById('new-prog-exercises');
+            container.innerHTML = '';
+            state.newProgram.exercises.forEach((ex, index) => {
+                const item = document.createElement('div');
+                item.className = 'glass-card p-3 space-y-2';
+                item.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div><p class="font-semibold text-text-primary text-sm">${ex.name}</p><p class="text-text-muted text-xs">${ex.muscle}</p></div>
+                        <button class="remove-ex-btn text-text-muted p-1" data-index="${index}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Подходы</label><input type="number" value="${ex.sets}" class="input-premium text-center py-1 text-sm ex-sets" data-index="${index}"></div>
+                        <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Повторы</label><input type="number" value="${ex.reps}" class="input-premium text-center py-1 text-sm ex-reps" data-index="${index}"></div>
+                        <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Вес</label><input type="number" value="${ex.weight}" class="input-premium text-center py-1 text-sm ex-weight" data-index="${index}"></div>
+                    </div>`;
+                item.querySelector('.remove-ex-btn').addEventListener('click', () => { state.newProgram.exercises.splice(index, 1); renderNewProgramExercises(); });
+                item.querySelectorAll('input').forEach(inp => {
+                    inp.addEventListener('change', (e) => {
+                        const idx = parseInt(e.target.dataset.index);
+                        const type = e.target.classList.contains('ex-sets') ? 'sets' : e.target.classList.contains('ex-reps') ? 'reps' : 'weight';
+                        state.newProgram.exercises[idx][type] = parseFloat(String(e.target.value).replace(',', '.')) || 0;
+                    });
+                });
+                container.appendChild(item);
+            });
+            validateNewProgram();
+        }
+
+        document.getElementById('new-prog-title').addEventListener('input', validateNewProgram);
+        function validateNewProgram() {
+            state.newProgram.title = document.getElementById('new-prog-title').value.trim();
+            document.getElementById('btn-save-program').disabled = !(state.newProgram.title && state.newProgram.exercises.length > 0);
+        }
+        document.getElementById('btn-save-program').addEventListener('click', () => {
+            state.customPrograms.push({ id: 'custom-' + Date.now(), title: state.newProgram.title, isDefault: false, exercises: state.newProgram.exercises });
+            saveState(); try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {} goToStep(5);
+        });
+
+        function startWorkout(prog) {
+            state.currentWorkout = { 
+                title: prog.title, 
+                exercises: prog.exercises.map(ex => ({ ...ex, log: [], maxWeight: ex.weight || 0, volume: 0 })) 
+            };
+            state.currentExIndex = 0; state.currentSet = 1; state.isResting = false;
+            state.totalSetsCompleted = 0; state.totalVolume = 0; state.workoutStartTime = Date.now();
+            document.getElementById('bottom-nav').classList.add('hidden');
+            goToStep(3);
+        }
+
+        function initWorkoutScreen() { 
+            clearInterval(state.clockInterval);
+            state.clockInterval = setInterval(() => {
+                const el = document.getElementById('workout-clock');
+                if (!el || !state.workoutStartTime) return;
+                const sec = Math.max(0, Math.floor((Date.now() - state.workoutStartTime) / 1000));
+                el.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+            }, 1000);
+            renderCurrentExercise(); 
+        }
+
+        function renderCurrentExercise() {
+            const ex = state.currentWorkout?.exercises[state.currentExIndex];
+            if (!ex) return;
+            const exView = document.getElementById('exercise-view');
+            const restView = document.getElementById('rest-view');
+            restView.classList.add('hidden-panel');
+            restView.classList.remove('active-panel');
+            setTimeout(() => {
+                document.getElementById('workout-title').textContent = state.currentWorkout.title;
+                document.getElementById('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
+                document.getElementById('ex-name').textContent = ex.name;
+                document.getElementById('ex-muscle').textContent = (ex.muscle || 'Функционал').toUpperCase();
+                document.getElementById('ex-weight').value = ex.weight || 0;
+                document.getElementById('ex-reps').value = ex.reps || 10;
+                document.getElementById('ex-tip-text').textContent = muscleTips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
+                renderSetDots(); 
+                const lastSet = ex.log?.[ex.log.length - 1];
+                const dockHint = document.getElementById('dock-hint');
+                if (dockHint) dockHint.textContent = lastSet ? `Последний: ${lastSet.weight} кг × ${lastSet.reps}` : `Осталось ${ex.sets - state.currentSet + 1} подходов`;
+                exView.classList.remove('hidden-panel');
+                requestAnimationFrame(() => exView.classList.add('active-panel'));
+                state.isResting = false;
+            }, 50);
+        }
+
+        function renderSetDots() {
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            const container = document.getElementById('set-dots');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= ex.sets; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'set-dot ' + (i < state.currentSet ? 'completed' : i === state.currentSet ? 'current' : 'future');
+                container.appendChild(dot);
+            }
+        }
+
+        document.querySelectorAll('.stepper-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(`ex-${btn.dataset.target}`);
+                if (!input) return;
+                let val = parseFloat(String(input.value).replace(',', '.')) || 0;
+                const step = btn.dataset.target === 'weight' ? 2.5 : 1;
+                val = btn.dataset.action === 'plus' ? val + step : Math.max(0, val - step);
+                input.value = btn.dataset.target === 'weight' ? Math.round(val * 10) / 10 : Math.round(val);
+                try { tg.HapticFeedback.selectionChanged(); } catch(e) {}
+            });
+        });
+
+        document.getElementById('btn-complete-set').addEventListener('click', () => {
+            if (state.isResting || !state.currentWorkout) return;
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            const weight = parseFloat(String(document.getElementById('ex-weight').value).replace(',', '.')) || 0;
+            const reps = parseInt(document.getElementById('ex-reps').value) || 0;
+            if (reps <= 0) { try { tg.HapticFeedback.notificationOccurred('error'); } catch(e) {} return; }
+            ex.log = ex.log || [];
+            ex.log.push({ set: state.currentSet, weight, reps });
+            ex.maxWeight = Math.max(ex.maxWeight || 0, weight);
+            ex.volume = (ex.volume || 0) + (weight * reps);
+            state.totalVolume += (weight * reps);
+            state.totalSetsCompleted++;
+            try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
+            startRestTimer();
+        });
+
+        function startRestTimer() {
+            clearInterval(state.timerInterval);
+            state.isResting = true;
+            state.timerSeconds = 90;
+            state.initialTimerSeconds = 90;
+            state.timerDeadline = Date.now() + 90000;
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            const isLastSet = state.currentSet >= ex.sets;
+            const nextLabel = document.getElementById('rest-next-label');
+            if (nextLabel) nextLabel.textContent = isLastSet ? 'Следующее упражнение' : `Следующий подход: ${state.currentSet + 1} из ${ex.sets}`;
+            const skipBtn = document.getElementById('btn-skip-rest');
+            if (skipBtn) skipBtn.textContent = isLastSet ? 'К упражнению' : 'Далее';
+            document.getElementById('exercise-view').classList.remove('active-panel');
+            document.getElementById('exercise-view').classList.add('hidden-panel');
+            setTimeout(() => {
+                document.getElementById('rest-view').classList.remove('hidden-panel');
+                document.getElementById('dock-rest').classList.remove('hidden-panel');
+                document.getElementById('dock-rest').style.pointerEvents = 'auto';
+                requestAnimationFrame(() => document.getElementById('rest-view').classList.add('active-panel'));
+                tickRest();
+                state.timerInterval = setInterval(tickRest, 200);
+            }, 200);
+        }
+
+        function tickRest() {
+            const left = Math.max(0, (state.timerDeadline - Date.now()) / 1000);
+            const secs = Math.ceil(left);
+            const timerText = document.getElementById('timer-text');
+            if (timerText) timerText.textContent = `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`;
+            const timerRing = document.getElementById('timer-ring');
+            if (timerRing) timerRing.style.strokeDashoffset = 339.3 - (Math.min(1, left / state.initialTimerSeconds) * 339.3);
+            if (left <= 0) { clearInterval(state.timerInterval); finishRest(); }
+        }
+
+        function adjustRest(deltaSeconds) {
+            state.timerDeadline += deltaSeconds * 1000;
+            state.initialTimerSeconds = Math.max(state.initialTimerSeconds, (state.timerDeadline - Date.now()) / 1000);
+            try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+            tickRest();
+        }
+
+        document.getElementById('btn-less-time').addEventListener('click', () => adjustRest(-15));
+        document.getElementById('btn-more-time').addEventListener('click', () => adjustRest(15));
+        document.getElementById('btn-skip-rest').addEventListener('click', () => { clearInterval(state.timerInterval); finishRest(); });
+
+        function finishRest() {
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            if (state.currentSet < ex.sets) {
+                state.currentSet++;
+                renderCurrentExercise();
+            } else {
+                state.currentSet = 1;
+                state.currentExIndex++;
+                if (state.currentExIndex >= state.currentWorkout.exercises.length) {
+                    clearInterval(state.clockInterval);
+                    goToStep(4);
+                } else {
+                    renderCurrentExercise();
+                }
+            }
+        }
+
+        document.getElementById('btn-close-workout').addEventListener('click', () => {
+            if(!confirm('Прервать тренировку? Незавершённый сеанс не сохранится.')) return;
+            clearInterval(state.timerInterval);
+            clearInterval(state.clockInterval);
             document.getElementById('bottom-nav').classList.remove('hidden');
             goToStep(2);
-        }
-    });
-
-    function animateItems(selector) {
-        document.querySelectorAll(selector).forEach((item, i) => {
-            setTimeout(() => item.classList.add('visible'), i * 100 + 200);
         });
-    }
 
-    // --- ГЛАВНЫЙ ЭКРАН ---
-    function getWeekStart() {
-        const now = new Date();
-        const day = now.getDay();
-        const diff = now.getDate() - day + (day === 0 ? -6 : 1);
-        return new Date(now.setDate(diff)).setHours(0,0,0,0);
-    }
-
-    function initHomeScreen() {
-        document.getElementById('user-greeting').textContent = `Здравствуйте, ${state.name}`;
-        const weekStart = getWeekStart();
-        const thisWeekWorkouts = state.history.filter(w => new Date(w.date).getTime() >= weekStart);
-        
-        const workoutCount = thisWeekWorkouts.length;
-        document.getElementById('stat-activity').textContent = `${workoutCount}/3`;
-
-        const weekVolume = thisWeekWorkouts.reduce((sum, w) => sum + w.volume, 0);
-        const volumeTarget = state.level === 'pro' ? 15000 : state.level === 'enthusiast' ? 8000 : 4000;
-        const volumePct = Math.min(100, (weekVolume / volumeTarget) * 100);
-        document.getElementById('stat-volume').textContent = `${weekVolume} кг`;
-
-        const weekMinutes = thisWeekWorkouts.reduce((sum, w) => sum + w.duration, 0);
-        const minutesPct = Math.min(100, (weekMinutes / 150) * 100);
-        document.getElementById('stat-time').textContent = `${weekMinutes} мин`;
-
-        setTimeout(() => {
-            animateRing('ring-1', 326.7, Math.min(100, (workoutCount / 3) * 100) / 100);
-            animateRing('ring-2', 251.3, volumePct / 100);
-            animateRing('ring-3', 175.9, minutesPct / 100);
-        }, 400);
-
-        renderQuickStart();
-        animateItems('#screen-2 .stagger-item');
-    }
-
-    function animateRing(id, circumference, percent) {
-        const ring = document.getElementById(id);
-        if(ring) ring.style.strokeDashoffset = circumference - (percent * circumference);
-    }
-
-    function renderQuickStart() {
-        const container = document.getElementById('quick-start-container');
-        container.innerHTML = '';
-        const allPrograms = [...defaultPrograms, ...state.customPrograms].slice(0, 3);
-
-        allPrograms.forEach((prog, index) => {
-            const card = document.createElement('div');
-            card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform';
-            const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
-            const tagText = prog.isDefault ? prog.level : 'Моя';
-            
-            card.innerHTML = `
-                <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">${icons.dumbbell}</div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
-                    <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">${icons.timer}<span>${prog.exercises.length} упр.</span></div>
-                </div>
-                <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${tagText}</span>
-            `;
-            card.addEventListener('click', () => startWorkout(prog));
-            container.appendChild(card);
-            setTimeout(() => card.classList.add('visible'), index * 100 + 400);
-        });
-    }
-
-    // --- ПРОГРАММЫ ---
-    function renderAllPrograms() {
-        const container = document.getElementById('all-programs-list');
-        container.innerHTML = '';
-        const allPrograms = [...defaultPrograms, ...state.customPrograms];
-
-        allPrograms.forEach((prog, index) => {
-            const card = document.createElement('div');
-            card.className = 'stagger-item glass-card p-4 flex items-center gap-4 cursor-pointer transition-transform';
-            const tagColor = prog.isDefault ? (prog.level === 'Новичок' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-accent/10 text-accent') : 'bg-blue-500/10 text-blue-400';
-            const tagText = prog.isDefault ? prog.level : 'Моя';
-            
-            let deleteBtn = '';
-            if (!prog.isDefault) {
-                deleteBtn = `<button class="delete-prog-btn w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400" data-id="${prog.id}">${icons.trash}</button>`;
-            }
-
-            card.innerHTML = `
-                <div class="w-11 h-11 rounded-xl bg-bg-tertiary flex items-center justify-center text-text-secondary flex-shrink-0">${icons.dumbbell}</div>
-                <div class="flex-1 min-w-0" data-start="${prog.id}">
-                    <h3 class="font-semibold text-text-primary truncate">${prog.title}</h3>
-                    <div class="flex items-center gap-1.5 text-text-muted text-xs mt-1">${icons.timer}<span>${prog.exercises.length} упр.</span></div>
-                </div>
-                ${deleteBtn}
-                <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${tagColor} whitespace-nowrap">${tagText}</span>
-            `;
-            
-            card.querySelector('[data-start]').addEventListener('click', () => startWorkout(prog));
-            const delBtn = card.querySelector('.delete-prog-btn');
-            if (delBtn) {
-                delBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    state.customPrograms = state.customPrograms.filter(p => p.id !== prog.id);
-                    saveState(); renderAllPrograms();
-                    try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
-                });
-            }
-            container.appendChild(card);
-            setTimeout(() => card.classList.add('visible'), index * 80);
-        });
-    }
-
-    document.getElementById('btn-open-create').addEventListener('click', () => {
-        state.newProgram = { title: '', exercises: [] };
-        document.getElementById('new-prog-title').value = '';
-        document.getElementById('new-prog-exercises').innerHTML = '';
-        document.getElementById('btn-save-program').disabled = true;
-        goToStep(6);
-    });
-    document.getElementById('btn-back-from-create').addEventListener('click', () => goToStep(5));
-
-    const modal = document.getElementById('exercise-picker-modal');
-    const modalList = document.getElementById('exercise-list-container');
-    document.getElementById('btn-add-ex').addEventListener('click', () => { renderExercisePicker(); modal.classList.add('active'); });
-    document.getElementById('close-picker').addEventListener('click', () => { modal.classList.remove('active'); });
-
-    function renderExercisePicker() {
-        modalList.innerHTML = '';
-        exerciseDB.forEach(cat => {
-            const title = document.createElement('div');
-            title.className = 'ex-category-title';
-            title.textContent = cat.category;
-            modalList.appendChild(title);
-            cat.items.forEach(item => {
-                const el = document.createElement('div');
-                el.className = 'ex-item';
-                el.innerHTML = `<span class="text-text-primary font-medium text-sm">${item}</span><span class="text-text-muted text-[10px]">${cat.category}</span>`;
-                el.addEventListener('click', () => {
-                    state.newProgram.exercises.push({ name: item, muscle: cat.category, sets: 3, reps: 10, weight: 20 });
-                    renderNewProgramExercises(); modal.classList.remove('active');
-                    try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
-                });
-                modalList.appendChild(el);
-            });
-        });
-    }
-
-    function renderNewProgramExercises() {
-        const container = document.getElementById('new-prog-exercises');
-        container.innerHTML = '';
-        state.newProgram.exercises.forEach((ex, index) => {
-            const item = document.createElement('div');
-            item.className = 'glass-card p-3 space-y-2';
-            item.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div><p class="font-semibold text-text-primary text-sm">${ex.name}</p><p class="text-text-muted text-xs">${ex.muscle}</p></div>
-                    <button class="remove-ex-btn text-text-muted p-1" data-index="${index}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-                </div>
-                <div class="grid grid-cols-3 gap-2 pt-1">
-                    <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Подходы</label><input type="number" value="${ex.sets}" class="input-premium text-center py-1 text-sm ex-sets" data-index="${index}"></div>
-                    <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Повторы</label><input type="number" value="${ex.reps}" class="input-premium text-center py-1 text-sm ex-reps" data-index="${index}"></div>
-                    <div class="text-center"><label class="text-[10px] text-text-muted uppercase">Вес</label><input type="number" value="${ex.weight}" class="input-premium text-center py-1 text-sm ex-weight" data-index="${index}"></div>
-                </div>
-            `;
-            item.querySelector('.remove-ex-btn').addEventListener('click', () => { state.newProgram.exercises.splice(index, 1); renderNewProgramExercises(); });
-            item.querySelectorAll('input').forEach(inp => {
-                inp.addEventListener('change', (e) => {
-                    const idx = parseInt(e.target.dataset.index);
-                    const type = e.target.classList.contains('ex-sets') ? 'sets' : e.target.classList.contains('ex-reps') ? 'reps' : 'weight';
-                       // Было: state.newProgram.exercises[idx][type] = parseFloat(e.target.value) || 0;
-   state.newProgram.exercises[idx][type] = parseFloat(String(e.target.value).replace(',', '.')) || 0;
-                });
-            });
-            container.appendChild(item);
-        });
-        validateNewProgram();
-    }
-
-    document.getElementById('new-prog-title').addEventListener('input', validateNewProgram);
-    function validateNewProgram() {
-        const title = document.getElementById('new-prog-title').value.trim();
-        state.newProgram.title = title;
-        document.getElementById('btn-save-program').disabled = !(title && state.newProgram.exercises.length > 0);
-    }
-    document.getElementById('btn-save-program').addEventListener('click', () => {
-        state.customPrograms.push({ id: 'custom-' + Date.now(), title: state.newProgram.title, isDefault: false, exercises: state.newProgram.exercises });
-        saveState(); try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {} goToStep(5);
-    });
-
-    // --- ТРЕНИРОВКА ---
-    function startWorkout(prog) {
-        state.currentWorkout = { 
-            title: prog.title, 
-            exercises: prog.exercises.map(ex => ({
-                ...ex,
-                log: [],
-                maxWeight: ex.weight || 0,
-                volume: 0
-            })) 
-        };
-        state.currentExIndex = 0; state.currentSet = 1; state.isResting = false;
-        state.totalSetsCompleted = 0; state.totalVolume = 0; state.workoutStartTime = Date.now();
-        document.getElementById('bottom-nav').classList.add('hidden');
-        goToStep(3);
-    }
-
-    function initWorkoutScreen() { 
-        clearInterval(state.clockInterval);
-        state.clockInterval = setInterval(() => {
-            const el = document.getElementById('workout-clock');
-            if (!el || !state.workoutStartTime) return;
-            const sec = Math.max(0, Math.floor((Date.now() - state.workoutStartTime) / 1000));
-            el.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
-        }, 1000);
-        renderCurrentExercise(); 
-    }
-
-    function renderCurrentExercise() {
-        const ex = state.currentWorkout?.exercises[state.currentExIndex];
-        if (!ex) return;
-        
-        const exView = document.getElementById('exercise-view');
-        const restView = document.getElementById('rest-view');
-        
-        // Подготовка к анимации
-        restView.classList.add('hidden-panel');
-        restView.classList.remove('active-panel');
-        
-        setTimeout(() => {
-            document.getElementById('workout-title').textContent = state.currentWorkout.title;
-            document.getElementById('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
-            document.getElementById('ex-name').textContent = ex.name;
-            document.getElementById('ex-muscle').textContent = (ex.muscle || 'Функционал').toUpperCase();
-            
-            document.getElementById('ex-weight').value = ex.weight || 0;
-            document.getElementById('ex-reps').value = ex.reps || 10;
-            
-            const tipText = muscleTips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
-            document.getElementById('ex-tip-text').textContent = tipText;
-            
-            renderSetDots(); 
-            
-            const lastSet = ex.log?.[ex.log.length - 1];
-            const dockHint = document.getElementById('dock-hint');
-            if (dockHint) {
-                dockHint.textContent = lastSet
-                    ? `Последний: ${lastSet.weight} кг × ${lastSet.reps}`
-                    : `Осталось ${ex.sets - state.currentSet + 1} подходов`;
-            }
-
-            // Запуск анимации появления
-            exView.classList.remove('hidden-panel');
-            requestAnimationFrame(() => {
-                exView.classList.add('active-panel');
-            });
-            
-            state.isResting = false;
-        }, 50);
-    }
-
-    function renderSetDots() {
-        const ex = state.currentWorkout.exercises[state.currentExIndex];
-        const container = document.getElementById('set-dots');
-        if (!container) return;
-        container.innerHTML = '';
-        for (let i = 1; i <= ex.sets; i++) {
-            const dot = document.createElement('div');
-            let classes = 'set-dot ';
-            if (i < state.currentSet) classes += 'completed';
-            else if (i === state.currentSet) classes += 'current';
-            else classes += 'future';
-            dot.className = classes;
-            container.appendChild(dot);
-        }
-    }
-
-    document.querySelectorAll('.stepper-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const target = btn.dataset.target;
-            const action = btn.dataset.action;
-            const input = document.getElementById(`ex-${target}`);
-            if (!input) return;
-            
-               // Было: let val = parseFloat(input.value) || 0;
-   let val = parseFloat(String(input.value).replace(',', '.')) || 0;
-            const step = target === 'weight' ? 2.5 : 1;
-            
-            if (action === 'plus') val += step;
-            else if (action === 'minus' && val >= step) val -= step;
-            
-            input.value = target === 'weight' ? Math.round(val * 10) / 10 : Math.round(val);
-            try { tg.HapticFeedback.selectionChanged(); } catch(e) {}
-        });
-    });
-
-    document.getElementById('btn-complete-set').addEventListener('click', () => {
-        if (state.isResting || !state.currentWorkout) return;
-        
-        const ex = state.currentWorkout.exercises[state.currentExIndex];
-           // Было: const weight = parseFloat(document.getElementById('ex-weight').value) || 0;
-   const weight = parseFloat(String(document.getElementById('ex-weight').value).replace(',', '.')) || 0;
-        const reps = parseInt(document.getElementById('ex-reps').value) || 0;
-        
-        if (reps <= 0) {
-            try { tg.HapticFeedback.notificationOccurred('error'); } catch(e) {}
-            return;
-        }
-        
-        ex.log = ex.log || [];
-        ex.log.push({ set: state.currentSet, weight, reps });
-        ex.maxWeight = Math.max(ex.maxWeight || 0, weight);
-        ex.volume = (ex.volume || 0) + (weight * reps);
-        
-        state.totalVolume += (weight * reps);
-        state.totalSetsCompleted++;
-        
-        try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
-        startRestTimer();
-    });
-
-    function startRestTimer() {
-        clearInterval(state.timerInterval);
-        state.isResting = true;
-        state.timerSeconds = 90;
-        state.initialTimerSeconds = 90;
-        state.timerDeadline = Date.now() + 90000;
-        
-        const ex = state.currentWorkout.exercises[state.currentExIndex];
-        const isLastSet = state.currentSet >= ex.sets;
-        
-        const nextLabel = document.getElementById('rest-next-label');
-        if (nextLabel) {
-            nextLabel.textContent = isLastSet ? 'Следующее упражнение' : `Следующий подход: ${state.currentSet + 1} из ${ex.sets}`;
-        }
-        
-        const skipBtn = document.getElementById('btn-skip-rest');
-        if (skipBtn) skipBtn.textContent = isLastSet ? 'К упражнению' : 'Далее';
-        
-        const exView = document.getElementById('exercise-view');
-        const restView = document.getElementById('rest-view');
-        const dockEx = document.getElementById('dock-exercise');
-        const dockRest = document.getElementById('dock-rest');
-
-        // Анимация ухода упражнения и прихода таймера
-        exView.classList.remove('active-panel');
-        exView.classList.add('hidden-panel');
-        
-        setTimeout(() => {
-            restView.classList.remove('hidden-panel');
-            dockRest.classList.remove('hidden-panel');
-            dockRest.style.pointerEvents = 'auto';
-            
-            requestAnimationFrame(() => {
-                restView.classList.add('active-panel');
-            });
-            
-            tickRest();
-            state.timerInterval = setInterval(tickRest, 200);
-        }, 200); // Небольшая задержка для перекрытия анимаций
-    }
-
-    function tickRest() {
-        const left = Math.max(0, (state.timerDeadline - Date.now()) / 1000);
-        const secs = Math.ceil(left);
-        
-        const timerText = document.getElementById('timer-text');
-        if (timerText) {
-            timerText.textContent = `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`;
-        }
-        
-        const circ = 339.3;
-        const progress = Math.min(1, left / state.initialTimerSeconds);
-        const timerRing = document.getElementById('timer-ring');
-        if (timerRing) {
-            timerRing.style.strokeDashoffset = circ - (progress * circ);
-        }
-        
-        if (left <= 0) {
+        function initCompleteScreen() {
             clearInterval(state.timerInterval);
-            finishRest();
-        }
-    }
-
-    function adjustRest(deltaSeconds) {
-        state.timerDeadline += deltaSeconds * 1000;
-        state.initialTimerSeconds = Math.max(state.initialTimerSeconds, (state.timerDeadline - Date.now()) / 1000);
-        try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
-        tickRest();
-    }
-
-    document.getElementById('btn-less-time').addEventListener('click', () => adjustRest(-15));
-    document.getElementById('btn-more-time').addEventListener('click', () => adjustRest(15));
-    document.getElementById('btn-skip-rest').addEventListener('click', () => { 
-        clearInterval(state.timerInterval); 
-        finishRest(); 
-    });
-
-    function finishRest() {
-        const ex = state.currentWorkout.exercises[state.currentExIndex];
-        
-        if (state.currentSet < ex.sets) {
-            state.currentSet++;
-            renderCurrentExercise();
-        } else {
-            state.currentSet = 1;
-            state.currentExIndex++;
-            if (state.currentExIndex >= state.currentWorkout.exercises.length) {
-                clearInterval(state.clockInterval);
-                goToStep(4);
-            } else {
-                renderCurrentExercise();
-            }
-        }
-    }
-
-    document.getElementById('btn-close-workout').addEventListener('click', () => {
-        if(!confirm('Прервать тренировку? Незавершённый сеанс не сохранится.')) return;
-        clearInterval(state.timerInterval);
-        clearInterval(state.clockInterval);
-        document.getElementById('bottom-nav').classList.remove('hidden');
-        goToStep(2);
-    });
-
-    // --- ЗАВЕРШЕНИЕ И ПРОФИЛЬ ---
-    function initCompleteScreen() {
-        clearInterval(state.timerInterval);
-        clearInterval(state.clockInterval);
-
-        const elapsedSec = Math.max(1, Math.round((Date.now() - state.workoutStartTime) / 1000));
-        const elapsedMin = Math.max(1, Math.round(elapsedSec / 60));
-        const exercises = state.currentWorkout.exercises;
-
-        document.getElementById('stat-time-final').textContent = elapsedMin;
-        document.getElementById('stat-sets-final').textContent = state.totalSetsCompleted;
-        
-        const volText = state.totalVolume >= 1000 
-            ? (state.totalVolume / 1000).toFixed(1) + 'т' 
-            : Math.round(state.totalVolume) + 'кг';
-        document.getElementById('stat-volume-final').textContent = volText;
-
-        state.history.unshift({
-            date: new Date().toISOString(),
-            title: state.currentWorkout.title,
-            duration: elapsedMin,
-            durationSec: elapsedSec,
-            volume: Math.round(state.totalVolume),
-            sets: state.totalSetsCompleted,
-            mainMuscle: exercises[0]?.muscle || 'Пресс и Кор',
-            maxWeight: Math.max(0, ...exercises.map(e => e.maxWeight || 0)),
-            exercises: exercises.map(e => ({
-                name: e.name,
-                muscle: e.muscle,
-                maxWeight: e.maxWeight || e.weight || 0,
-                volume: e.volume || 0,
-                sets: e.sets,
-                reps: e.reps
-            }))
-        });
-
-        saveState();
-        try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
-    }
-
-    document.getElementById('btn-finish-workout').addEventListener('click', () => {
-        document.getElementById('bottom-nav').classList.remove('hidden');
-        goToStep(2);
-    });
-
-    function initTelegramProfile() {
-        const u = (window.Telegram && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) || null;
-        state.tgUser = u;
-
-        const first = u?.first_name || state.name || 'Атлет';
-        const last  = u?.last_name || '';
-        const handle = u?.username ? '@' + u.username
-                     : u?.id ? 'Telegram ID · ' + u.id
-                     : 'gym*** · локальный профиль';
-
-        const nameEl = document.getElementById('profile-name');
-        if (nameEl) nameEl.textContent = (first + ' ' + last).trim();
-        
-        const handleEl = document.getElementById('profile-handle');
-        if (handleEl) handleEl.textContent = handle;
-
-        const avatar = document.getElementById('profile-avatar');
-        if (avatar) {
-            avatar.innerHTML = '';
-            if (u?.photo_url && /^https?:\/\//.test(u.photo_url)) {
-                const img = document.createElement('img');
-                img.src = u.photo_url;
-                img.alt = first;
-                img.onerror = () => { 
-                    const letters = (first.charAt(0) + (last ? last.charAt(0) : '')).toUpperCase();
-                    avatar.innerHTML = `<span>${letters || 'G'}</span>`; 
-                };
-                avatar.appendChild(img);
-            } else {
-                const letters = (first.charAt(0) + (last ? last.charAt(0) : '')).toUpperCase();
-                avatar.innerHTML = `<span>${letters || 'G'}</span>`;
-            }
-        }
-
-        const input = document.getElementById('input-name');
-        if (input && u?.first_name && !input.value.trim()) {
-            input.value = u.first_name;
-            state.name = u.first_name;
-            const btnNext0 = document.getElementById('btn-next-0');
-            if (btnNext0) btnNext0.disabled = false;
-        }
-        return u;
-    }
-
-    function initProfileScreen() {
-        initTelegramProfile();
-
-        const lvlMap = { beginner: 'Новичок', enthusiast: 'Энтузиаст', pro: 'Профи' };
-        const levelEl = document.getElementById('profile-level');
-        if (levelEl) levelEl.textContent = lvlMap[state.level] || 'Уровень не указан';
-
-        const totalVolume = state.history.reduce((s, w) => s + (w.volume || 0), 0);
-        const totalMin = state.history.reduce((s, w) => s + (w.duration || 0), 0);
-
-        const totalWorkoutsEl = document.getElementById('total-workouts');
-        if (totalWorkoutsEl) totalWorkoutsEl.textContent = state.history.length;
-        
-        const totalVolumeEl = document.getElementById('total-volume');
-           // Было: if (totalVolumeEl) totalVolumeEl.textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) : Math.round(totalVolume);
-   
-   // Стало:
-   if (totalVolumeEl) {
-       totalVolumeEl.textContent = totalVolume >= 1000 
-           ? (totalVolume / 1000).toFixed(1) + ' т' 
-           : Math.round(totalVolume) + ' кг';
-   }
-        
-        const totalTimeEl = document.getElementById('total-time');
-        if (totalTimeEl) totalTimeEl.textContent = totalMin;
-
-        renderProgressChart();
-        renderHistoryV2();
-
-        const tipTextEl = document.getElementById('tip-text');
-        if (tipTextEl && !tipTextEl.textContent) {
-            tipTextEl.textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)];
-        }
-        
-        document.querySelectorAll('#screen-7 .stagger-item').forEach((item, i) => {
-            setTimeout(() => item.classList.add('visible'), i * 100 + 200);
-        });
-    }
-
-    function renderHistoryV2() {
-        const list = document.getElementById('history-list');
-        if (!list) return;
-        list.innerHTML = '';
-
-        const sorted = [...state.history].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        if (!sorted.length) {
-            list.innerHTML = `<div class="glass-card p-5 text-center">
-                <p class="text-sm text-text-secondary">Пока нет завершённых тренировок</p>
-                <p class="text-xs text-text-muted mt-1">Начните с программы на главной — история появится здесь.</p>
-            </div>`;
-            return;
-        }
-
-        sorted.forEach((w, i) => {
-            const date = new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-            const vol = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + ' т' : (w.volume || 0) + ' кг';
-            const tip = muscleTips[w.mainMuscle] || sportsTips[i % sportsTips.length];
-
-            const item = document.createElement('div');
-            item.className = 'stagger-item glass-card p-4';
-            item.innerHTML = `
-                <div class="flex items-start justify-between gap-3 mb-3">
-                    <div class="min-w-0">
-                        <p class="font-semibold text-text-primary text-sm truncate">${w.title}</p>
-                        <p class="text-[11px] text-text-muted mt-1">${date} · ${w.sets} подходов · ${vol}</p>
-                    </div>
-                    <div class="text-right flex-shrink-0">
-                        <p class="text-sm font-bold text-accent">${w.duration} мин</p>
-                        ${w.maxWeight ? `<p class="text-[10px] text-text-muted mt-1">рекорд ${w.maxWeight} кг</p>` : ''}
-                    </div>
-                </div>
-                <div class="rounded-lg p-3 bg-bg-tertiary border-l-2" style="border-color: rgba(197,160,89,.45)">
-                    <p class="text-[11px] text-text-secondary leading-relaxed">💡 ${tip}</p>
-                </div>`;
-            list.appendChild(item);
-            setTimeout(() => item.classList.add('visible'), i * 70);
-        });
-    }
-
-    const chartState = { metric: 'weight', exercise: null };
-
-    function renderProgressChart() {
-        const wrap = document.getElementById('progress-chart-container');
-        const summary = document.getElementById('chart-summary');
-        if (!wrap) return;
-
-        const history = [...state.history].sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-10);
-        let points = [];
-        let unit = 'кг';
-
-        if (chartState.metric === 'weight') {
-            const names = [...new Set(state.history.flatMap(w => (w.exercises || []).map(e => e.name)))];
-            const select = document.getElementById('chart-exercise');
-
-            if (!chartState.exercise || !names.includes(chartState.exercise)) {
-                chartState.exercise = names[0] || null;
-            }
-
-            if (select) {
-                select.innerHTML = names.length
-                    ? names.map(n => `<option value="${n}" ${n === chartState.exercise ? 'selected' : ''}>${n}</option>`).join('')
-                    : '<option>Нет упражнений</option>';
-                document.getElementById('chart-exercise-wrap').style.display = names.length ? 'block' : 'none';
-            }
-
-            history.forEach(w => {
-                const ex = (w.exercises || []).find(e => e.name === chartState.exercise);
-                const value = ex ? (ex.maxWeight || 0) : (w.maxWeight || 0);
-                if (value > 0) points.push({ value, label: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) });
+            clearInterval(state.clockInterval);
+            const elapsedSec = Math.max(1, Math.round((Date.now() - state.workoutStartTime) / 1000));
+            const elapsedMin = Math.max(1, Math.round(elapsedSec / 60));
+            const exercises = state.currentWorkout.exercises;
+            document.getElementById('stat-time-final').textContent = elapsedMin;
+            document.getElementById('stat-sets-final').textContent = state.totalSetsCompleted;
+            document.getElementById('stat-volume-final').textContent = state.totalVolume >= 1000 ? (state.totalVolume / 1000).toFixed(1) + 'т' : Math.round(state.totalVolume) + 'кг';
+            state.history.unshift({
+                date: new Date().toISOString(), title: state.currentWorkout.title, duration: elapsedMin, durationSec: elapsedSec,
+                volume: Math.round(state.totalVolume), sets: state.totalSetsCompleted,
+                mainMuscle: exercises[0]?.muscle || 'Пресс и Кор',
+                maxWeight: Math.max(0, ...exercises.map(e => e.maxWeight || 0)),
+                exercises: exercises.map(e => ({ name: e.name, muscle: e.muscle, maxWeight: e.maxWeight || e.weight || 0, volume: e.volume || 0, sets: e.sets, reps: e.reps }))
             });
-
-        } else if (chartState.metric === 'volume') {
-            const wrapEx = document.getElementById('chart-exercise-wrap');
-            if (wrapEx) wrapEx.style.display = 'none';
-            history.forEach(w => { if (w.volume > 0) points.push({ value: w.volume, label: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) }); });
-        } else {
-            const wrapEx = document.getElementById('chart-exercise-wrap');
-            if (wrapEx) wrapEx.style.display = 'none';
-            unit = 'мин';
-            history.forEach(w => { if (w.duration > 0) points.push({ value: w.duration, label: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) }); });
+            saveState();
+            try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
         }
 
-        if (points.length < 2) {
-            wrap.innerHTML = `
-                <div class="chart-empty">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#52525B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 3v18h18"></path><path d="M7 14l4-4 4 4 5-6"></path>
-                    </svg>
-                    <p class="text-sm text-text-secondary">Прогресс ещё впереди</p>
-                    <p class="text-[11px] text-text-muted leading-relaxed px-6">
-                        ${chartState.metric === 'weight'
-                            ? 'Выполните это упражнение минимум на двух тренировках — график построится сам.'
-                            : 'Завершите две тренировки — график построится автоматически.'}
-                    </p>
-                </div>`;
-            if (summary) summary.textContent = 'Данные сохраняются после каждого завершённого подхода.';
-            return;
-        }
-
-        const W = 300, H = 120, padX = 10, padTop = 14, padBottom = 22;
-        const maxV = Math.max(...points.map(p => p.value)) * 1.15;
-        const x = i => padX + (i * (W - padX * 2)) / (points.length - 1);
-        const y = v => padTop + (1 - v / maxV) * (H - padTop - padBottom);
-
-        let line = '', area = `M ${x(0)} ${H - padBottom} `;
-        points.forEach((p, i) => {
-            line += `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(p.value)} `;
-            area += `L ${x(i)} ${y(p.value)} `;
-        });
-        area += `L ${x(points.length - 1)} ${H - padBottom} Z`;
-
-        let grid = '';
-        for (let g = 0; g < 3; g++) {
-            const gy = padTop + g * (H - padTop - padBottom) / 2;
-            grid += `<line x1="${padX}" y1="${gy}" x2="${W - padX}" y2="${gy}" stroke="rgba(255,255,255,.05)" stroke-width="1" stroke-dasharray="3 5"/>`;
-        }
-
-        let dots = '';
-        points.forEach((p, i) => {
-            dots += `<circle class="chart-dot" cx="${x(i)}" cy="${y(p.value)}" r="3.5"
-                        fill="#09090B" stroke="#C5A059" stroke-width="2"
-                        data-value="${p.value}" data-label="${p.label}">
-                        <title>${p.label} · ${p.value} ${unit}</title>
-                     </circle>`;
+        document.getElementById('btn-finish-workout').addEventListener('click', () => {
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            goToStep(2);
         });
 
-        wrap.innerHTML = `
-            <svg viewBox="0 0 ${W} ${H}" class="w-full h-full overflow-visible">
-                <defs>
-                    <linearGradient id="chartArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#C5A059" stop-opacity=".28"/>
-                        <stop offset="100%" stop-color="#C5A059" stop-opacity="0"/>
-                    </linearGradient>
-                </defs>
-                ${grid}
-                <path d="${area}" fill="url(#chartArea)"/>
-                <path class="chart-line" d="${line}" fill="none" stroke="#C5A059" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round"/>
-                ${dots}
-            </svg>
-            <div class="flex justify-between mt-1 px-1">
-                <span class="text-[9px] text-text-muted">${points[0].label}</span>
-                <span class="text-[9px] text-text-muted">${points[points.length - 1].label}</span>
-            </div>`;
+        function initTelegramProfile() {
+            const u = (window.Telegram && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) || null;
+            state.tgUser = u;
+            const first = u?.first_name || state.name || 'Атлет';
+            const last = u?.last_name || '';
+            const handle = u?.username ? '@' + u.username : (u?.id ? 'Telegram ID · ' + u.id : 'gym*** · локальный профиль');
+            const nameEl = document.getElementById('profile-name');
+            if (nameEl) nameEl.textContent = (first + ' ' + last).trim();
+            const handleEl = document.getElementById('profile-handle');
+            if (handleEl) handleEl.textContent = handle;
+            const avatar = document.getElementById('profile-avatar');
+            if (avatar) {
+                avatar.innerHTML = '';
+                if (u?.photo_url && /^https?:\/\//.test(u.photo_url)) {
+                    const img = document.createElement('img');
+                    img.src = u.photo_url; img.alt = first;
+                    img.onerror = () => { avatar.innerHTML = `<span>${(first.charAt(0) + (last ? last.charAt(0) : '')).toUpperCase() || 'G'}</span>`; };
+                    avatar.appendChild(img);
+                } else {
+                    avatar.innerHTML = `<span>${(first.charAt(0) + (last ? last.charAt(0) : '')).toUpperCase() || 'G'}</span>`;
+                }
+            }
+            const input = document.getElementById('input-name');
+            if (input && u?.first_name && !input.value.trim()) {
+                input.value = u.first_name; state.name = u.first_name;
+                const btn = document.getElementById('btn-next-0');
+                if (btn) btn.disabled = false;
+            }
+            return u;
+        }
 
-        const values = points.map(p => p.value);
-        const first = values[0], last = values[values.length - 1];
-        const sum = values.reduce((a, b) => a + b, 0);
+        function initProfileScreen() {
+            initTelegramProfile();
+            const lvlMap = { beginner: 'Новичок', enthusiast: 'Энтузиаст', pro: 'Профи' };
+            const levelEl = document.getElementById('profile-level');
+            if (levelEl) levelEl.textContent = lvlMap[state.level] || 'Уровень не указан';
+            const totalVolume = state.history.reduce((s, w) => s + (w.volume || 0), 0);
+            const totalMin = state.history.reduce((s, w) => s + (w.duration || 0), 0);
+            const totalWorkoutsEl = document.getElementById('total-workouts');
+            if (totalWorkoutsEl) totalWorkoutsEl.textContent = state.history.length;
+            const totalVolumeEl = document.getElementById('total-volume');
+            if (totalVolumeEl) totalVolumeEl.textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + ' т' : Math.round(totalVolume) + ' кг';
+            const totalTimeEl = document.getElementById('total-time');
+            if (totalTimeEl) totalTimeEl.textContent = totalMin;
+            renderProgressChart();
+            renderHistoryV2();
+            const tipTextEl = document.getElementById('tip-text');
+            if (tipTextEl && !tipTextEl.textContent) tipTextEl.textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)];
+            document.querySelectorAll('#screen-7 .stagger-item').forEach((item, i) => {
+                setTimeout(() => item.classList.add('visible'), i * 100 + 200);
+            });
+        }
 
-        if (summary) {
+        function renderHistoryV2() {
+            const list = document.getElementById('history-list');
+            if (!list) return;
+            list.innerHTML = '';
+            const sorted = [...state.history].sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (!sorted.length) {
+                list.innerHTML = `<div class="glass-card p-5 text-center"><p class="text-sm text-text-secondary">Пока нет завершённых тренировок</p><p class="text-xs text-text-muted mt-1">Начните с программы на главной.</p></div>`;
+                return;
+            }
+            sorted.forEach((w, i) => {
+                const date = new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+                const vol = w.volume >= 1000 ? (w.volume / 1000).toFixed(1) + ' т' : (w.volume || 0) + ' кг';
+                const tip = muscleTips[w.mainMuscle] || sportsTips[i % sportsTips.length];
+                const item = document.createElement('div');
+                item.className = 'stagger-item glass-card p-4';
+                item.innerHTML = `
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-semibold text-text-primary text-sm truncate">${w.title}</p>
+                            <p class="text-[11px] text-text-muted mt-1">${date} · ${w.sets} подходов · ${vol}</p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <p class="text-sm font-bold text-accent">${w.duration} мин</p>
+                            ${w.maxWeight ? `<p class="text-[10px] text-text-muted mt-1">рекорд ${w.maxWeight} кг</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="rounded-lg p-3 bg-bg-tertiary border-l-2" style="border-color: rgba(197,160,89,.45)">
+                        <p class="text-[11px] text-text-secondary leading-relaxed">💡 ${tip}</p>
+                    </div>`;
+                list.appendChild(item);
+                setTimeout(() => item.classList.add('visible'), i * 70);
+            });
+        }
+
+        const chartState = { metric: 'weight', exercise: null };
+        function renderProgressChart() {
+            const wrap = document.getElementById('progress-chart-container');
+            const summary = document.getElementById('chart-summary');
+            if (!wrap) return;
+            const history = [...state.history].sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-10);
+            let points = [], unit = 'кг';
             if (chartState.metric === 'weight') {
-                const delta = last - first;
-                summary.textContent = `Рекорд ${last} кг · ${delta >= 0 ? '+' : ''}${Math.round(delta * 10) / 10} кг за период`;
+                const names = [...new Set(state.history.flatMap(w => (w.exercises || []).map(e => e.name)))];
+                const select = document.getElementById('chart-exercise');
+                if (!chartState.exercise || !names.includes(chartState.exercise)) chartState.exercise = names[0] || null;
+                if (select) {
+                    select.innerHTML = names.length ? names.map(n => `<option value="${n}" ${n === chartState.exercise ? 'selected' : ''}>${n}</option>`).join('') : '<option>Нет упражнений</option>';
+                    document.getElementById('chart-exercise-wrap').style.display = names.length ? 'block' : 'none';
+                }
+                history.forEach(w => {
+                    const ex = (w.exercises || []).find(e => e.name === chartState.exercise);
+                    const value = ex ? (ex.maxWeight || 0) : (w.maxWeight || 0);
+                    if (value > 0) points.push({ value, label: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) });
+                });
             } else if (chartState.metric === 'volume') {
-                summary.textContent = `Суммарный объём: ${(sum / 1000).toFixed(2)} тонн`;
+                const wrapEx = document.getElementById('chart-exercise-wrap');
+                if (wrapEx) wrapEx.style.display = 'none';
+                history.forEach(w => { if (w.volume > 0) points.push({ value: w.volume, label: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) }); });
             } else {
-                summary.textContent = `Средняя тренировка: ${Math.round(sum / values.length)} минут`;
+                const wrapEx = document.getElementById('chart-exercise-wrap');
+                if (wrapEx) wrapEx.style.display = 'none';
+                unit = 'мин';
+                history.forEach(w => { if (w.duration > 0) points.push({ value: w.duration, label: new Date(w.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) }); });
             }
+            if (points.length < 2) {
+                wrap.innerHTML = `<div class="chart-empty"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#52525B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 14l4-4 4 4 5-6"></path></svg><p class="text-sm text-text-secondary">Прогресс ещё впереди</p><p class="text-[11px] text-text-muted leading-relaxed px-6">${chartState.metric === 'weight' ? 'Выполните это упражнение минимум на двух тренировках.' : 'Завершите две тренировки.'}</p></div>`;
+                if (summary) summary.textContent = 'Данные сохраняются после каждого завершённого подхода.';
+                return;
+            }
+            const W = 300, H = 120, padX = 10, padTop = 14, padBottom = 22;
+            const maxV = Math.max(...points.map(p => p.value)) * 1.15;
+            const x = i => padX + (i * (W - padX * 2)) / (points.length - 1);
+            const y = v => padTop + (1 - v / maxV) * (H - padTop - padBottom);
+            let line = '', area = `M ${x(0)} ${H - padBottom} `;
+            points.forEach((p, i) => { line += `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(p.value)} `; area += `L ${x(i)} ${y(p.value)} `; });
+            area += `L ${x(points.length - 1)} ${H - padBottom} Z`;
+            let grid = '';
+            for (let g = 0; g < 3; g++) { const gy = padTop + g * (H - padTop - padBottom) / 2; grid += `<line x1="${padX}" y1="${gy}" x2="${W - padX}" y2="${gy}" stroke="rgba(255,255,255,.05)" stroke-width="1" stroke-dasharray="3 5"/>`; }
+            let dots = '';
+            points.forEach((p, i) => { dots += `<circle class="chart-dot" cx="${x(i)}" cy="${y(p.value)}" r="3.5" fill="#09090B" stroke="#C5A059" stroke-width="2" data-value="${p.value}" data-label="${p.label}"><title>${p.label} · ${p.value} ${unit}</title></circle>`; });
+            wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="w-full h-full overflow-visible"><defs><linearGradient id="chartArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C5A059" stop-opacity=".28"/><stop offset="100%" stop-color="#C5A059" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${area}" fill="url(#chartArea)"/><path class="chart-line" d="${line}" fill="none" stroke="#C5A059" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg><div class="flex justify-between mt-1 px-1"><span class="text-[9px] text-text-muted">${points[0].label}</span><span class="text-[9px] text-text-muted">${points[points.length - 1].label}</span></div>`;
+            const values = points.map(p => p.value);
+            if (summary) {
+                if (chartState.metric === 'weight') { const delta = values[values.length - 1] - values[0]; summary.textContent = `Рекорд ${values[values.length - 1]} кг · ${delta >= 0 ? '+' : ''}${Math.round(delta * 10) / 10} кг за период`; }
+                else if (chartState.metric === 'volume') { summary.textContent = `Суммарный объём: ${(values.reduce((a, b) => a + b, 0) / 1000).toFixed(2)} тонн`; }
+                else { summary.textContent = `Средняя тренировка: ${Math.round(values.reduce((a, b) => a + b, 0) / values.length)} минут`; }
+            }
+            wrap.querySelectorAll('.chart-dot').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    if (summary) summary.textContent = `${dot.dataset.label} · ${dot.dataset.value} ${unit}`;
+                    try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+                });
+            });
         }
 
-        wrap.querySelectorAll('.chart-dot').forEach(dot => {
-            dot.addEventListener('click', () => {
-                if (summary) summary.textContent = `${dot.dataset.label} · ${dot.dataset.value} ${unit}`;
+        document.querySelectorAll('.chart-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                chartState.metric = btn.dataset.metric;
                 try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+                renderProgressChart();
             });
         });
-    }
 
-    document.querySelectorAll('.chart-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            chartState.metric = btn.dataset.metric;
-            try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
-            renderProgressChart();
-        });
-    });
-
-    const chartExerciseSelect = document.getElementById('chart-exercise');
-    if (chartExerciseSelect) {
-        chartExerciseSelect.addEventListener('change', e => {
-            chartState.exercise = e.target.value;
-            renderProgressChart();
-        });
-    }
-
-    document.getElementById('btn-new-tip').addEventListener('click', () => {
-        const randomTip = sportsTips[Math.floor(Math.random() * sportsTips.length)];
-        const tipEl = document.getElementById('tip-text');
-        if(tipEl) {
-            tipEl.style.opacity = '0';
-            setTimeout(() => { tipEl.textContent = randomTip; tipEl.style.opacity = '1'; }, 200);
+        const chartExerciseSelect = document.getElementById('chart-exercise');
+        if (chartExerciseSelect) {
+            chartExerciseSelect.addEventListener('change', e => { chartState.exercise = e.target.value; renderProgressChart(); });
         }
-        try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
-    });
 
-    // --- ИНИЦИАЛИЗАЦИЯ ---
-    loadState();
-    initTelegramProfile();
-    
-    if (state.currentStep === 2) {
-        document.getElementById('bottom-nav').classList.remove('hidden');
-        document.getElementById('screen-0').classList.remove('active');
-        document.getElementById('screen-2').classList.add('active');
-        initHomeScreen();
-    } else {
-        const input = document.getElementById('input-name');
-        if(input) input.value = state.name;
-        const btnNext0 = document.getElementById('btn-next-0');
-        if(btnNext0) btnNext0.disabled = !state.name;
-    }
-</script>
+        document.getElementById('btn-new-tip').addEventListener('click', () => {
+            const tipEl = document.getElementById('tip-text');
+            if(tipEl) {
+                tipEl.style.opacity = '0';
+                setTimeout(() => { tipEl.textContent = sportsTips[Math.floor(Math.random() * sportsTips.length)]; tipEl.style.opacity = '1'; }, 200);
+            }
+            try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+        });
+
+        loadState();
+        initTelegramProfile();
+        if (state.currentStep === 2) {
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            document.getElementById('screen-0').classList.remove('active');
+            document.getElementById('screen-2').classList.add('active');
+            initHomeScreen();
+        } else {
+            const input = document.getElementById('input-name');
+            if(input) input.value = state.name;
+            const btn = document.getElementById('btn-next-0');
+            if(btn) btn.disabled = !state.name;
+        }
+    </script>
 </body>
 </html>
