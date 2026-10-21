@@ -145,32 +145,55 @@
 .stagger-item { opacity: 0; transform: translate3d(0,10px,0); transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1); }
 .stagger-item.visible { opacity: 1; transform: translate3d(0,0,0); }
 
-/* ===== ЭКРАН ТРЕНИРОВКИ: Компактный, без скролла ===== */
+/* ===== ЭКРАН ТРЕНИРОВКИ: Премиум контраст и переходы ===== */
 #screen-3 { 
-    overflow: hidden; /* Запрещаем скролл, всё должно влезать */
+    overflow: hidden; 
     padding-bottom: calc(5rem + env(safe-area-inset-bottom)); 
-    justify-content: space-between; /* Распределяем пространство */
+    justify-content: space-between; 
 }
 
 .workout-header {
     flex: 0 0 auto;
     display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; margin-bottom: 12px;
+    gap: 10px; margin-bottom: 16px;
 }
 .icon-btn {
-    width: 38px; height: 38px; flex-shrink: 0;
+    width: 40px; height: 40px; flex-shrink: 0;
     border-radius: 50%; background: #18181B;
-    border: 1px solid rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
     display: flex; align-items: center; justify-content: center; color: #A1A1AA;
-    transition: background .2s, transform .2s;
+    transition: all .2s ease;
 }
-.icon-btn:active { transform: scale(.92); background: #222226; }
+.icon-btn:active { transform: scale(.92); background: #27272A; color: #F4F4F5; }
 
 .workout-clock {
     flex-shrink: 0; display: flex; align-items: center; gap: 6px;
-    padding: 8px 10px; border-radius: 10px;
-    background: #111114; border: 1px solid rgba(255,255,255,.05);
-    color: #C5A059; font-size: 12px; font-variant-numeric: tabular-nums;
+    padding: 8px 12px; border-radius: 99px;
+    background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15);
+    color: #C5A059; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+            
+            /* Контейнер для плавного переключения видов */
+.view-switcher {
+    flex: 1 1 auto; display: grid; grid-template-rows: 1fr; 
+    min-height: 0; position: relative;
+}
+.view-panel {
+    grid-row: 1; grid-column: 1;
+    display: flex; flex-direction: column;
+    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.view-panel.hidden-panel {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+    pointer-events: none;
+    z-index: 0;
+}
+.view-panel.active-panel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    z-index: 10;
 }
 
 /* Центральная часть: сжата, но дышит */
@@ -192,58 +215,81 @@
 .set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,.1); }
 @keyframes pulseDot { 0%, 100% { box-shadow: 0 0 0 3px rgba(197,160,89,.15); } 50% { box-shadow: 0 0 0 5px rgba(197,160,89,.05); } }
 
-.workout-card { padding: 16px; }
-.ex-title { font-size: 20px; line-height: 1.2; font-weight: 700; color: #F4F4F5; text-align: center; }
-.muscle-chip {
-    display: block; margin: 6px auto 0; width: fit-content;
-    padding: 3px 10px; font-size: 11px; color: #A1A1AA; 
-    background: #18181B; border-radius: 999px; text-align: center;
+/* Карточка упражнения с глубиной */
+.workout-card {
+    background: linear-gradient(160deg, #18181B 0%, #111114 100%);
+    border: 1px solid rgba(197, 160, 89, 0.15);
+    border-top: 2px solid rgba(197, 160, 89, 0.4); /* Акцент сверху */
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* Степперы: компактные и ровные */
-.stepper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
-.stepper-cell {
-    padding: 10px 6px;
-    background: #18181B; border: 1px solid rgba(255,255,255,.05); border-radius: 12px;
+.ex-title { 
+    font-size: 22px; line-height: 1.2; font-weight: 700; color: #FFFFFF; text-align: center; 
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
-.stepper-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #71717A; margin-bottom: 8px; text-align: center; }
-.stepper-row { display: flex; align-items: center; justify-content: center; gap: 4px; }
-.stepper-btn { width: 32px; height: 32px; flex: 0 0 32px; font-size: 18px; font-weight: 400; }
+.muscle-chip {
+    display: block; margin: 8px auto 0; width: fit-content;
+    padding: 4px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    color: #C5A059; background: rgba(197, 160, 89, 0.08); 
+    border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 99px; text-align: center;
+}
+
+/* Степперы: высокий контраст */
+.stepper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.stepper-cell {
+    padding: 12px 8px;
+    background: #09090B; /* Ещё темнее для контраста с карточкой */
+    border: 1px solid rgba(255,255,255,.06); border-radius: 14px;
+}
+.stepper-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #71717A; margin-bottom: 8px; text-align: center; font-weight: 600; }
+.stepper-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.stepper-btn { 
+    width: 36px; height: 36px; flex: 0 0 36px; 
+    border-radius: 10px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
+    color: #F4F4F5; font-size: 20px; font-weight: 300;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s ease;
+}
+.stepper-btn:active { transform: scale(0.9); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
 .stepper-value {
     width: 50px; background: transparent; border: 0; outline: 0; padding: 0;
-    text-align: center; color: #F4F4F5;
-    font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums;
+    text-align: center; color: #C5A059; /* ЗОЛОТОЙ ЦВЕТ ДЛЯ ЦИФР */
+    font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;
 }
-.stepper-value:focus { color: #C5A059; }
 
-/* Совет: компактный, под карточкой */
+/* Совет: выделенный блок */
 .ex-tip {
-    padding: 10px 12px;
-    display: flex; align-items: flex-start; gap: 8px;
-    background: rgba(197,160,89,.04); border: 1px solid rgba(197,160,89,.10); border-radius: 10px;
+    margin-top: 16px; padding: 12px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px;
 }
-.ex-tip svg { flex-shrink: 0; margin-top: 1px; color: #C5A059; width: 14px; height: 14px; }
-.ex-tip p { font-size: 11px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+.ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #A1A1AA; width: 16px; height: 16px; }
+.ex-tip p { font-size: 12px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+.ex-tip span.text-accent { color: #C5A059; font-weight: 600; }
 
-/* Кнопка действия: прижата к низу, но не перекрывает контент */
+/* Кнопка действия */
 .action-dock {
-    flex: 0 0 auto; padding-top: 12px;
+    flex: 0 0 auto; padding-top: 16px;
     background: linear-gradient(180deg, rgba(9,9,11,0) 0%, #09090B 40%);
 }
 .dock-btn {
-    height: 50px; padding: 0 20px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-size: 15px; font-weight: 600; letter-spacing: .01em;
+    height: 54px; padding: 0 24px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 16px; font-weight: 700; letter-spacing: .02em;
+    box-shadow: 0 8px 24px rgba(197, 160, 89, 0.25);
 }
-.dock-hint { text-align: center; font-size: 10px; color: #52525B; margin-top: 8px; }
+.dock-hint { text-align: center; font-size: 11px; color: #52525B; margin-top: 10px; font-weight: 500; }
 
 /* Таймер отдыха */
-.rest-view { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
-.rest-ring-wrap { position: relative; width: 200px; height: 200px; margin: 16px 0; }
-.rest-time { font-size: 48px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: #F4F4F5; }
-#rest-view.hidden, #dock-rest.hidden, #dock-exercise.hidden { display: none !important; }
-.exercise-fade { transition: opacity .25s ease, transform .25s ease; }
-.exercise-fade.fading { opacity: 0; transform: translate3d(0,8px,0); }
+.rest-panel { align-items: center; justify-content: center; text-align: center; }
+.rest-ring-wrap { position: relative; width: 220px; height: 220px; margin: 24px 0; }
+.rest-time { font-size: 56px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #FFFFFF; }
+.rest-next { 
+    margin-top: 16px; padding: 8px 16px; 
+    background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
+    border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600;
 
 /* ПРОФИЛЬ: личность из Telegram */
 .tg-profile { display: flex; align-items: center; gap: 14px; }
@@ -354,36 +400,33 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
             <div class="space-y-3 mb-6" id="quick-start-container"></div>
         </section>
 
-        <!-- ЭКРАН 3: ТРЕНИРОВКА (Компактный, без скролла) -->
+        <!-- ЭКРАН 3: ТРЕНИРОВКА (Премиум контраст) -->
 <section id="screen-3" class="screen">
 
     <header class="workout-header">
         <button id="btn-close-workout" class="icon-btn" aria-label="Завершить">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
 
         <div class="text-center min-w-0 flex-1">
             <h2 id="workout-title" class="text-base font-bold text-text-primary truncate">Программа</h2>
-            <p id="workout-progress-text" class="text-[11px] text-text-muted mt-0.5">Подход 1 из 4</p>
+            <p id="workout-progress-text" class="text-[11px] text-text-muted mt-1 font-medium">Подход 1 из 4</p>
         </div>
 
         <div class="workout-clock">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
             <span id="workout-clock">00:00</span>
         </div>
     </header>
 
-    <!-- Центральная часть: всё влезает, ничего не скроллится -->
-    <div class="workout-core">
+    <!-- Контейнер для плавного переключения -->
+    <div class="view-switcher">
         
-        <!-- ВИД УПРАЖНЕНИЯ -->
-        <div id="exercise-view" class="exercise-fade w-full">
-            
-            <div class="set-dots-wrap" id="set-dots"></div>
-
-            <div class="glass-card workout-card">
+        <!-- ПАНЕЛЬ УПРАЖНЕНИЯ -->
+        <div id="exercise-view" class="view-panel active-panel">
+            <div class="workout-card">
                 <h3 id="ex-name" class="ex-title">Жим штанги лежа</h3>
-                <span id="ex-muscle" class="muscle-chip">Грудь</span>
+                <span id="ex-muscle" class="muscle-chip">ГРУДЬ</span>
 
                 <div class="stepper-grid">
                     <div class="stepper-cell">
@@ -407,14 +450,15 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
             </div>
 
             <div class="ex-tip">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                <p><span class="text-accent font-semibold">Совет: </span><span id="ex-tip-text">Контролируйте негативную фазу движения.</span></p>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <p><span class="text-accent">Совет:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
             </div>
         </div>
 
-        <!-- ВИД ОТДЫХА -->
-        <div id="rest-view" class="rest-view hidden">
-            <p class="eyebrow">Отдых между подходами</p>
+        <!-- ПАНЕЛЬ ОТДЫХА -->
+        <div id="rest-view" class="view-panel hidden-panel rest-panel">
+            <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
+            
             <div class="rest-ring-wrap">
                 <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
                     <defs>
@@ -423,8 +467,8 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
                             <stop offset="100%" stop-color="#C5A059"/>
                         </linearGradient>
                     </defs>
-                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="5"/>
-                    <circle id="timer-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gradRest)" stroke-width="5"
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6"/>
+                    <circle id="timer-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gradRest)" stroke-width="6"
                             stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0"
                             style="transition: stroke-dashoffset .25s linear;"/>
                 </svg>
@@ -433,29 +477,32 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
                     <span class="text-[10px] text-text-muted uppercase tracking-widest mt-1">осталось</span>
                 </div>
             </div>
-            <p id="rest-next-label" class="text-center text-text-secondary text-xs">Следующий подход: 2 из 4</p>
+            
+            <div id="rest-next-label" class="rest-next">Следующий подход: 2 из 4</div>
         </div>
+
     </div>
 
-    <!-- Кнопка всегда внизу -->
+    <!-- Кнопка действия -->
     <div class="action-dock">
         <div id="dock-exercise">
             <button id="btn-complete-set" class="btn-primary dock-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Завершить подход
             </button>
             <p id="dock-hint" class="dock-hint">Осталось 4 подхода</p>
         </div>
 
-        <div id="dock-rest" class="hidden">
-            <div class="flex gap-2">
-                <button id="btn-less-time" class="btn-secondary flex-1 py-3 text-sm">−15 с</button>
-                <button id="btn-skip-rest" class="btn-primary flex-1 py-3 text-sm">Далее</button>
-                <button id="btn-more-time" class="btn-secondary flex-1 py-3 text-sm">+15 с</button>
+        <div id="dock-rest" class="hidden-panel" style="pointer-events: none;">
+            <div class="flex gap-3">
+                <button id="btn-less-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">− 15с</button>
+                <button id="btn-skip-rest" class="btn-primary flex-1 py-3.5 text-sm font-semibold">Далее</button>
+                <button id="btn-more-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">+ 15с</button>
             </div>
-            <p class="dock-hint">Таймер считается по реальному времени</p>
+            <p class="dock-hint">Время считается автоматически</p>
         </div>
     </div>
+
 </section>
 
         <!-- ЭКРАН 4: ЗАВЕРШЕНИЕ -->
@@ -1065,16 +1112,19 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         const ex = state.currentWorkout?.exercises[state.currentExIndex];
         if (!ex) return;
         
-        const view = document.getElementById('exercise-view');
-        view.classList.add('fading');
+        const exView = document.getElementById('exercise-view');
+        const restView = document.getElementById('rest-view');
+        
+        // Подготовка к анимации
+        restView.classList.add('hidden-panel');
+        restView.classList.remove('active-panel');
         
         setTimeout(() => {
             document.getElementById('workout-title').textContent = state.currentWorkout.title;
             document.getElementById('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
             document.getElementById('ex-name').textContent = ex.name;
-            document.getElementById('ex-muscle').textContent = ex.muscle || 'Функционал';
+            document.getElementById('ex-muscle').textContent = (ex.muscle || 'Функционал').toUpperCase();
             
-            // ИСПРАВЛЕНО: используем .value для input, а не .textContent
             document.getElementById('ex-weight').value = ex.weight || 0;
             document.getElementById('ex-reps').value = ex.reps || 10;
             
@@ -1083,22 +1133,22 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
             
             renderSetDots(); 
             
-            document.getElementById('exercise-view').classList.remove('hidden');
-            document.getElementById('rest-view').classList.add('hidden');
-            document.getElementById('dock-exercise').classList.remove('hidden');
-            document.getElementById('dock-rest').classList.add('hidden');
-            state.isResting = false;
-            
             const lastSet = ex.log?.[ex.log.length - 1];
             const dockHint = document.getElementById('dock-hint');
             if (dockHint) {
                 dockHint.textContent = lastSet
-                    ? `Последний подход: ${lastSet.weight} кг × ${lastSet.reps}`
+                    ? `Последний: ${lastSet.weight} кг × ${lastSet.reps}`
                     : `Осталось ${ex.sets - state.currentSet + 1} подходов`;
             }
 
-            requestAnimationFrame(() => view.classList.remove('fading'));
-        }, 250);
+            // Запуск анимации появления
+            exView.classList.remove('hidden-panel');
+            requestAnimationFrame(() => {
+                exView.classList.add('active-panel');
+            });
+            
+            state.isResting = false;
+        }, 50);
     }
 
     function renderSetDots() {
@@ -1175,17 +1225,29 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         }
         
         const skipBtn = document.getElementById('btn-skip-rest');
-        if (skipBtn) {
-            skipBtn.textContent = isLastSet ? 'К упражнению' : 'Далее';
-        }
+        if (skipBtn) skipBtn.textContent = isLastSet ? 'К упражнению' : 'Далее';
         
-        document.getElementById('exercise-view').classList.add('hidden');
-        document.getElementById('rest-view').classList.remove('hidden');
-        document.getElementById('dock-exercise').classList.add('hidden');
-        document.getElementById('dock-rest').classList.remove('hidden');
+        const exView = document.getElementById('exercise-view');
+        const restView = document.getElementById('rest-view');
+        const dockEx = document.getElementById('dock-exercise');
+        const dockRest = document.getElementById('dock-rest');
+
+        // Анимация ухода упражнения и прихода таймера
+        exView.classList.remove('active-panel');
+        exView.classList.add('hidden-panel');
         
-        tickRest();
-        state.timerInterval = setInterval(tickRest, 200);
+        setTimeout(() => {
+            restView.classList.remove('hidden-panel');
+            dockRest.classList.remove('hidden-panel');
+            dockRest.style.pointerEvents = 'auto';
+            
+            requestAnimationFrame(() => {
+                restView.classList.add('active-panel');
+            });
+            
+            tickRest();
+            state.timerInterval = setInterval(tickRest, 200);
+        }, 200); // Небольшая задержка для перекрытия анимаций
     }
 
     function tickRest() {
@@ -1226,6 +1288,7 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
 
     function finishRest() {
         const ex = state.currentWorkout.exercises[state.currentExIndex];
+        
         if (state.currentSet < ex.sets) {
             state.currentSet++;
             renderCurrentExercise();
