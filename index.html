@@ -290,6 +290,7 @@
     margin-top: 16px; padding: 8px 16px; 
     background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
     border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600;
+    }
 
 /* ПРОФИЛЬ: личность из Telegram */
 .tg-profile { display: flex; align-items: center; gap: 14px; }
@@ -422,8 +423,12 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
     <!-- Контейнер для плавного переключения -->
     <div class="view-switcher">
         
-        <!-- ПАНЕЛЬ УПРАЖНЕНИЯ -->
+                <!-- ПАНЕЛЬ УПРАЖНЕНИЯ -->
         <div id="exercise-view" class="view-panel active-panel">
+            
+            <!-- ВОССТАНОВЛЕНО: Контейнер для точек подходов -->
+            <div class="set-dots-wrap" id="set-dots"></div>
+
             <div class="workout-card">
                 <h3 id="ex-name" class="ex-title">Жим штанги лежа</h3>
                 <span id="ex-muscle" class="muscle-chip">ГРУДЬ</span>
