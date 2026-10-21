@@ -638,8 +638,15 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         tg.setHeaderColor('#09090B'); tg.setBackgroundColor('#09090B');
         tg.MainButton.hide(); tg.BackButton.hide();
 
-        // БАЗА УПРАЖНЕНИЙ (Оставлена без изменений, но для краткости пропущена в этом блоке, оставьте вашу текущую базу)
-        // ... (Вставьте сюда ваш текущий массив exerciseDB) ...
+                const exerciseDB = [
+            { category: 'Грудь', items: ['Жим штанги лежа', 'Жим гантелей на наклонной скамье', 'Жим в Хаммере', 'Разводка гантелей лежа', 'Сведения в кроссовере', 'Отжимания на брусьях', 'Отжимания от пола', 'Пуловер с гантелью'] },
+            { category: 'Спина', items: ['Становая тяга', 'Тяга штанги в наклоне', 'Тяга Т-грифа', 'Подтягивания широким хватом', 'Подтягивания узким хватом', 'Тяга верхнего блока к груди', 'Тяга горизонтального блока', 'Тяга гантели одной рукой', 'Гиперэкстензия', 'Пуловер в блоке', 'Шраги с гантелями'] },
+            { category: 'Ноги', items: ['Приседания со штангой на плечах', 'Фронтальные приседания', 'Жим ногами в тренажере', 'Выпады с гантелями', 'Болгарские выпады', 'Румынская тяга', 'Сгибания ног в тренажере', 'Разгибания ног в тренажере', 'Подъем на носки стоя', 'Подъем на носки сидя', 'Зашагивания на тумбу'] },
+            { category: 'Плечи', items: ['Армейский жим стоя', 'Жим гантелей сидя', 'Жим в Хаммере на плечи', 'Махи гантелями в стороны', 'Махи гантелями в наклоне', 'Тяга к подбородку', 'Обратные разведения в Pec-Dec'] },
+            { category: 'Руки', items: ['Подъем штанги на бицепс стоя', 'Подъем гантелей на бицепс с супинацией', 'Молотки с гантелями', 'Подъем штанги обратным хватом', 'Французский жим лежа', 'Разгибания на блоке на трицепс', 'Отжимания узким хватом', 'Разгибания рук с гантелью из-за головы'] },
+            { category: 'Пресс и Кор', items: ['Скручивания на полу', 'Подъем ног в висе', 'Планка классическая', 'Планка боковая', 'Русский твист', 'Молитва в блоке', 'Складка', 'Велосипед'] },
+            { category: 'Кардио и Функционал', items: ['Бег на дорожке', 'Эллипсоид', 'Велотренажер', 'Гребной тренажер', 'Скакалка', 'Берпи', 'Бой с тенью', 'Упражнение "Мельница"'] }
+        ];
 
         // РАСШИРЕННЫЕ СОВЕТЫ (Более 40 штук)
         const muscleTips = {
@@ -1070,27 +1077,49 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         }
 
         function renderCurrentExercise() {
-            const view = document.getElementById('exercise-view');
-            view.classList.add('fading');
-            
+            const ex = state.currentWorkout?.exercises[state.currentExIndex];
+            if (!ex) return;
+            const view = $('exercise-view');
+            if (view) view.classList.add('fading');
+
             setTimeout(() => {
-                const ex = state.currentWorkout.exercises[state.currentExIndex];
-                document.getElementById('workout-title').textContent = state.currentWorkout.title;
-                document.getElementById('ex-name').textContent = ex.name;
-                document.getElementById('ex-muscle').textContent = ex.muscle;
-                document.getElementById('ex-weight').textContent = ex.weight;
-                document.getElementById('ex-reps').textContent = ex.reps;
-                
-                // НОВЫЙ СОВЕТ ДЛЯ УПРАЖНЕНИЯ
-                const tipText = muscleTips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
-                document.getElementById('ex-tip-text').textContent = tipText;
-                
-                renderSetDots(); 
-                view.classList.remove('hidden');
-                document.getElementById('rest-view').classList.add('hidden');
+                if ($('workout-title')) $('workout-title').textContent = state.currentWorkout.title;
+                if ($('workout-progress-text')) $('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
+                if ($('ex-counter')) $('ex-counter').textContent = `Упражнение ${state.currentExIndex + 1} / ${state.currentWorkout.exercises.length}`;
+                if ($('ex-name')) $('ex-name').textContent = ex.name;
+                if ($('ex-muscle')) $('ex-muscle').textContent = ex.muscle || 'Функционал';
+                if ($('ex-weight')) $('ex-weight').value = ex.weight || 0;
+                if ($('ex-reps')) $('ex-reps').value = ex.reps || 10;
+
+                const tips = (typeof muscleTips !== 'undefined') ? muscleTips : {};
+                if ($('ex-tip-text')) {
+                    $('ex-tip-text').textContent = tips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
+                }
+
+                renderSetDots();
+                renderSetStrip();
+
+                const lastSet = ex.log?.[ex.log.length - 1];
+                if ($('dock-hint')) {
+                    $('dock-hint').textContent = lastSet
+                        ? `Последний подход: ${lastSet.weight} кг × ${lastSet.reps}`
+                        : `Осталось ${ex.sets} ${ex.sets === 1 ? 'подход' : 'подходов'}`;
+                }
+
+                if ($('btn-complete-set')) $('btn-complete-set').disabled = false;
+                if (view) view.classList.remove('hidden');
+                if ($('rest-view')) $('rest-view').classList.add('hidden');
+                if ($('dock-exercise')) $('dock-exercise').classList.remove('hidden');
+                if ($('dock-rest')) $('dock-rest').classList.add('hidden');
                 state.isResting = false;
-                setTimeout(() => view.classList.remove('fading'), 50);
-            }, 300);
+
+                const sc = document.querySelector('#screen-3 .screen-scroll') || document.querySelector('#screen-3');
+                if (sc) sc.scrollTop = 0;
+                
+                requestAnimationFrame(() => {
+                    if (view) view.classList.remove('fading');
+                });
+            }, 180);
         }
 
         function renderSetDots() {
@@ -1471,19 +1500,19 @@ function renderSetDots() {
 }
 
 function renderSetStrip() {
-    const ex = state.currentWorkout.exercises[state.currentExIndex];
-    const c = $('set-strip');
-    if (!c) return;
-    c.innerHTML = '';
-    const check = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-    for (let i = 1; i <= ex.sets; i++) {
-        const done = (ex.log || []).find(l => l.set === i);
-        const chip = document.createElement('div');
-        chip.className = 'set-chip ' + (done ? 'done' : i === state.currentSet ? 'current' : 'todo');
-        chip.innerHTML = done ? `${check}<span>${done.weight}×${done.reps}</span>` : `<span>${i}</span>`;
-        c.appendChild(chip);
-    }
-}
+            const ex = state.currentWorkout.exercises[state.currentExIndex];
+            const c = $('set-strip');
+            if (!c) return; // Безопасный выход: если элемента нет в HTML, код не упадет
+            c.innerHTML = '';
+            const check = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            for (let i = 1; i <= ex.sets; i++) {
+                const done = (ex.log || []).find(l => l.set === i);
+                const chip = document.createElement('div');
+                chip.className = 'set-chip ' + (done ? 'done' : i === state.currentSet ? 'current' : 'todo');
+                chip.innerHTML = done ? `${check}<span>${done.weight}×${done.reps}</span>` : `<span>${i}</span>`;
+                c.appendChild(chip);
+            }
+        }
 
 /* ---------- ЗАВЕРШЕНИЕ ПОДХОДА ---------- */
 rebindButton('btn-complete-set', () => {
