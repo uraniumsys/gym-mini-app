@@ -39,29 +39,6 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-                /* ИСПРАВЛЕНО: Убрали filter: blur, добавили GPU-ускорение */
-        .screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
-            padding: 1.5rem; padding-bottom: 5.5rem; 
-            display: flex; flex-direction: column;
-            opacity: 0; 
-            transform: translate3d(0, 20px, 0); /* Аппаратное ускорение */
-            pointer-events: none; 
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Более плавная и быстрая кривая */
-            overflow-y: auto;
-            will-change: transform, opacity; /* Подсказка браузеру для оптимизации */
-        }
-        .screen.active { 
-            opacity: 1; 
-            transform: translate3d(0, 0, 0); 
-            pointer-events: auto; 
-            position: relative; 
-        }
-        .screen.exit { 
-            opacity: 0; 
-            transform: translate3d(0, -20px, 0); 
-        }
-
         .glass-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(4px); transition: transform 0.2s; }
         .glass-card:active { transform: scale(0.98); }
         
@@ -660,7 +637,8 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         </div>
         <div class="glass-card p-3 text-center">
             <p id="total-volume" class="text-lg font-bold text-accent">0</p>
-            <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Объем, т</p>
+               <!-- Было: <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Объем, т</p> -->
+   <p class="text-[9px] text-text-muted mt-1 uppercase tracking-wide">Общий объем</p>
         </div>
         <div class="glass-card p-3 text-center">
             <p id="total-time" class="text-lg font-bold text-accent">0</p>
@@ -1121,7 +1099,8 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
                 inp.addEventListener('change', (e) => {
                     const idx = parseInt(e.target.dataset.index);
                     const type = e.target.classList.contains('ex-sets') ? 'sets' : e.target.classList.contains('ex-reps') ? 'reps' : 'weight';
-                    state.newProgram.exercises[idx][type] = parseFloat(e.target.value) || 0;
+                       // Было: state.newProgram.exercises[idx][type] = parseFloat(e.target.value) || 0;
+   state.newProgram.exercises[idx][type] = parseFloat(String(e.target.value).replace(',', '.')) || 0;
                 });
             });
             container.appendChild(item);
@@ -1234,7 +1213,8 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
             const input = document.getElementById(`ex-${target}`);
             if (!input) return;
             
-            let val = parseFloat(input.value) || 0;
+               // Было: let val = parseFloat(input.value) || 0;
+   let val = parseFloat(String(input.value).replace(',', '.')) || 0;
             const step = target === 'weight' ? 2.5 : 1;
             
             if (action === 'plus') val += step;
@@ -1249,7 +1229,8 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         if (state.isResting || !state.currentWorkout) return;
         
         const ex = state.currentWorkout.exercises[state.currentExIndex];
-        const weight = parseFloat(document.getElementById('ex-weight').value) || 0;
+           // Было: const weight = parseFloat(document.getElementById('ex-weight').value) || 0;
+   const weight = parseFloat(String(document.getElementById('ex-weight').value).replace(',', '.')) || 0;
         const reps = parseInt(document.getElementById('ex-reps').value) || 0;
         
         if (reps <= 0) {
@@ -1475,7 +1456,14 @@ select.input-premium { appearance: none; background-image: url("data:image/svg+x
         if (totalWorkoutsEl) totalWorkoutsEl.textContent = state.history.length;
         
         const totalVolumeEl = document.getElementById('total-volume');
-        if (totalVolumeEl) totalVolumeEl.textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) : Math.round(totalVolume);
+           // Было: if (totalVolumeEl) totalVolumeEl.textContent = totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) : Math.round(totalVolume);
+   
+   // Стало:
+   if (totalVolumeEl) {
+       totalVolumeEl.textContent = totalVolume >= 1000 
+           ? (totalVolume / 1000).toFixed(1) + ' т' 
+           : Math.round(totalVolume) + ' кг';
+   }
         
         const totalTimeEl = document.getElementById('total-time');
         if (totalTimeEl) totalTimeEl.textContent = totalMin;
