@@ -96,7 +96,7 @@
         .ex-item { padding: 0.75rem 1rem; background: #18181B; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
         .ex-item:active { background: #27272A; border-color: rgba(197, 160, 89, 0.3); transform: scale(0.98); }
 
-        /* ===== ЭКРАН ТРЕНИРОВКИ: Исправленная версия ===== */
+        /* ===== ЭКРАН ТРЕНИРОВКИ: Полностью исправленная версия ===== */
 #screen-3 { 
     overflow: hidden; 
     padding: 1.5rem;
@@ -112,12 +112,20 @@
     gap: 12px; margin-bottom: 24px;
 }
 
+.workout-clock {
+    flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px; border-radius: 99px;
+    background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15);
+    color: #C5A059; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+
 .view-switcher {
     flex: 1 1 auto; 
     display: flex;
     flex-direction: column;
     min-height: 0; 
     position: relative;
+    width: 100%;
 }
 
 .view-panel {
@@ -135,6 +143,7 @@
     display: flex !important;
 }
 
+/* Точки подходов */
 .set-dots-wrap { 
     display: flex; 
     justify-content: center; 
@@ -143,15 +152,32 @@
     width: 100%;
 }
 
+.set-dot { 
+    width: 10px; height: 10px; border-radius: 50%; 
+    transition: all .3s cubic-bezier(.16,1,.3,1); 
+}
+.set-dot.completed { background: #C5A059; }
+.set-dot.current { 
+    background: rgba(197,160,89,.3); 
+    box-shadow: 0 0 0 3px rgba(197,160,89,.15); 
+    animation: pulseDot 1.5s infinite; 
+}
+.set-dot.future { background: #27272A; border: 1px solid rgba(255,255,255,.1); }
+@keyframes pulseDot { 
+    0%, 100% { box-shadow: 0 0 0 3px rgba(197,160,89,.15); } 
+    50% { box-shadow: 0 0 0 6px rgba(197,160,89,.05); } 
+}
+
+/* Карточка упражнения */
 .workout-card {
     background: #111114;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 20px;
-    padding: 24px 20px;
+    padding: 24px;
     width: 100%;
     box-sizing: border-box;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .ex-title { 
@@ -177,20 +203,23 @@
     text-align: center;
 }
 
+/* Степперы - ИСПРАВЛЕНО */
 .stepper-grid { 
     display: grid; 
     grid-template-columns: 1fr 1fr; 
     gap: 16px; 
+    width: 100%;
 }
 
 .stepper-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px 8px;
+    padding: 16px 12px;
     background: #09090B;
     border: 1px solid rgba(255,255,255,.06); 
     border-radius: 16px;
+    min-width: 0; /* Важно: предотвращает выход за границы */
 }
 
 .stepper-label { 
@@ -208,28 +237,33 @@
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    gap: 8px; 
+    gap: 12px; 
     width: 100%;
 }
 
 .stepper-btn { 
-    width: 40px; height: 40px; flex: 0 0 40px; 
+    width: 44px; height: 44px; flex: 0 0 44px; 
     border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
     color: #F4F4F5; font-size: 20px; font-weight: 400;
     display: flex; align-items: center; justify-content: center;
     transition: all .15s ease;
+    flex-shrink: 0; /* Важно: кнопки не сжимаются */
 }
 
+.stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
+
 .stepper-value {
-    width: 50px; 
+    width: 60px; /* Увеличили ширину */
     background: transparent; border: 0; outline: 0; padding: 0;
     text-align: center; color: #C5A059;
     font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;
+    flex-shrink: 0; /* Важно: число не сжимается */
 }
 
+/* Совет */
 .ex-tip {
     margin-top: auto;
-    margin-bottom: 16px;
+    margin-bottom: 20px; /* Увеличили отступ */
     padding: 16px;
     display: flex; align-items: flex-start; gap: 12px;
     background: rgba(197, 160, 89, 0.04); 
@@ -239,10 +273,12 @@
 
 .ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 18px; height: 18px; }
 .ex-tip p { font-size: 13px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+.ex-tip span.text-accent { color: #C5A059; font-weight: 600; }
 
+/* Кнопка действия */
 .action-dock {
     flex: 0 0 auto; 
-    padding-top: 16px;
+    padding-top: 20px;
     background: linear-gradient(180deg, rgba(9,9,11,0) 0%, #09090B 40%);
 }
 
@@ -268,7 +304,7 @@
     font-weight: 500; 
 }
 
-/* Rest timer styles */
+/* Таймер отдыха */
 .rest-panel { 
     align-items: center; 
     justify-content: center; 
@@ -420,94 +456,103 @@
         </section>
 
         <!-- ЭКРАН 3: ТРЕНИРОВКА -->
-        <section id="screen-3" class="screen">
-            <header class="workout-header">
-                <button id="btn-close-workout" class="icon-btn" aria-label="Завершить">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
+<section id="screen-3" class="screen">
+    <header class="workout-header">
+        <button id="btn-close-workout" class="icon-btn" aria-label="Завершить">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
 
-                <div class="text-center min-w-0 flex-1">
-                    <h2 id="workout-title" class="text-base font-bold text-text-primary truncate">Программа</h2>
-                    <p id="workout-progress-text" class="text-[11px] text-text-muted mt-1 font-medium">Подход 1 из 4</p>
-                </div>
+        <div class="text-center min-w-0 flex-1">
+            <h2 id="workout-title" class="text-base font-bold text-text-primary truncate">Программа</h2>
+            <p id="workout-progress-text" class="text-[11px] text-text-muted mt-1 font-medium">Подход 1 из 4</p>
+        </div>
 
-                <div class="workout-clock">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
-                    <span id="workout-clock">00:00</span>
-                </div>
-            </header>
+        <div class="workout-clock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
+            <span id="workout-clock">00:00</span>
+        </div>
+    </header>
 
-            <div class="view-switcher">
-                <div id="exercise-view" class="view-panel active-panel">
-                    <div class="set-dots-wrap" id="set-dots"></div>
-                    <div class="workout-card">
-                        <h3 id="ex-name" class="ex-title">Жим штанги лежа</h3>
-                        <span id="ex-muscle" class="muscle-chip">ГРУДЬ</span>
-                        <div class="stepper-grid">
-                            <div class="stepper-cell">
-                                <label class="stepper-label">Вес, кг</label>
-                                <div class="stepper-row">
-                                    <button class="stepper-btn" data-target="weight" data-action="minus">−</button>
-                                    <input id="ex-weight" class="stepper-value" type="number" inputmode="decimal" value="60">
-                                    <button class="stepper-btn" data-target="weight" data-action="plus">+</button>
-                                </div>
-                            </div>
-                            <div class="stepper-cell">
-                                <label class="stepper-label">Повторы</label>
-                                <div class="stepper-row">
-                                    <button class="stepper-btn" data-target="reps" data-action="minus">−</button>
-                                    <input id="ex-reps" class="stepper-value" type="number" inputmode="numeric" value="10">
-                                    <button class="stepper-btn" data-target="reps" data-action="plus">+</button>
-                                </div>
-                            </div>
+    <div class="view-switcher">
+        <div id="exercise-view" class="view-panel active-panel">
+            <div class="set-dots-wrap" id="set-dots"></div>
+            
+            <div class="workout-card">
+                <h3 id="ex-name" class="ex-title">Жим штанги лежа</h3>
+                <span id="ex-muscle" class="muscle-chip">ГРУДЬ</span>
+                
+                <div class="stepper-grid">
+                    <div class="stepper-cell">
+                        <label class="stepper-label">ВЕС, КГ</label>
+                        <div class="stepper-row">
+                            <button class="stepper-btn" data-target="weight" data-action="minus">−</button>
+                            <input id="ex-weight" class="stepper-value" type="number" inputmode="decimal" value="20" step="0.5">
+                            <button class="stepper-btn" data-target="weight" data-action="plus">+</button>
                         </div>
                     </div>
-                    <div class="ex-tip">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                        <p><span class="text-accent">Совет:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
-                    </div>
-                </div>
-
-                <div id="rest-view" class="view-panel hidden-panel rest-panel">
-                    <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
-                    <div class="rest-ring-wrap">
-                        <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-                            <defs>
-                                <linearGradient id="gradRest" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#E5C07B"/>
-                                    <stop offset="100%" stop-color="#C5A059"/>
-                                </linearGradient>
-                            </defs>
-                            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6"/>
-                            <circle id="timer-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gradRest)" stroke-width="6" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0" style="transition: stroke-dashoffset .25s linear;"/>
-                        </svg>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span id="timer-text" class="rest-time">01:30</span>
-                            <span class="text-[10px] text-text-muted uppercase tracking-widest mt-1">осталось</span>
+                    
+                    <div class="stepper-cell">
+                        <label class="stepper-label">ПОВТОРЫ</label>
+                        <div class="stepper-row">
+                            <button class="stepper-btn" data-target="reps" data-action="minus">−</button>
+                            <input id="ex-reps" class="stepper-value" type="number" inputmode="numeric" value="10">
+                            <button class="stepper-btn" data-target="reps" data-action="plus">+</button>
                         </div>
                     </div>
-                    <div id="rest-next-label" class="rest-next">Следующий подход: 2 из 4</div>
                 </div>
             </div>
 
-            <div class="action-dock">
-                <div id="dock-exercise">
-                    <button id="btn-complete-set" class="btn-primary dock-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        Завершить подход
-                    </button>
-                    <p id="dock-hint" class="dock-hint">Осталось 4 подхода</p>
-                </div>
-                <div id="dock-rest" class="hidden-panel" style="pointer-events: none;">
-                    <div class="flex gap-3">
-                        <button id="btn-less-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">− 15с</button>
-                        <button id="btn-skip-rest" class="btn-primary flex-1 py-3.5 text-sm font-semibold">Далее</button>
-                        <button id="btn-more-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">+ 15с</button>
-                    </div>
-                    <p class="dock-hint">Время считается автоматически</p>
+            <div class="ex-tip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <p><span class="text-accent">Совет:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
+            </div>
+        </div>
+
+        <div id="rest-view" class="view-panel hidden-panel rest-panel">
+            <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
+            
+            <div class="rest-ring-wrap">
+                <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                    <defs>
+                        <linearGradient id="gradRest" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#E5C07B"/>
+                            <stop offset="100%" stop-color="#C5A059"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="6"/>
+                    <circle id="timer-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gradRest)" stroke-width="6"
+                            stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="0"
+                            style="transition: stroke-dashoffset .25s linear;"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="timer-text" class="rest-time">01:30</span>
+                    <span class="text-[10px] text-text-muted uppercase tracking-widest mt-1">осталось</span>
                 </div>
             </div>
-        </section>
+            
+            <div id="rest-next-label" class="rest-next">Следующий подход: 2 из 4</div>
+        </div>
+    </div>
+
+    <div class="action-dock">
+        <div id="dock-exercise">
+            <button id="btn-complete-set" class="btn-primary dock-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Завершить подход
+            </button>
+            <p id="dock-hint" class="dock-hint">Осталось 3 подхода</p>
+        </div>
+
+        <div id="dock-rest" class="hidden-panel" style="pointer-events: none;">
+            <div class="flex gap-3">
+                <button id="btn-less-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">− 15с</button>
+                <button id="btn-skip-rest" class="btn-primary flex-1 py-3.5 text-sm font-semibold">Далее</button>
+                <button id="btn-more-time" class="btn-secondary flex-1 py-3.5 text-sm font-semibold">+ 15с</button>
+            </div>
+            <p class="dock-hint">Время считается автоматически</p>
+        </div>
+    </div>
+</section>
 
         <!-- ЭКРАН 4: ЗАВЕРШЕНИЕ -->
         <section id="screen-4" class="screen">
