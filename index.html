@@ -97,6 +97,40 @@
         .ex-item:active { background: #27272A; border-color: rgba(197, 160, 89, 0.3); transform: scale(0.98); }
 
         /* ===== ЭКРАН ТРЕНИРОВКИ: Финальная версия ===== */
+        /* ===== ИСПРАВЛЕНИЕ СКРОЛЛА НА ГЛАВНОЙ СТРАНИЦЕ ===== */
+#screen-2 {
+    overflow-y: auto !important;
+    padding-bottom: 6rem !important; /* Гарантирует место для нижней навигации и прокрутку до конца */
+}
+/* Убираем лишние ограничения высоты для контейнера программ */
+#quick-start-container {
+    padding-bottom: 1rem;
+}
+
+/* ===== ВЕРТИКАЛЬНЫЕ КНОПКИ ТАЙМЕРА И ИХ УМЕНЬШЕНИЕ ===== */
+#dock-rest .flex {
+    flex-direction: column; /* Кнопки теперь друг под другом */
+    gap: 8px;
+    margin-bottom: 4px;
+}
+#dock-rest .btn-secondary, 
+#dock-rest .btn-primary {
+    padding: 12px; /* Уменьшенная высота кнопок */
+    font-size: 14px;
+    height: auto;
+    border-radius: 12px;
+}
+
+/* ===== ФОРМАТИРОВАНИЕ ПОДСКАЗКИ ВНИЗУ ТАЙМЕРА ===== */
+#dock-rest .dock-hint {
+    text-align: center;
+    font-size: 11px;
+    color: #52525B;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
         #screen-3 { 
             overflow: hidden; 
             padding: 1rem 1.25rem;
@@ -972,42 +1006,46 @@
         }
 
         function renderCurrentExercise() {
-            const ex = state.currentWorkout?.exercises[state.currentExIndex];
-            if (!ex) return;
-            const exView = document.getElementById('exercise-view');
-            const restView = document.getElementById('rest-view');
-            
-            restView.classList.remove('active-panel');
-            
-            // ИСПРАВЛЕНО: Сбрасываем состояние совета при смене упражнения
-            const adviceContent = document.getElementById('advice-content');
-            const adviceToggleBtn = document.getElementById('advice-toggle');
-            if (adviceContent) adviceContent.classList.remove('show');
-            if (adviceToggleBtn) {
-                adviceToggleBtn.innerHTML = `
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                    Показать совет
-                `;
-            }
+    const ex = state.currentWorkout?.exercises[state.currentExIndex];
+    if (!ex) return;
+    const exView = document.getElementById('exercise-view');
+    const restView = document.getElementById('rest-view');
+    
+    restView.classList.remove('active-panel');
+    
+    const adviceContent = document.getElementById('advice-content');
+    const adviceToggleBtn = document.getElementById('advice-toggle');
+    if (adviceContent) adviceContent.classList.remove('show');
+    if (adviceToggleBtn) {
+        adviceToggleBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Показать совет
+        `;
+    }
 
-            setTimeout(() => {
-                document.getElementById('workout-title').textContent = state.currentWorkout.title;
-                document.getElementById('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
-                document.getElementById('ex-name').textContent = ex.name;
-                document.getElementById('ex-muscle').textContent = (ex.muscle || 'Функционал').toUpperCase();
-                document.getElementById('ex-weight').value = ex.weight || 0;
-                document.getElementById('ex-reps').value = ex.reps || 10;
-                document.getElementById('ex-tip-text').textContent = muscleTips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
-                renderSetDots(); 
-                
-                const lastSet = ex.log?.[ex.log.length - 1];
-                const dockHint = document.getElementById('dock-hint');
-                if (dockHint) dockHint.textContent = lastSet ? `Последний: ${lastSet.weight} кг × ${lastSet.reps}` : `Осталось ${ex.sets - state.currentSet + 1} подходов`;
-                
-                exView.classList.add('active-panel');
-                state.isResting = false;
-            }, 50);
+    setTimeout(() => {
+        document.getElementById('workout-title').textContent = state.currentWorkout.title;
+        document.getElementById('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
+        document.getElementById('ex-name').textContent = ex.name;
+        document.getElementById('ex-muscle').textContent = (ex.muscle || 'Функционал').toUpperCase();
+        document.getElementById('ex-weight').value = ex.weight || 0;
+        document.getElementById('ex-reps').value = ex.reps || 10;
+        document.getElementById('ex-tip-text').textContent = muscleTips[ex.muscle] || sportsTips[Math.floor(Math.random() * sportsTips.length)];
+        renderSetDots(); 
+        
+        const lastSet = ex.log?.[ex.log.length - 1];
+        const dockHint = document.getElementById('dock-hint');
+        if (dockHint) {
+            // ИСПРАВЛЕНО: Формат "Последний: 25 кг на 12"
+            dockHint.textContent = lastSet 
+                ? `Последний: ${lastSet.weight} кг на ${lastSet.reps}` 
+                : `Осталось ${ex.sets - state.currentSet + 1} подходов`;
         }
+        
+        exView.classList.add('active-panel');
+        state.isResting = false;
+    }, 50);
+}
 
         function renderSetDots() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
