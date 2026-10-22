@@ -163,23 +163,55 @@
             color: #C5A059; background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15); border-radius: 99px; text-align: center;
         }
 
-        /* Степперы */
-        .stepper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .stepper-cell {
-            display: flex; flex-direction: column; align-items: center; padding: 12px 8px;
-            background: #09090B; border: 1px solid rgba(255,255,255,.06); border-radius: 16px; overflow: hidden; min-width: 0;
-        }
-        .stepper-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #71717A; margin-bottom: 10px; text-align: center; font-weight: 600; }
-        .stepper-row { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; }
-        .stepper-btn { 
-            width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
-            color: #F4F4F5; font-size: 18px; font-weight: 400; display: flex; align-items: center; justify-content: center; transition: all .15s ease;
-        }
-        .stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
-        .stepper-value {
-            width: 48px; background: transparent; border: 0; outline: 0; padding: 0; text-align: center; color: #C5A059;
-            font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0;
-        }
+        /* Степперы: РАСШИРЕННЫЕ блоки */
+.stepper-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 16px; /* Увеличили padding */
+    background: #09090B;
+    border: 1px solid rgba(255,255,255,.06); 
+    border-radius: 16px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.stepper-label { 
+    display: block; 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: .12em; 
+    color: #71717A; 
+    margin-bottom: 14px; 
+    text-align: center; 
+    font-weight: 600; 
+}
+
+.stepper-row { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    width: 100%;
+}
+
+.stepper-btn { 
+    width: 44px; height: 44px; flex: 0 0 44px; /* Увеличили кнопки */
+    border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
+    color: #F4F4F5; font-size: 20px; font-weight: 400;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s ease;
+}
+
+.stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
+
+.stepper-value {
+    width: 56px; /* Увеличили ширину значения */
+    background: transparent; border: 0; outline: 0; padding: 0;
+    text-align: center; color: #C5A059;
+    font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+}
 
         /* Совет */
         .ex-tip {
@@ -200,8 +232,20 @@
 
         /* Таймер отдыха */
         .rest-panel { align-items: center; justify-content: center; text-align: center; padding: 10px 0; }
-        .rest-ring-wrap { position: relative; width: 200px; height: 200px; margin: 16px auto; }
-        .rest-time { font-size: 48px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #FFFFFF; }
+.rest-ring-wrap { 
+    position: relative; 
+    width: 240px; /* Увеличили размер */
+    height: 240px; 
+    margin: 20px auto; 
+}
+
+.rest-time { 
+    font-size: 52px; 
+    font-weight: 800; 
+    letter-spacing: -.03em; 
+    font-variant-numeric: tabular-nums; 
+    color: #FFFFFF; 
+}
         .rest-next { 
             margin-top: 12px; padding: 8px 16px; background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
             border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600; display: inline-block;
