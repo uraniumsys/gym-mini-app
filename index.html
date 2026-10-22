@@ -130,7 +130,7 @@
             color: #C5A059; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; flex-shrink: 0;
         }
 
-        /* VIEW SWITCHER: Плавное переключение через opacity/visibility вместо display:none */
+        /* VIEW SWITCHER: Плавное переключение через opacity/visibility */
         .view-switcher {
             flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; position: relative; width: 100%;
         }
@@ -163,126 +163,67 @@
             color: #C5A059; background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15); border-radius: 99px; text-align: center;
         }
 
-        /* Степперы: РАСШИРЕННЫЕ блоки */
-.stepper-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 18px 16px; /* Увеличили padding */
-    background: #09090B;
-    border: 1px solid rgba(255,255,255,.06); 
-    border-radius: 16px;
-    overflow: hidden;
-    min-width: 0;
-}
-
-.stepper-label { 
-    display: block; 
-    font-size: 10px; 
-    text-transform: uppercase; 
-    letter-spacing: .12em; 
-    color: #71717A; 
-    margin-bottom: 14px; 
-    text-align: center; 
-    font-weight: 600; 
-}
-
-.stepper-row { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 10px; 
-    width: 100%;
-}
-
-.stepper-btn { 
-    width: 44px; height: 44px; flex: 0 0 44px; /* Увеличили кнопки */
-    border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
-    color: #F4F4F5; font-size: 20px; font-weight: 400;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .15s ease;
-}
-
-.stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
-
-.stepper-value {
-    width: 56px; /* Увеличили ширину значения */
-    background: transparent; border: 0; outline: 0; padding: 0;
-    text-align: center; color: #C5A059;
-    font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-}
+        /* Степперы: Сетка и расширенные блоки */
+        .stepper-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            width: 100%;
+        }
+        .stepper-cell {
+            display: flex; flex-direction: column; align-items: center; padding: 18px 16px;
+            background: #09090B; border: 1px solid rgba(255,255,255,.06); border-radius: 16px; overflow: hidden; min-width: 0;
+        }
+        .stepper-label { 
+            display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #71717A; 
+            margin-bottom: 14px; text-align: center; font-weight: 600; 
+        }
+        .stepper-row { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
+        .stepper-btn { 
+            width: 44px; height: 44px; flex: 0 0 44px; border-radius: 12px; background: #18181B; border: 1px solid rgba(255,255,255,.1);
+            color: #F4F4F5; font-size: 20px; font-weight: 400; display: flex; align-items: center; justify-content: center; transition: all .15s ease;
+        }
+        .stepper-btn:active { transform: scale(0.92); background: rgba(197, 160, 89, 0.15); border-color: #C5A059; color: #C5A059; }
+        .stepper-value {
+            width: 56px; background: transparent; border: 0; outline: 0; padding: 0; text-align: center; color: #C5A059;
+            font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0;
+        }
 
         /* Кнопка-триггер для совета */
-.advice-toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin: 12px auto 0 auto;
-    padding: 8px 16px;
-    background: rgba(197, 160, 89, 0.08);
-    border: 1px solid rgba(197, 160, 89, 0.15);
-    border-radius: 99px;
-    color: #C5A059;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-.advice-toggle-btn:active {
-    transform: scale(0.95);
-    background: rgba(197, 160, 89, 0.15);
-}
-.advice-toggle-btn svg {
-    width: 14px; height: 14px;
-}
+        .advice-toggle-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            margin: 12px auto 0 auto; padding: 8px 16px;
+            background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.15);
+            border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
+        }
+        .advice-toggle-btn:active { transform: scale(0.95); background: rgba(197, 160, 89, 0.15); }
+        .advice-toggle-btn svg { width: 14px; height: 14px; }
 
-/* Раскрывающийся блок совета */
-.advice-content {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.advice-content.show {
-    max-height: 200px; /* Достаточная высота для текста */
-    opacity: 1;
-    margin-top: 12px;
-    margin-bottom: 16px;
-}
+        /* Раскрывающийся блок совета */
+        .advice-content {
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease;
+            margin-top: 0; margin-bottom: 0;
+        }
+        .advice-content.show {
+            max-height: 200px; opacity: 1; margin-top: 12px; margin-bottom: 16px;
+        }
+        .advice-inner {
+            padding: 14px; display: flex; align-items: flex-start; gap: 10px;
+            background: rgba(197, 160, 89, 0.04); border: 1px solid rgba(197, 160, 89, 0.1); border-radius: 14px;
+        }
+        .advice-inner svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 16px; height: 16px; }
+        .advice-inner p { font-size: 12px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+        .advice-inner span.text-accent { color: #C5A059; font-weight: 600; }
 
-/* Внутренности совета */
-.advice-inner {
-    padding: 14px;
-    display: flex; align-items: flex-start; gap: 10px;
-    background: rgba(197, 160, 89, 0.04); 
-    border: 1px solid rgba(197, 160, 89, 0.1); 
-    border-radius: 14px;
-}
-.advice-inner svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 16px; height: 16px; }
-.advice-inner p { font-size: 12px; line-height: 1.5; color: #A1A1AA; margin: 0; }
-.advice-inner span.text-accent { color: #C5A059; font-weight: 600; }
+        /* Управление видимостью доков (ИСПРАВЛЕНО) */
+        .dock-hidden { display: none !important; }
 
         /* Таймер отдыха */
         .rest-panel { align-items: center; justify-content: center; text-align: center; padding: 10px 0; }
-.rest-ring-wrap { 
-    position: relative; 
-    width: 240px; /* Увеличили размер */
-    height: 240px; 
-    margin: 20px auto; 
-}
-
-.rest-time { 
-    font-size: 52px; 
-    font-weight: 800; 
-    letter-spacing: -.03em; 
-    font-variant-numeric: tabular-nums; 
-    color: #FFFFFF; 
-}
+        .rest-ring-wrap { position: relative; width: 240px; height: 240px; margin: 20px auto; }
+        .rest-time { font-size: 52px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #FFFFFF; }
         .rest-next { 
             margin-top: 12px; padding: 8px 16px; background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.2); 
             border-radius: 99px; color: #C5A059; font-size: 12px; font-weight: 600; display: inline-block;
@@ -436,19 +377,19 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Кнопка, открывающая совет -->
-<button id="advice-toggle" class="advice-toggle-btn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    Показать совет
-</button>
+                    
+                    <button id="advice-toggle" class="advice-toggle-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        Показать совет
+                    </button>
 
-<!-- Скрытый блок с текстом совета -->
-<div id="advice-content" class="advice-content">
-    <div class="advice-inner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        <p><span class="text-accent">Техника:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
-    </div>
-</div>
+                    <div id="advice-content" class="advice-content">
+                        <div class="advice-inner">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            <p><span class="text-accent">Техника:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
+                        </div>
+                    </div>
+                </div>
 
                 <div id="rest-view" class="view-panel rest-panel">
                     <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
@@ -480,7 +421,9 @@
                     </button>
                     <p id="dock-hint" class="dock-hint">Осталось 3 подхода</p>
                 </div>
-                <div id="dock-rest" class="view-panel" style="pointer-events: none;">
+                
+                <!-- ИСПРАВЛЕНО: убран класс view-panel, который ломал верстку -->
+                <div id="dock-rest" class="dock-hidden">
                     <div class="flex gap-3">
                         <button id="btn-less-time" class="btn-secondary flex-1 py-3 text-sm font-semibold">− 15с</button>
                         <button id="btn-skip-rest" class="btn-primary flex-1 py-3 text-sm font-semibold">Далее</button>
@@ -1034,9 +977,19 @@
             const exView = document.getElementById('exercise-view');
             const restView = document.getElementById('rest-view');
             
-            // Плавное скрытие отдыха
             restView.classList.remove('active-panel');
             
+            // ИСПРАВЛЕНО: Сбрасываем состояние совета при смене упражнения
+            const adviceContent = document.getElementById('advice-content');
+            const adviceToggleBtn = document.getElementById('advice-toggle');
+            if (adviceContent) adviceContent.classList.remove('show');
+            if (adviceToggleBtn) {
+                adviceToggleBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Показать совет
+                `;
+            }
+
             setTimeout(() => {
                 document.getElementById('workout-title').textContent = state.currentWorkout.title;
                 document.getElementById('workout-progress-text').textContent = `Подход ${state.currentSet} из ${ex.sets}`;
@@ -1051,7 +1004,6 @@
                 const dockHint = document.getElementById('dock-hint');
                 if (dockHint) dockHint.textContent = lastSet ? `Последний: ${lastSet.weight} кг × ${lastSet.reps}` : `Осталось ${ex.sets - state.currentSet + 1} подходов`;
                 
-                // Плавное появление упражнения
                 exView.classList.add('active-panel');
                 state.isResting = false;
             }, 50);
@@ -1115,19 +1067,16 @@
             const skipBtn = document.getElementById('btn-skip-rest');
             if (skipBtn) skipBtn.textContent = isLastSet ? 'К упражнению' : 'Далее';
             
-            // Плавное переключение
             document.getElementById('exercise-view').classList.remove('active-panel');
-            document.getElementById('dock-exercise').style.display = 'none';
+            document.getElementById('dock-exercise').classList.add('dock-hidden'); // ИСПРАВЛЕНО
             
             setTimeout(() => {
                 document.getElementById('rest-view').classList.add('active-panel');
-                document.getElementById('dock-rest').classList.add('active-panel');
-                document.getElementById('dock-rest').style.pointerEvents = 'auto';
-                document.getElementById('dock-rest').style.display = 'block';
+                document.getElementById('dock-rest').classList.remove('dock-hidden'); // ИСПРАВЛЕНО
                 
                 tickRest();
                 state.timerInterval = setInterval(tickRest, 200);
-            }, 350); // Синхронизировано с transition: 0.35s в CSS
+            }, 350);
         }
 
         function tickRest() {
@@ -1155,8 +1104,8 @@
 
         function finishRest() {
             const ex = state.currentWorkout.exercises[state.currentExIndex];
-            document.getElementById('dock-rest').style.display = 'none';
-            document.getElementById('dock-exercise').style.display = 'block';
+            document.getElementById('dock-rest').classList.add('dock-hidden'); // ИСПРАВЛЕНО
+            document.getElementById('dock-exercise').classList.remove('dock-hidden'); // ИСПРАВЛЕНО
             
             if (state.currentSet < ex.sets) {
                 state.currentSet++;
@@ -1382,29 +1331,6 @@
             });
         }
 
-        // Логика кнопки "Показать совет"
-const adviceToggleBtn = document.getElementById('advice-toggle');
-const adviceContent = document.getElementById('advice-content');
-
-if (adviceToggleBtn && adviceContent) {
-    adviceToggleBtn.addEventListener('click', () => {
-        const isShown = adviceContent.classList.contains('show');
-        if (isShown) {
-            adviceContent.classList.remove('show');
-            adviceToggleBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                Показать совет
-            `;
-        } else {
-            adviceContent.classList.add('show');
-            adviceToggleBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                Скрыть совет
-            `;
-            try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
-        }
-    });
-}
         document.querySelectorAll('.chart-tab').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
@@ -1428,6 +1354,30 @@ if (adviceToggleBtn && adviceContent) {
             }
             try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
         });
+
+        // Логика кнопки "Показать совет"
+        const adviceToggleBtn = document.getElementById('advice-toggle');
+        const adviceContent = document.getElementById('advice-content');
+
+        if (adviceToggleBtn && adviceContent) {
+            adviceToggleBtn.addEventListener('click', () => {
+                const isShown = adviceContent.classList.contains('show');
+                if (isShown) {
+                    adviceContent.classList.remove('show');
+                    adviceToggleBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        Показать совет
+                    `;
+                } else {
+                    adviceContent.classList.add('show');
+                    adviceToggleBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                        Скрыть совет
+                    `;
+                    try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+                }
+            });
+        }
 
         // --- ИНИЦИАЛИЗАЦИЯ ---
         loadState();
