@@ -213,22 +213,59 @@
     flex-shrink: 0;
 }
 
-        /* Совет */
-        .ex-tip {
-            margin-top: 12px; padding: 14px; display: flex; align-items: flex-start; gap: 10px;
-            background: rgba(197, 160, 89, 0.04); border: 1px solid rgba(197, 160, 89, 0.1); border-radius: 14px; flex-shrink: 0;
-        }
-        .ex-tip svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 16px; height: 16px; }
-        .ex-tip p { font-size: 12px; line-height: 1.5; color: #A1A1AA; margin: 0; }
-        .ex-tip span.text-accent { color: #C5A059; font-weight: 600; }
+        /* Кнопка-триггер для совета */
+.advice-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 12px auto 0 auto;
+    padding: 8px 16px;
+    background: rgba(197, 160, 89, 0.08);
+    border: 1px solid rgba(197, 160, 89, 0.15);
+    border-radius: 99px;
+    color: #C5A059;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.advice-toggle-btn:active {
+    transform: scale(0.95);
+    background: rgba(197, 160, 89, 0.15);
+}
+.advice-toggle-btn svg {
+    width: 14px; height: 14px;
+}
 
-        /* Кнопка действия */
-        .action-dock { flex: 0 0 auto; padding-top: 12px; margin-top: auto; }
-        .dock-btn {
-            height: 52px; padding: 0 24px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 10px;
-            font-size: 15px; font-weight: 700; letter-spacing: .02em; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.2); margin-bottom: 8px;
-        }
-        .dock-hint { text-align: center; font-size: 11px; color: #52525B; margin: 0; font-weight: 500; }
+/* Раскрывающийся блок совета */
+.advice-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.advice-content.show {
+    max-height: 200px; /* Достаточная высота для текста */
+    opacity: 1;
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+
+/* Внутренности совета */
+.advice-inner {
+    padding: 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(197, 160, 89, 0.04); 
+    border: 1px solid rgba(197, 160, 89, 0.1); 
+    border-radius: 14px;
+}
+.advice-inner svg { flex-shrink: 0; margin-top: 2px; color: #C5A059; width: 16px; height: 16px; }
+.advice-inner p { font-size: 12px; line-height: 1.5; color: #A1A1AA; margin: 0; }
+.advice-inner span.text-accent { color: #C5A059; font-weight: 600; }
 
         /* Таймер отдыха */
         .rest-panel { align-items: center; justify-content: center; text-align: center; padding: 10px 0; }
@@ -399,11 +436,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ex-tip">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                        <p><span class="text-accent">Совет:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
-                    </div>
-                </div>
+                    <!-- Кнопка, открывающая совет -->
+<button id="advice-toggle" class="advice-toggle-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    Показать совет
+</button>
+
+<!-- Скрытый блок с текстом совета -->
+<div id="advice-content" class="advice-content">
+    <div class="advice-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <p><span class="text-accent">Техника:</span> <span id="ex-tip-text">Контролируйте негативную фазу движения 2-3 секунды.</span></p>
+    </div>
+</div>
 
                 <div id="rest-view" class="view-panel rest-panel">
                     <p class="text-[10px] text-text-muted uppercase tracking-[0.2em] font-bold mb-2">Отдых</p>
@@ -1337,6 +1382,29 @@
             });
         }
 
+        // Логика кнопки "Показать совет"
+const adviceToggleBtn = document.getElementById('advice-toggle');
+const adviceContent = document.getElementById('advice-content');
+
+if (adviceToggleBtn && adviceContent) {
+    adviceToggleBtn.addEventListener('click', () => {
+        const isShown = adviceContent.classList.contains('show');
+        if (isShown) {
+            adviceContent.classList.remove('show');
+            adviceToggleBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Показать совет
+            `;
+        } else {
+            adviceContent.classList.add('show');
+            adviceToggleBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                Скрыть совет
+            `;
+            try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+        }
+    });
+}
         document.querySelectorAll('.chart-tab').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
