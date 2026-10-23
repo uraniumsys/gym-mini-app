@@ -19,9 +19,10 @@ accent:{DEFAULT:'#C5A059',hover:'#D4AF37'}}}}}
 html,body{margin:0;background:#09090B;color:#F4F4F5;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 body{background:radial-gradient(900px 420px at 50% -120px,rgba(197,160,89,.14),transparent) #09090B}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-.screen{position:fixed;inset:0;overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(18px);filter:blur(6px);
- transition:opacity .45s cubic-bezier(.16,1,.3,1),transform .45s cubic-bezier(.16,1,.3,1),filter .45s,visibility .45s}
-.screen.on{opacity:1;visibility:visible;transform:none;filter:none}
+.screen{position:fixed;inset:0;overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(14px);
+ transition:opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1),visibility .35s}
+.screen:not(.on),.screen:not(.on) *{pointer-events:none!important}
+.screen.on{opacity:1;visibility:visible;transform:none}
 .wrap{max-width:520px;margin:0 auto;padding:1.5rem 1.25rem calc(7rem + env(safe-area-inset-bottom));min-height:100%;display:flex;flex-direction:column}
 .card{background:linear-gradient(180deg,#131316,#0F0F12);border:1px solid rgba(255,255,255,.06);border-radius:1.1rem;transition:transform .2s}
 .tap:active{transform:scale(.97)}
@@ -32,7 +33,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 .inp{width:100%;background:#18181B;border:1px solid rgba(255,255,255,.06);border-radius:.8rem;padding:.85rem 1rem;color:#F4F4F5;font-size:1rem;outline:0;font-family:inherit}
 .inp:focus{border-color:rgba(197,160,89,.5)}
 .pop{opacity:0;transform:translateY(10px);transition:.5s cubic-bezier(.16,1,.3,1)}.pop.v{opacity:1;transform:none}
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(17,17,20,.92);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.06);padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom))}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(14,14,17,.97);border-top:1px solid rgba(255,255,255,.06);padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom))}
 .nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:#52525B;background:0;border:0;padding:.4rem;font-size:10px;font-weight:500;transition:.3s}
 .nav button.on{color:var(--a)}
 .ring{transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)}
@@ -43,41 +44,40 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 .step{width:42px;height:42px;border-radius:12px;background:#18181B;border:1px solid rgba(255,255,255,.1);color:#F4F4F5;font-size:20px}
 .step:active{background:rgba(197,160,89,.15);border-color:var(--a);color:var(--a)}
 .sv{width:64px;background:0;border:0;outline:0;text-align:center;color:var(--a);font-size:24px;font-weight:700;font-family:inherit}
-.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:.3s}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:.3s}
 .modal.on{opacity:1;visibility:visible}
 .sheet{background:#111114;width:100%;max-width:520px;max-height:80vh;overflow-y:auto;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
 .modal.on .sheet{transform:none}
-.glow{animation:g 3s infinite ease-in-out}@keyframes g{50%{filter:drop-shadow(0 0 26px rgba(197,160,89,.6))}}
+.glow{box-shadow:0 0 48px rgba(197,160,89,.35)}
 .ln{stroke-dasharray:1000;stroke-dashoffset:1000;animation:dr 1.3s forwards}@keyframes dr{to{stroke-dashoffset:0}}
 .hide{display:none!important}
 .conf{position:fixed;top:-10px;width:8px;height:12px;z-index:200;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}.ln{stroke-dashoffset:0}}
 
-.ex-title{font-size:22px;line-height:1.25;font-weight:800;text-align:center;letter-spacing:-.01em;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere;text-wrap:balance}
-.stage{position:relative;flex:1;min-height:440px}
-.pane{position:absolute;inset:0;overflow-y:auto;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.94) translateY(16px);filter:blur(10px);
- transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1),filter .5s,visibility .5s}
-.pane.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;filter:none}
-.pane.out{transform:scale(1.05) translateY(-8px)}
-.dock{position:relative;height:60px;margin-top:12px}
-.dpane{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateY(12px);transition:.4s cubic-bezier(.16,1,.3,1)}
+.ex-title{font-size:22px;line-height:1.25;font-weight:800;text-align:center;letter-spacing:-.01em;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere;text-wrap:balance;text-shadow:0 0 24px rgba(197,160,89,.35)}
+.stage{position:relative;flex:1;min-height:400px}
+.pane{position:absolute;inset:0;overflow-y:auto;opacity:0;visibility:hidden;transform:scale(.96) translateY(12px);
+ transition:opacity .35s ease,transform .5s cubic-bezier(.16,1,.3,1),visibility .35s}
+.pane.on{opacity:1;visibility:visible;transform:none}
+.pane.out{transform:scale(1.03)}
+.dock{position:relative;height:56px;margin-top:12px}
+.dpane{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .3s,transform .4s cubic-bezier(.16,1,.3,1),visibility .3s}
 .dpane.on{opacity:1;visibility:visible;transform:none}
 .seg{flex:1;height:4px;border-radius:9px;background:#27272A;display:block}
 .seg.d{background:var(--a)}.seg.c{background:linear-gradient(90deg,var(--a) var(--p,0%),#27272A var(--p,0%))}
-.cell{display:flex;flex-direction:column;align-items:center;padding:14px 10px 10px;background:#09090B;border:1px solid rgba(255,255,255,.06);border-radius:18px}
-.cell .sv{width:100%;font-size:34px;line-height:1.1;margin-bottom:10px;font-variant-numeric:tabular-nums}
-.step{flex:1;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;transition:.15s}
-.step:active{transform:scale(.9)}
-.timer{position:relative;width:min(300px,78vw);aspect-ratio:1;margin:8px auto 18px}
-.halo{position:absolute;inset:-6%;border-radius:50%;background:conic-gradient(from 0deg,rgba(229,192,123,.0),rgba(229,192,123,.5),rgba(139,90,60,0),rgba(197,160,89,.4),rgba(229,192,123,0));filter:blur(26px);opacity:.55;animation:spin 9s linear infinite,breathe 3s ease-in-out infinite}
-@keyframes spin{to{transform:rotate(360deg)}}@keyframes breathe{50%{opacity:.85;scale:1.06}}
-.timer svg{position:relative;width:100%;height:100%;overflow:visible}
-.t-digits{font-size:clamp(52px,17vw,68px);font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;background:linear-gradient(180deg,#fff,#E5C07B);-webkit-background-clip:text;background-clip:text;color:transparent}
-.timer.urgent .t-digits{animation:beat 1s infinite;background:linear-gradient(180deg,#fff,#F59E0B)}
-.timer.urgent #t-ring{stroke:#F59E0B}.timer.urgent .halo{filter:blur(26px) hue-rotate(-20deg)}
-@keyframes beat{50%{transform:scale(1.08)}}
-.next-card{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 16px;border-radius:16px;max-width:340px;width:100%;background:rgba(197,160,89,.07);border:1px solid rgba(197,160,89,.18);backdrop-filter:blur(6px)}
+.glowcard{position:relative;border-color:rgba(197,160,89,.22);box-shadow:0 0 0 1px rgba(197,160,89,.06),0 14px 48px -14px rgba(197,160,89,.4)}
+.glowcard::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 55% at 50% 0%,rgba(197,160,89,.16),transparent 70%)}
+.cell{padding:12px 12px 12px;background:#09090B;border:1px solid rgba(255,255,255,.06);border-radius:16px}
+.lbl{display:block;text-align:center;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#71717A;font-weight:600;margin-bottom:8px}
+.srow{display:flex;align-items:center;gap:8px}
+.step{width:46px;height:46px;flex:0 0 46px;border-radius:13px;background:#18181B;border:1px solid rgba(255,255,255,.1);color:#F4F4F5;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s}
+.step:active{transform:scale(.92);background:rgba(197,160,89,.15);border-color:var(--a);color:var(--a)}
+.srow .sv{flex:1;min-width:0;width:auto;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.timer{position:relative;width:min(260px,70vw);aspect-ratio:1;margin:10px auto 22px}
+.timer svg{width:100%;height:100%}
+.t-digits{font-size:clamp(48px,15vw,60px);font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;color:#F4F4F5}
+.next-card{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 16px;border-radius:16px;max-width:340px;width:100%;background:rgba(197,160,89,.07);border:1px solid rgba(197,160,89,.18)}
 .hy{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere}
 </style>
 </head>
@@ -105,7 +105,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
  <p class="text-text-muted text-xs uppercase tracking-wider font-medium pt-2">Ваш прогресс за неделю</p>
  <div class="flex items-center justify-between mt-1 mb-5">
   <h1 id="greet" class="text-3xl font-bold truncate"></h1>
-  <span id="streak" class="chip on shrink-0 ml-2 inline-flex items-center gap-1"></span>
+  
  </div>
  <div class="card p-5 mb-6 flex items-center gap-5 pop">
   <svg viewBox="0 0 120 120" class="w-36 h-36 -rotate-90 shrink-0">
@@ -136,30 +136,22 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
   <span id="w-clock" class="chip on tabular-nums">00:00</span>
  </header>
  <div class="stage">
-  <div id="ex-view" class="pane on"><div class="card p-5">
+  <div id="ex-view" class="pane on"><div class="card glowcard p-5">
    <div class="flex items-center justify-between mb-3"><span id="ex-muscle" class="chip on !text-[10px] tracking-wider"></span><span id="ex-set" class="text-xs text-text-muted font-semibold tabular-nums"></span></div>
    <h3 id="ex-name" class="ex-title"></h3>
-   <div class="grid grid-cols-2 gap-3 mt-5">
-    <div class="cell"><p class="text-[10px] text-text-muted uppercase tracking-widest mb-1 font-semibold">Вес, кг</p><input id="ex-weight" class="sv" inputmode="decimal">
-     <div class="flex gap-2 w-full"><button class="step btn2 !p-0" data-t="weight" data-d="-1" aria-label="Меньше"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14"/></svg></button><button class="step btn2 !p-0" data-t="weight" data-d="1" aria-label="Больше"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 5v14M5 12h14"/></svg></button></div></div>
-    <div class="cell"><p class="text-[10px] text-text-muted uppercase tracking-widest mb-1 font-semibold">Повторы</p><input id="ex-reps" class="sv" inputmode="numeric">
-     <div class="flex gap-2 w-full"><button class="step btn2 !p-0" data-t="reps" data-d="-1" aria-label="Меньше"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14"/></svg></button><button class="step btn2 !p-0" data-t="reps" data-d="1" aria-label="Больше"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 5v14M5 12h14"/></svg></button></div></div>
-   </div>
+   <div class="grid gap-3 mt-5"><div class="cell"><span class="lbl">Вес, кг</span><div class="srow"><button class="step" data-t="weight" data-d="-1" aria-label="Меньше"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14"/></svg></button><input id="ex-weight" class="sv" inputmode="decimal"><button class="step" data-t="weight" data-d="1" aria-label="Больше"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 5v14M5 12h14"/></svg></button></div></div><div class="cell"><span class="lbl">Повторы</span><div class="srow"><button class="step" data-t="reps" data-d="-1" aria-label="Меньше"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14"/></svg></button><input id="ex-reps" class="sv" inputmode="numeric"><button class="step" data-t="reps" data-d="1" aria-label="Больше"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 5v14M5 12h14"/></svg></button></div></div></div>
    <p id="ex-last" class="text-center text-xs text-text-muted mt-4"></p>
    <button id="b-tip" class="btn2 w-full mt-3 !text-[13px] text-text-secondary inline-flex items-center justify-center gap-2"><span class="text-accent"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>Совет по технике</button>
   </div></div>
-  <div id="rest-view" class="pane flex-col items-center justify-center text-center" style="display:flex">
+  <div id="rest-view" class="pane" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
    <p class="text-[10px] text-text-muted uppercase tracking-[.3em] font-bold">Отдых</p>
-   <div id="timer" class="timer"><div class="halo"></div>
-    <svg viewBox="0 0 160 160" class="-rotate-90"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3D9A0"/><stop offset="1" stop-color="#C5A059"/></linearGradient>
-     <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-     <g id="ticks" stroke="#C5A059" stroke-width="1.4" stroke-linecap="round"></g>
-     <circle cx="80" cy="80" r="62" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
-     <circle id="t-ring" cx="80" cy="80" r="62" fill="none" stroke="url(#gr)" stroke-width="7" stroke-linecap="round" stroke-dasharray="389.6" filter="url(#glow)"/>
-     <circle id="t-dot" cx="142" cy="80" r="4.5" fill="#fff" filter="url(#glow)"/></svg>
+   <div class="timer">
+    <svg viewBox="0 0 120 120" class="-rotate-90"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E5C07B"/><stop offset="1" stop-color="#C5A059"/></linearGradient></defs>
+     <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="6"/>
+     <circle id="t-ring" cx="60" cy="60" r="54" fill="none" stroke="url(#gr)" stroke-width="6" stroke-linecap="round" stroke-dasharray="339.3"/></svg>
     <div class="absolute inset-0 flex flex-col items-center justify-center"><span id="t-text" class="t-digits">01:30</span><span class="text-[10px] text-text-muted uppercase tracking-[.25em] mt-2">осталось</span></div>
    </div>
-   <div class="next-card"><span class="text-accent shrink-0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><div class="min-w-0"><p class="text-[10px] uppercase tracking-widest text-text-muted">Далее</p><p id="r-next-t" class="font-semibold text-sm hy"></p><p id="r-next-s" class="text-xs text-accent"></p></div></div>
+   <div class="next-card"><span class="text-accent shrink-0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><div class="min-w-0"><p class="text-[10px] uppercase tracking-widest text-text-muted">Далее</p><p id="r-next-t" class="font-semibold text-sm hy"></p><p id="r-next-s" class="text-xs text-accent"></p></div></div>
   </div>
  </div>
  <div class="dock">
@@ -333,7 +325,7 @@ function show(id) {
   $('s-'+cur).classList.remove('on');
   cur = id;
   const el = $('s-'+id); el.scrollTop = 0; el.classList.add('on');
-  $('nav').classList.toggle('hide', !NAV.includes(id) && id !== 'create' ? true : id === 'create');
+  $('nav').classList.toggle('hide', !NAV.includes(id));
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.s === (id === 'create' ? 'progs' : id)));
   try { id === 'create' ? tg.BackButton.show() : tg.BackButton.hide(); } catch {}
   ({home:renderHome, progs:renderProgs, prof:renderProfile, work:startClock, done:renderDone})[id]?.();
@@ -362,13 +354,6 @@ $('b-level').onclick = () => { if (S.level) { persist(); show('home'); } };
 
 /* ===== ГЛАВНАЯ ===== */
 const weekStart = () => { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
-function streak() {
-  const days = new Set(S.history.map(w => new Date(w.date).toDateString()));
-  let n = 0, d = new Date();
-  if (!days.has(d.toDateString())) d.setDate(d.getDate() - 1);
-  while (days.has(d.toDateString())) { n++; d.setDate(d.getDate() - 1); }
-  return n;
-}
 function ring(id, c, p) { $(id).style.strokeDashoffset = c * (1 - Math.min(1, Math.max(0, p))); }
 function progCard(p, i, mount, withDel) {
   const lvl = p.isDefault ? p.level : 'Моя';
@@ -387,7 +372,6 @@ function progCard(p, i, mount, withDel) {
 }
 function renderHome() {
   $('greet').textContent = `Привет, ${S.name}`;
-  const st = streak(); $('streak').innerHTML = `${ic('flame', 14)}${st}`; $('streak').classList.toggle('hide', !st);
   const ws = S.history.filter(w => new Date(w.date).getTime() >= weekStart());
   const vol = ws.reduce((s, w) => s + (w.volume || 0), 0), min = ws.reduce((s, w) => s + (w.duration || 0), 0);
   const target = { pro:15000, enthusiast:8000, beginner:4000 }[S.level] || 6000, goal = S.settings.goal;
@@ -482,37 +466,26 @@ $('b-set').onclick = () => {
   if (W.set >= ex.sets && W.ei >= W.exs.length - 1) return finish();
   startRest();
 };
-const CIRC = 389.6;
+const CIRC = 339.3;
+function paintRing() {
+  const left = Math.max(0, (W.deadline - Date.now()) / 1000), r = $('t-ring');
+  r.style.transition = 'none'; r.style.strokeDashoffset = CIRC * (1 - Math.min(1, left / W.initial)); r.getBoundingClientRect();
+  r.style.transition = `stroke-dashoffset ${left}s linear`; r.style.strokeDashoffset = CIRC;
+}
 function startRest() {
   const ex = W.exs[W.ei], lastSet = W.set >= ex.sets, lastEx = W.ei >= W.exs.length - 1, next = W.exs[W.ei + 1];
-  W.resting = true; W.initial = S.settings.rest; W.deadline = Date.now() + W.initial * 1000; W.lit = -1; W.intro = true;
+  W.resting = true; W.initial = S.settings.rest; W.deadline = Date.now() + W.initial * 1000; W.sec = -1;
   $('r-next-t').textContent = lastSet ? next?.name || '' : ex.name;
   $('r-next-s').textContent = lastSet ? `Упражнение ${W.ei + 2} из ${W.exs.length}` : `Подход ${W.set + 1} из ${ex.sets}`;
   $('b-skip').textContent = lastSet && !lastEx ? 'К упражнению' : 'Далее';
-  const tk = $('ticks');
-  if (!tk.children.length) for (let i = 0; i < 60; i++) {
-    const a = i * Math.PI / 30, r2 = i % 5 ? 74 : 76, l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    l.setAttribute('x1', 80 + 70 * Math.cos(a)); l.setAttribute('y1', 80 + 70 * Math.sin(a));
-    l.setAttribute('x2', 80 + r2 * Math.cos(a)); l.setAttribute('y2', 80 + r2 * Math.sin(a)); tk.appendChild(l);
-  }
-  const ring = $('t-ring'); ring.style.transition = 'none'; ring.style.strokeDashoffset = CIRC; ring.getBoundingClientRect();
-  ring.style.transition = 'stroke-dashoffset .9s cubic-bezier(.16,1,.3,1)'; ring.style.strokeDashoffset = 0;
-  setTimeout(() => { W.intro = false; ring.style.transition = 'stroke-dashoffset .25s linear'; }, 900);
-  setView(true); clearInterval(tInt); tickRest(); tInt = setInterval(tickRest, 200);
+  setView(true); paintRing(); clearInterval(tInt); tickRest(); tInt = setInterval(tickRest, 250);
 }
 function tickRest() {
-  const left = Math.max(0, (W.deadline - Date.now()) / 1000), frac = Math.min(1, left / W.initial);
-  $('t-text').textContent = mmss(Math.ceil(left));
-  $('timer').classList.toggle('urgent', left > 0 && left <= 5);
-  if (!W.intro) {
-    $('t-ring').style.strokeDashoffset = CIRC * (1 - frac);
-    const a = frac * 2 * Math.PI; $('t-dot').setAttribute('cx', 80 + 62 * Math.cos(a)); $('t-dot').setAttribute('cy', 80 + 62 * Math.sin(a));
-  }
-  const lit = Math.ceil(frac * 60);
-  if (lit !== W.lit) { W.lit = lit; [...$('ticks').children].forEach((t, i) => t.style.opacity = i < lit ? 1 : .15); }
+  const left = Math.max(0, (W.deadline - Date.now()) / 1000), secs = Math.ceil(left);
+  if (secs !== W.sec) { W.sec = secs; $('t-text').textContent = mmss(secs); }
   if (left <= 0) { clearInterval(tInt); hap('heavy'); endRest(); }
 }
-function adjust(s) { W.deadline += s * 1000; W.initial = Math.max(W.initial, (W.deadline - Date.now()) / 1000); hap(); tickRest(); }
+function adjust(s) { W.deadline += s * 1000; W.initial = Math.max(W.initial, (W.deadline - Date.now()) / 1000); hap(); paintRing(); tickRest(); }
 $('b-less').onclick = () => adjust(-15); $('b-more').onclick = () => adjust(15);
 $('b-skip').onclick = () => { clearInterval(tInt); endRest(); };
 function endRest() {
