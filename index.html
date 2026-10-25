@@ -231,6 +231,16 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
   <p id="tip" class="text-text-secondary text-sm mb-3 transition-opacity"></p><button id="b-tip2" class="btn2 w-full !text-xs">Другой совет</button></div>
 </div></section>
 
+<!-- ПОДПИСКА -->
+<section id="s-subscribe" class="screen"><div class="wrap items-center justify-center text-center">
+ <div class="w-24 h-24 rounded-full bg-accent/10 border border-accent/30 text-accent flex items-center justify-center mb-6 glow"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+ <h1 class="text-3xl font-bold mb-2">Доступ ограничен</h1>
+ <p class="text-text-secondary text-sm leading-relaxed mb-8 max-w-xs">Чтобы пользоваться приложением, необходимо подписаться на наш канал. Подпишитесь и нажмите кнопку проверки.</p>
+ <button id="b-open-channel" class="btn flex items-center justify-center gap-2 mb-3">Подписаться на канал <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg></button>
+ <button id="b-check-sub" class="btn2 w-full flex items-center justify-center gap-2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Я уже подписан, проверить</button>
+ <p id="sub-error" class="text-sm mt-4" style="color:#F87171;opacity:0;transition:opacity .3s"></p>
+</div></section>
+
 <nav id="nav" class="nav hide"><div class="flex max-w-md mx-auto">
  <button data-s="home" class="on"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Главная</button>
  <button data-s="progs"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Программы</button>
@@ -243,6 +253,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 <script>
 const tg = window.Telegram?.WebApp || {};
 try { tg.ready(); tg.expand(); tg.disableVerticalSwipes?.(); tg.setHeaderColor?.('#09090B'); tg.setBackgroundColor?.('#09090B'); } catch {}
+const CHANNEL_LINK = "https://t.me/username"; // TODO: ссылка на ваш канал
+const API_URL = "/api/check-sub";
 const $ = id => document.getElementById(id);
 const ICONS = {"x": "M18 6L6 18M6 6l12 12", "plus": "M12 5v14M5 12h14", "minus": "M5 12h14", "check": "M20 6L9 17l-5-5", "flame": "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z", "bulb": "M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z", "trophy": "M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3", "dumbbell": "M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11", "trash": "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6", "sprout": "M12 22V12M12 12C12 8 9 5 4 5c0 4 3 7 8 7zM12 14c0-3 2-5 7-5 0 3-2 5-7 5z", "bolt": "M13 2L3 14h9l-1 8 10-12h-9l1-8z", "chev": "M15 18l-6-6 6-6", "next": "M5 12h14M13 6l6 6-6 6"};
 const ic = (n, s = 20, sw = 1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONS[n]}"/></svg>`;
@@ -604,17 +616,51 @@ function renderChart() {
 }
 $('b-tip2').onclick = () => { const t = $('tip'); t.style.opacity = 0; setTimeout(() => { t.textContent = rnd(TIPS); t.style.opacity = 1; }, 200); hap(); };
 
+/* ===== ПРОВЕРКА ПОДПИСКИ ===== */
+let subOk = false;
+async function checkSub() {
+  const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ initData: tg.initData }) });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  return data.isSubscribed === true;
+}
+function subError(msg) { const e = $('sub-error'); if (msg) e.textContent = msg; e.style.opacity = msg ? 1 : 0; }
+function gate(msg) { $('nav').classList.add('hide'); show('subscribe'); subError(msg || ''); }
+function enterApp() {
+  if (S.name && S.level) return show('home');
+  inName.value = S.name || tg.initDataUnsafe?.user?.first_name || ''; S.name = inName.value.trim(); $('b-name').disabled = !S.name;
+  show('name');
+}
+$('b-open-channel').onclick = () => { hap('medium'); try { tg.openLink(CHANNEL_LINK); } catch { window.open(CHANNEL_LINK, '_blank'); } };
+$('b-check-sub').onclick = async () => {
+  const btn = $('b-check-sub'), html = btn.innerHTML;
+  btn.disabled = true; subError('');
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></path></svg>Проверка...';
+  try {
+    if (await checkSub()) { subOk = true; hap('ok'); enterApp(); }
+    else { hap('err'); subError('Подписка не найдена. Подпишитесь на канал и повторите проверку.'); }
+  } catch (e) { hap('err'); subError('Ошибка сети. Проверьте соединение и попробуйте снова.'); }
+  finally { btn.disabled = false; btn.innerHTML = html; }
+};
+
 /* ===== СТАРТ ===== */
-function boot() {
-  const u = tg.initDataUnsafe?.user;
-  if (S.name && S.level) { show('home'); return; }
-  inName.value = S.name || u?.first_name || ''; S.name = inName.value.trim(); $('b-name').disabled = !S.name;
+async function boot() {
+  if (!tg.initData) { console.warn('Telegram initData отсутствует — проверка подписки пропущена'); subOk = true; return enterApp(); }
+  document.body.style.cursor = 'wait';
+  try {
+    const ok = await checkSub();
+    document.body.style.cursor = '';
+    if (ok) { subOk = true; enterApp(); } else gate();
+  } catch (e) {
+    document.body.style.cursor = '';
+    gate('Ошибка сети. Проверьте соединение и попробуйте снова.');
+  }
 }
 try { const raw = localStorage.getItem(KEY); if (raw) hydrate(raw); } catch {}
 boot();
 // если локально пусто — пробуем облако Telegram (данные с другого устройства)
 if (!(S.name && S.level)) try {
-  tg.CloudStorage?.getItem(KEY, (err, raw) => { if (!err && raw && hydrate(raw)) { try { localStorage.setItem(KEY, raw); } catch {} boot(); } });
+  tg.CloudStorage?.getItem(KEY, (err, raw) => { if (!err && raw && hydrate(raw)) { try { localStorage.setItem(KEY, raw); } catch {} if (subOk) enterApp(); } });
 } catch {}
 </script>
 </body>
