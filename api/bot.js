@@ -49,7 +49,6 @@ export default async function handler(req, res) {
     // ============================================
     const welcomeText = `
 Добро пожаловать в <b>gym***</b>!
-
 <blockquote>
 <b>Что внутри:</b>
 
