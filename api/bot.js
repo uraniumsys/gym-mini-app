@@ -45,7 +45,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: `👋 Привет, <b>${userName}</b>!\n\nДобро пожаловать в Gym Mini App 💪`,
+          text: `👋 Привет, <b>${userName}</b>!\n\nДобро пожаловать в gym***`,
           parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [[{ text: '🚀 Открыть приложение', web_app: { url: MINI_APP_URL } }]]
