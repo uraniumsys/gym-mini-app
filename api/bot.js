@@ -3,7 +3,7 @@ const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const MINI_APP_URL = 'https://gym-mini-app-six.vercel.app';
 
 // 🔥 ВОТ ТВОЙ НАЙДЕННЫЙ ID КАСТОМНОГО ЭМОДЗИ
-const CUSTOM_EMOJI_ID = '5870734657384877785';
+const CUSTOM_EMOJI_ID = 5870734657384877785;
 
 export default async function handler(req, res) {
   if (req.method === 'GET' && req.query.test === 'token') {
