@@ -3,7 +3,21 @@ const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const MINI_APP_URL = 'https://gym-mini-app-six.vercel.app';
 
 export default async function handler(req, res) {
-  // 1. Отладка: если открыть ссылку с ?debug=true, покажем, что видит Vercel
+  // 🛠️ Диагностика токена: открой в браузере /api/bot?test=token
+  if (req.method === 'GET' && req.query.test === 'token') {
+    if (!BOT_TOKEN) {
+      return res.status(500).json({ error: '❌ BOT_TOKEN не найден' });
+    }
+    const testResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`);
+    const testData = await testResponse.json();
+    return res.status(200).json({ 
+      message: '✅ Токен работает!',
+      tokenLength: BOT_TOKEN.length,
+      telegramResponse: testData 
+    });
+  }
+
+  // 🛠️ Диагностика запросов: открой в браузере /api/bot?debug=true
   if (req.method === 'GET' && req.query.debug === 'true') {
     return res.status(200).json({
       method: req.method,
@@ -13,53 +27,113 @@ export default async function handler(req, res) {
     });
   }
 
+  // Основная логика бота
   if (req.method !== 'POST') {
-    return res.status(200).send('Бот работает. Ожидает команду /start');
+    return res.status(200).send(' Бот работает. Напиши /start в Telegram');
   }
 
-  // 2. Защита: иногда Vercel передает body как строку, а не как объект
   let update = req.body;
   if (typeof update === 'string') {
-    try {
-      update = JSON.parse(update);
-    } catch (e) {
-      console.error("❌ Ошибка парсинга JSON:", e);
-      return res.status(400).send("Invalid JSON");
-    }
+    try { update = JSON.parse(update); } 
+    catch (e) { return res.status(400).send("Invalid JSON"); }
   }
 
-  console.log("📥 ПОЛУЧЕН UPDATE:", JSON.stringify(update));
+  console.log("📥 Получен update:", JSON.stringify(update));
 
-  // 3. Проверяем, есть ли вообще текст сообщения
-  if (update && update.message && update.message.text) {
-    console.log("📝 Текст сообщения:", update.message.text);
-    
-    if (update.message.text.startsWith('/start')) {
-      const chatId = update.message.chat.id;
-      const userName = update.message.from.first_name || 'друг';
+  if (update && update.message && update.message.text && update.message.text.startsWith('/start')) {
+    const chatId = update.message.chat.id;
+    const userName = update.message.from.first_name || 'друг';
 
-      console.log("📤 ОТПРАВЛЯЕМ СООБЩЕНИЕ в чат:", chatId);
+    // ============================================
+    // 📝 ЗДЕСЬ МЕНЯЕТСЯ ТЕКСТ ПРИВЕТСТВИЯ
+    // ============================================
+    const welcomeText = `
+ Привет, <b>${userName}</b>!
 
-      const response = await fetch(`${API_URL}/sendMessage`, {
+Добро пожаловать в <b>Gym Mini App</b> 💪
+Твой персональный помощник для тренировок и здорового образа жизни.
+
+📌 <b>Что ты найдёшь внутри:</b>
+
+🏋️ <b>Программы тренировок</b>
+Готовые планы для любого уровня подготовки — от новичка до продвинутого.
+
+📊 <b>Трекер прогресса</b>
+Записывай результаты, отслеживай динамику и достигай целей быстрее.
+
+🥗 <b>Советы по питанию</b>
+Рекомендации по рациону, которые помогут получить максимум от тренировок.
+
+ <b>Таймеры и напоминания</b>
+Не пропусти ни одну тренировку.
+
+🚀 <b>Начать очень просто:</b>
+Нажми кнопку ниже — и приложение откроется прямо внутри Telegram.
+
+<i>Если возникнут вопросы — напиши нам, мы всегда на связи!</i>
+    `;
+    // ============================================
+
+    // Кнопки под сообщением
+    const keyboard = {
+      inline_keyboard: [
+        [
+          { text: '🚀 Открыть приложение', web_app: { url: MINI_APP_URL } }
+        ],
+        [
+          { text: 'ℹ️ О боте', callback_data: 'about' },
+          { text: '📞 Поддержка', url: 'https://t.me/ТВОЙ_КОНТАКТ' }
+        ]
+      ]
+    };
+
+    console.log("📤 Отправляем приветствие в чат:", chatId);
+
+    const response = await fetch(`${API_URL}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: welcomeText.trim(),
+        parse_mode: 'HTML',
+        reply_markup: keyboard
+      })
+    });
+
+    const responseData = await response.json();
+    console.log("📡 Ответ Telegram API:", JSON.stringify(responseData));
+
+    if (!response.ok) {
+      console.error("❌ Ошибка отправки:", responseData);
+    }
+
+    return res.status(200).json({ ok: true, telegramResponse: responseData });
+  }
+
+  // Обработка нажатий на inline-кнопки (callback)
+  if (update.callback_query && update.callback_query.data) {
+    const callbackData = update.callback_query.data;
+    const callbackChatId = update.callback_query.message.chat.id;
+    const callbackQueryId = update.callback_query.id;
+
+    // Убираем "крутилку" на кнопке
+    await fetch(`${API_URL}/answerCallbackQuery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ callback_query_id: callbackQueryId })
+    });
+
+    if (callbackData === 'about') {
+      await fetch(`${API_URL}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: chatId,
-          text: `👋 Привет, <b>${userName}</b>!\n\nДобро пожаловать в gym***`,
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [[{ text: '🌙  Открыть приложение', web_app: { url: MINI_APP_URL } }]]
-          }
+          chat_id: callbackChatId,
+          text: 'ℹ️ <b>Gym Mini App</b> — это удобное приложение для тренировок прямо внутри Telegram.\n\nРазработано с любовью к спорту 💪',
+          parse_mode: 'HTML'
         })
       });
-
-      const responseData = await response.json();
-      console.log("📡 ОТВЕТ TELEGRAM API:", JSON.stringify(responseData));
-      
-      return res.status(200).json({ ok: true, telegramResponse: responseData });
     }
-  } else {
-    console.log("⚠️ Получен запрос, но это НЕ текстовое сообщение (или нет поля message.text)");
   }
 
   return res.status(200).json({ ok: true });
