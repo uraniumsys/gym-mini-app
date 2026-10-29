@@ -77,7 +77,7 @@ export default async function handler(req, res) {
             type: 'custom_emoji',
             offset: 0,                     // Начинается с самого первого символа
             length: 2,                     // Длина эмодзи-заглушки "✨" в UTF-16 всегда 2
-            custom_emoji_id:5870734657384877785 // Твой найденный ID
+            custom_emoji_id: CUSTOM_EMOJI_ID // Твой найденный ID
           }
         ]
       })
