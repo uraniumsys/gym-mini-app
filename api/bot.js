@@ -48,7 +48,7 @@ export default async function handler(req, res) {
           text: `👋 Привет, <b>${userName}</b>!\n\nДобро пожаловать в gym***`,
           parse_mode: 'HTML',
           reply_markup: {
-            inline_keyboard: [[{ text: '🌙 Открыть приложение', web_app: { url: MINI_APP_URL } }]]
+            inline_keyboard: [[{ text: '🌙  Открыть приложение', web_app: { url: MINI_APP_URL } }]]
           }
         })
       });
