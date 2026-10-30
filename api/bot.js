@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     const welcomeText = `
 Привет, <b>${userName}</b>! 👋
 
-Добро пожаловать в <b>gym***</b> — твой личный инструмент для построения тела мечты.
+добро пожаловать в <b>gym***</b>!
 
 <blockquote>
 🗡️ <b>что внутри:</b>
@@ -68,8 +68,8 @@ export default async function handler(req, res) {
 чтобы ты сохранял мотивацию и не пропускал ни одной тренировки.
 </blockquote>
 
-⚔️ <b>начать просто:</b>
-Нажми кнопку ниже — приложение откроется внутри telegram.
+🌙 <b>начать просто:</b>
+нажми кнопку ниже — приложение откроется внутри telegram.
 
 <blockquote><i>Если возникнут вопросы или предложения по рекламе — пиши нам!</i></blockquote>
     `;
@@ -79,11 +79,11 @@ export default async function handler(req, res) {
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🌙 Открыть приложение', web_app: { url: MINI_APP_URL } }
+          { text: '🌙 открыть приложение', web_app: { url: MINI_APP_URL } }
         ],
         [
-          { text: '🌐 О боте', callback_data: 'about' },
-          { text: '📞 Контакты', url: 'https://t.me/ijustwanttto' }
+          { text: '🌐 о боте', callback_data: 'about' },
+          { text: '📞 контакты', url: 'https://t.me/ijustwanttto' }
         ]
       ]
     };
