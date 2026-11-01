@@ -70,11 +70,11 @@ export default async function handler(req, res) {
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🌙  открыть приложение', web_app: { url: MINI_APP_URL } }
+          { text: '🌙⠀открыть приложение', web_app: { url: MINI_APP_URL } }
         ],
         [
-          { text: '🌐  о боте', callback_data: 'about' },
-          { text: '📞  контакты', url: 'https://t.me/ijustwanttto' }
+          { text: '🌐⠀о боте', callback_data: 'about' },
+          { text: '📞⠀контакты', url: 'https://t.me/ijustwanttto' }
         ]
       ]
     };
