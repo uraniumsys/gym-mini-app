@@ -119,13 +119,13 @@ export default async function handler(req, res) {
       const legalKeyboard = {
         inline_keyboard: [
           [
-            { text: '📜 ⁢ㅤ  политика конфиденциальности', url: PRIVACY_POLICY_URL }
+            { text: '📜ㅤполитика конфиденциальности', url: PRIVACY_POLICY_URL }
           ],
           [
-            { text: '📄 ⁢ ㅤ пользовательское соглашение', url: TERMS_OF_SERVICE_URL }
+            { text: '📄ㅤпользовательское соглашение', url: TERMS_OF_SERVICE_URL }
           ],
           [
-            { text: '📞 ⁢ ㅤ написать в поддержку', url: 'https://t.me/ijustwanttto' }
+            { text: '📞ㅤнаписать в поддержку', url: 'https://t.me/ijustwanttto' }
           ]
         ]
       };
