@@ -136,7 +136,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: callbackChatId,
-          text: 'ℹ️ <b>Gym Mini App</b> — это удобное приложение для тренировок прямо внутри Telegram.\n\nРазработано с любовью к спорту 💪',
+          text: '🌙 <b>gym***</b> — это удобное приложение для тренировок прямо внутри Telegram.\n\nРазработано с любовью к спорту 💪',
           parse_mode: 'HTML'
         })
       });
