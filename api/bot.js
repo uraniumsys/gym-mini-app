@@ -2,33 +2,24 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const MINI_APP_URL = 'https://gym-mini-app-six.vercel.app';
 
-// 🖼️ ДОБАВЛЕН БЛОК ДЛЯ ССЫЛКИ НА ФОТО
-// Замени эту ссылку на прямую ссылку на твою картинку (должна заканчиваться на .jpg, .png или .gif)
+// 🖼️ ССЫЛКА НА ФОТО
 const PHOTO_URL = 'https://i.imgur.com/ZKp0atf.png'; 
 
+// ⚖️ ССЫЛКИ НА ЮРИДИЧЕСКИЕ ДОКУМЕНТЫ (ЗАМЕНИ ИХ НА СВОИ!)
+const PRIVACY_POLICY_URL = 'https://telegra.ph/ТВОЯ_ССЫЛКА_НА_ПОЛИТИКУ';
+const TERMS_OF_SERVICE_URL = 'https://telegra.ph/ТВОЯ_ССЫЛКА_НА_СОГЛАШЕНИЕ';
+
 export default async function handler(req, res) {
-  // 🛠️ Диагностика токена: открой в браузере /api/bot?test=token
+  // 🛠️ Диагностика токена
   if (req.method === 'GET' && req.query.test === 'token') {
-    if (!BOT_TOKEN) {
-      return res.status(500).json({ error: '❌ BOT_TOKEN не найден' });
-    }
+    if (!BOT_TOKEN) return res.status(500).json({ error: '❌ BOT_TOKEN не найден' });
     const testResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`);
-    const testData = await testResponse.json();
-    return res.status(200).json({ 
-      message: '✅ Токен работает!',
-      tokenLength: BOT_TOKEN.length,
-      telegramResponse: testData 
-    });
+    return res.status(200).json({ message: '✅ Токен работает!', telegramResponse: await testResponse.json() });
   }
 
-  // 🛠️ Диагностика запросов: открой в браузере /api/bot?debug=true
+  // 🛠️ Диагностика запросов
   if (req.method === 'GET' && req.query.debug === 'true') {
-    return res.status(200).json({
-      method: req.method,
-      bodyType: typeof req.body,
-      body: req.body,
-      headers: req.headers
-    });
+    return res.status(200).json({ method: req.method, bodyType: typeof req.body, body: req.body, headers: req.headers });
   }
 
   // Основная логика бота
@@ -44,13 +35,11 @@ export default async function handler(req, res) {
 
   console.log("📥 Получен update:", JSON.stringify(update));
 
+  // 1. Обработка команды /start
   if (update && update.message && update.message.text && update.message.text.startsWith('/start')) {
     const chatId = update.message.chat.id;
     const userName = update.message.from.first_name || 'друг';
 
-    // ============================================
-    // 📝 ЗДЕСЬ МЕНЯЕТСЯ ТЕКСТ ПРИВЕТСТВИЯ С ЦИТИРОВАНИЕМ
-    // ============================================
     const welcomeText = `
 Привет, <b>${userName}</b>! 👋
 
@@ -77,9 +66,7 @@ export default async function handler(req, res) {
 
 <blockquote><i>если возникнут вопросы или предложения по рекламе — пиши нам!</i></blockquote>
     `;
-    // ============================================
 
-    // Кнопки под сообщением
     const keyboard = {
       inline_keyboard: [
         [
@@ -94,50 +81,63 @@ export default async function handler(req, res) {
 
     console.log("📤 Отправляем приветствие с фото в чат:", chatId);
 
-    // ⚠️ ИЗМЕНЕНО: sendMessage заменен на sendPhoto, text заменен на photo + caption
     const response = await fetch(`${API_URL}/sendPhoto`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        photo: PHOTO_URL,           // Ссылка на картинку
-        caption: welcomeText.trim(), // Твой текст теперь идет как подпись к фото
-        parse_mode: 'HTML',         // Форматирование (жирный, цитаты) работает и здесь
-        reply_markup: keyboard      // Кнопки остаются под фото
+        photo: PHOTO_URL,
+        caption: welcomeText.trim(),
+        parse_mode: 'HTML',
+        reply_markup: keyboard
       })
     });
 
     const responseData = await response.json();
-    console.log("📡 Ответ Telegram API:", JSON.stringify(responseData));
-
-    if (!response.ok) {
-      console.error("❌ Ошибка отправки:", responseData);
-    }
+    if (!response.ok) console.error("❌ Ошибка отправки:", responseData);
 
     return res.status(200).json({ ok: true, telegramResponse: responseData });
   }
 
-  // Обработка нажатий на inline-кнопки (callback)
+  // 2. Обработка нажатий на inline-кнопки (callback)
   if (update.callback_query && update.callback_query.data) {
     const callbackData = update.callback_query.data;
     const callbackChatId = update.callback_query.message.chat.id;
     const callbackQueryId = update.callback_query.id;
 
-    // Убираем "крутилку" на кнопке
+    // Убираем "крутилку" загрузки на кнопке
     await fetch(`${API_URL}/answerCallbackQuery`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ callback_query_id: callbackQueryId })
     });
 
+    // Если нажали "о боте"
     if (callbackData === 'about') {
+      
+      // Создаем новую клавиатуру со ссылками на документы
+      const legalKeyboard = {
+        inline_keyboard: [
+          [
+            { text: '📜  политика конфиденциальности', url: PRIVACY_POLICY_URL }
+          ],
+          [
+            { text: '📄  пользовательское соглашение', url: TERMS_OF_SERVICE_URL }
+          ],
+          [
+            { text: '📞  написать в поддержку', url: 'https://t.me/ijustwanttto' }
+          ]
+        ]
+      };
+
       await fetch(`${API_URL}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: callbackChatId,
-          text: '🌙 <b>gym***</b> — полноценное премиум приложение для тренировок на базе telegram.\n\nРазработано с любовью к спорту 💪',
-          parse_mode: 'HTML'
+          text: 'ℹ️ <b>gym***</b> — полноценное премиум приложение для тренировок на базе Telegram.\n\nНиже вы найдете важные документы, регулирующие использование приложения и защиту ваших данных:',
+          parse_mode: 'HTML',
+          reply_markup: legalKeyboard // ⬅️ Добавляем кнопки с ссылками
         })
       });
     }
