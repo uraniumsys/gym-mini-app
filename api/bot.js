@@ -119,13 +119,13 @@ export default async function handler(req, res) {
       const legalKeyboard = {
         inline_keyboard: [
           [
-            { text: '📜   политика конфиденциальности', url: PRIVACY_POLICY_URL }
+            { text: '📜 ⁢ㅤ  политика конфиденциальности', url: PRIVACY_POLICY_URL }
           ],
           [
-            { text: '📄   пользовательское соглашение', url: TERMS_OF_SERVICE_URL }
+            { text: '📄 ⁢ ㅤ пользовательское соглашение', url: TERMS_OF_SERVICE_URL }
           ],
           [
-            { text: '📞   написать в поддержку', url: 'https://t.me/ijustwanttto' }
+            { text: '📞 ⁢ ㅤ написать в поддержку', url: 'https://t.me/ijustwanttto' }
           ]
         ]
       };
@@ -135,7 +135,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: callbackChatId,
-          text: 'ℹ️ <b>gym***</b> — полноценное премиум приложение для тренировок на базе Telegram.\n\nНиже вы найдете важные документы, регулирующие использование приложения и защиту ваших данных:',
+          text: 'ℹ️ <b>gym***</b> — полноценное премиум приложение для тренировок на базе Telegram.\n\nниже — документы, регулирующие использование приложения и защиту данных:',
           parse_mode: 'HTML',
           reply_markup: legalKeyboard // ⬅️ Добавляем кнопки с ссылками
         })
