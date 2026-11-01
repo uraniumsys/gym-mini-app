@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     const welcomeText = `
 Привет, <b>${userName}</b>! 👋
 
-добро пожаловать в <b>gym***</b> — полноценное премиум приложение для тренировок на базе telegram.
+добро пожаловать в <b>gym***</b> !
 
 <blockquote>
 🌑  <b>что внутри:</b>
@@ -136,7 +136,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: callbackChatId,
-          text: '🌙 <b>gym***</b> — это удобное приложение для тренировок прямо внутри Telegram.\n\nРазработано с любовью к спорту 💪',
+          text: '🌙 <b>gym***</b> — полноценное премиум приложение для тренировок на базе telegram.\n\nРазработано с любовью к спорту 💪',
           parse_mode: 'HTML'
         })
       });
