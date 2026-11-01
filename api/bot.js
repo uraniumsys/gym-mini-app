@@ -2,6 +2,10 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const MINI_APP_URL = 'https://gym-mini-app-six.vercel.app';
 
+// 🖼️ ДОБАВЛЕН БЛОК ДЛЯ ССЫЛКИ НА ФОТО
+// Замени эту ссылку на прямую ссылку на твою картинку (должна заканчиваться на .jpg, .png или .gif)
+const PHOTO_URL = 'https://i.imgur.com/ZKp0atf.png'; 
+
 export default async function handler(req, res) {
   // 🛠️ Диагностика токена: открой в браузере /api/bot?test=token
   if (req.method === 'GET' && req.query.test === 'token') {
@@ -88,16 +92,18 @@ export default async function handler(req, res) {
       ]
     };
 
-    console.log("📤 Отправляем приветствие в чат:", chatId);
+    console.log("📤 Отправляем приветствие с фото в чат:", chatId);
 
-    const response = await fetch(`${API_URL}/sendMessage`, {
+    // ⚠️ ИЗМЕНЕНО: sendMessage заменен на sendPhoto, text заменен на photo + caption
+    const response = await fetch(`${API_URL}/sendPhoto`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        text: welcomeText.trim(),
-        parse_mode: 'HTML', // Важно! Без этого теги <blockquote> не сработают
-        reply_markup: keyboard
+        photo: PHOTO_URL,           // Ссылка на картинку
+        caption: welcomeText.trim(), // Твой текст теперь идет как подпись к фото
+        parse_mode: 'HTML',         // Форматирование (жирный, цитаты) работает и здесь
+        reply_markup: keyboard      // Кнопки остаются под фото
       })
     });
 
